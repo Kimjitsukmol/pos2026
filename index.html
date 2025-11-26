@@ -251,6 +251,32 @@
     </div>
 
 
+    <div id="minOrderModal" class="fixed inset-0 bg-black/80 hidden z-[130] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop text-center relative border border-gray-100">
+            <div class="bg-gradient-to-br from-orange-400 to-red-500 h-28 flex items-center justify-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
+                <div class="bg-white p-4 rounded-full shadow-lg mt-8 relative z-10">
+                    <i class="fas fa-shopping-basket text-4xl text-orange-500"></i>
+                    <div class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold w-6 h-6 flex items-center justify-center rounded-full border-2 border-white">!</div>
+                </div>
+            </div>
+            
+            <div class="pt-10 pb-8 px-8">
+                <h3 class="text-2xl font-extrabold text-gray-800 mb-2">ยอดขั้นต่ำ 100 บาท</h3>
+                <p class="text-gray-500 mb-6 text-sm leading-relaxed">ขออภัยค่ะ ทางร้านมีนโยบายจัดส่ง<br>เมื่อมียอดสั่งซื้อ 100 บาทขึ้นไปนะคะ</p>
+                
+                <div class="bg-orange-50 rounded-xl p-4 border border-orange-100 mb-6">
+                    <p class="text-gray-600 text-xs font-bold uppercase mb-1">ต้องสั่งเพิ่มอีก</p>
+                    <p class="text-orange-600 font-extrabold text-3xl"><span id="diffAmount">0</span> <span class="text-sm text-gray-400">บาท</span></p>
+                </div>
+
+                <button onclick="closeModal('minOrderModal')" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3.5 rounded-xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fas fa-cart-plus"></i> เลือกสินค้าเพิ่ม
+                </button>
+            </div>
+        </div>
+    </div>
+
 
 
     <div id="confirmOrderModal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-end lg:items-center justify-center p-0 lg:p-4 backdrop-blur-sm">
@@ -1076,56 +1102,65 @@
             setLoading('btnSubmitOrder', true, 'กำลังบันทึก...');
             const total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
             
-            // --- 🔊 1. พูดราคาทันทีที่กดปุ่ม ---
+            // --- 🛑 เพิ่มใหม่: ตรวจสอบขั้นต่ำ 100 บาท (เฉพาะโหมดลูกค้า) ---
+            if (isCustomerMode && total < 100) {
+                // คำนวณยอดที่ขาด
+                const diff = 100 - total;
+                document.getElementById('diffAmount').innerText = diff.toLocaleString();
+                
+                // เปิดหน้าต่างแจ้งเตือน
+                document.getElementById('minOrderModal').classList.remove('hidden');
+                
+                playNotificationSound(); // เสียงเตือน (ถ้ามี)
+                speak("ต้องสั่งขั้นต่ำ 100 บาทค่ะ"); // เสียงพูด
+                
+                // คืนค่าปุ่มและจบการทำงาน
+                setLoading('btnSubmitOrder', false, 'ยืนยันรายการ'); 
+                return;
+            }
+            // --------------------------------------------------------
+
+            // --- ส่วนเดิม: พูดราคา ---
             if (isCustomerMode) {
                 speak("ยอดรวม " + total.toLocaleString() + " บาท");
             }
-            // --------------------------------
             
             const orderType = document.getElementById('orderType').value;
             let noteText = document.getElementById('orderNote').value;
-            
-            // ... (โค้ดช่วงต้นเหมือนเดิม) ...
             
             if (orderType === 'ส่งเดลิเวอรี่') {
                 const houseNo = document.getElementById('addrHouseNo').value.trim(); 
                 const soi = document.getElementById('addrSoi').value.trim();
                 
                 if (!houseNo || !soi) {
-                    // ... (ส่วนแจ้งเตือน Error เหมือนเดิม) ...
+                    showCustomAlert('ข้อมูลไม่ครบ', 'กรุณาระบุ "บ้านเลขที่" และ "ซอย/ถนน" ให้ครบถ้วน', '<i class="fas fa-map-marked-alt text-orange-500"></i>');
+                    setLoading('btnSubmitOrder', false, 'ยืนยันรายการ'); 
                     return; 
                 }
-
-                // --- 🔴 เพิ่มใหม่: บันทึกที่อยู่ลูกค้าไว้ใช้ครั้งหน้า ---
+                
                 if (isCustomerMode) {
                     localStorage.setItem('customerAddrHouse', houseNo);
                     localStorage.setItem('customerAddrSoi', soi);
                 }
-                // --------------------------------------------------
                 
                 const addressStr = `[ส่งที่: ${houseNo} ${soi ? 'ซ.'+soi : ''}]`; 
                 noteText = noteText ? `${addressStr} ${noteText}` : addressStr; 
             }
-
-            // ... (ส่วนส่งข้อมูล API ด้านล่างเหมือนเดิม) ...
 
             const payload = { action: "saveOrder", tableNo: document.getElementById('tableNo').value || "หน้าร้าน", orderType: orderType, cartItems: cart.map(i => ({ name: i.name, qty: i.qty, price: i.price, spicy: "-" })), totalPrice: total, note: noteText };
             
              fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => {
                 if(data.result === 'success') {
                     
-                    // --- 📦 เก็บรายการล่าสุดไว้โชว์ลูกค้า ---
-                    myLastOrders = [...cart]; // สำเนาตะกร้าเก็บไว้
+                    myLastOrders = [...cart]; 
                     
                     showToast('บันทึกรายการขายแล้ว!', 'success'); 
                     
-                    // --- 🔊 2. เปลี่ยนเสียงเป็นขอบคุณค่ะ ---
                     if (isCustomerMode) {
-                        setTimeout(() => speak("ขอบคุณค่ะ"), 1500); // หน่วงนิดนึงให้พูดราคาจบก่อน
+                        setTimeout(() => speak("ขอบคุณค่ะ"), 1500); 
                     } else {
                         speak("บันทึกรายการแล้วค่ะ");
                     }
-                    // -------------------------------------
 
                     cart = []; renderCart(); toggleCart(false); closeModal('confirmOrderModal');
                     if(!isCustomerMode) document.getElementById('tableNo').value = '';
@@ -1133,7 +1168,6 @@
                     document.getElementById('addrHouseNo').value = '';
                     document.getElementById('addrSoi').value = '';
                     
-                    // เปิดหน้าต่างสรุปรายการที่เพิ่งสั่งให้ดูเลย (Option)
                     if(isCustomerMode) openMyRecentOrder();
                     
                     updateKitchenBadge();
