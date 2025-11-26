@@ -57,10 +57,10 @@
 
         <div id="customerToolbar" class="hidden flex items-center justify-end gap-2 flex-1">
              <button onclick="openMyRecentOrder()" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1 border border-white/30 active:scale-95 transition">
-                <i class="fas fa-receipt"></i> รายการ
+                <i class="fas fa-receipt"></i> รายการที่สั่ง
             </button>
             
-            <div class="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1 animate-pulse"><i class="fas fa-clock"></i> <span id="queueCountDisplay">0</span> คิว</div>
+            <div class="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1 animate-pulse"><i class="fas fa-clock"></i> รออีก <span id="queueCountDisplay">0</span> คิว</div>
             <span class="bg-white/20 px-3 py-1 rounded-full text-sm font-bold text-white"><i class="fas fa-user mr-1"></i> <span id="customerTableDisplay">...</span></span>
         </div>
     </nav>
@@ -423,7 +423,7 @@
 
     <script>
         // ใส่ URL ที่ได้จาก Web App Deployment ใหม่ที่นี่
-        const API_URL = "https://script.google.com/macros/s/AKfycbxqxE2Wk-R5w7Hn95upf6pJAb8e3PPdHznO-etkQOw2vNP8DseCfp1BjN5VJU_8rtgz7Q/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbxsEVswZLqeeijj4NAjeErT2mNaFbGdotAf_ZSo44APCCKgbDlGFf8DVG5FxpsiNRBLzQ/exec"; 
         
         // -------------------------------------------------------------
         // 🔴🔴 แก้ไขรหัสโฟลเดอร์ให้ตรงกับที่คุณให้มาแล้ว 🔴🔴
@@ -1151,27 +1151,29 @@
             
              fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => {
                 if(data.result === 'success') {
-                    
+                    // ... (โค้ด Success เดิม) ...
                     myLastOrders = [...cart]; 
-                    
                     showToast('บันทึกรายการขายแล้ว!', 'success'); 
-                    
-                    if (isCustomerMode) {
-                        setTimeout(() => speak("ขอบคุณค่ะ"), 1500); 
-                    } else {
-                        speak("บันทึกรายการแล้วค่ะ");
-                    }
-
+                    if (isCustomerMode) { setTimeout(() => speak("ขอบคุณค่ะ"), 1500); } else { speak("บันทึกรายการแล้วค่ะ"); }
                     cart = []; renderCart(); toggleCart(false); closeModal('confirmOrderModal');
                     if(!isCustomerMode) document.getElementById('tableNo').value = '';
                     document.getElementById('orderNote').value = ''; 
                     document.getElementById('addrHouseNo').value = '';
                     document.getElementById('addrSoi').value = '';
-                    
                     if(isCustomerMode) openMyRecentOrder();
-                    
                     updateKitchenBadge();
-                } else { showCustomAlert('ผิดพลาด', 'ส่งออเดอร์ไม่สำเร็จ: ' + data.error, '<i class="fas fa-exclamation-circle text-red-500"></i>'); }
+                    
+                } else if (data.error === 'STORE_CLOSED') {
+                    // 🛑 1. ดักจับ Error ร้านปิดตรงนี้
+                    document.getElementById('storeClosedModal').classList.remove('hidden');
+                    isStoreOpen = false;
+                    updateStoreUI();
+                    speak("ขออภัย ร้านปิดแล้วค่ะ");
+                    closeModal('confirmOrderModal'); // ปิดหน้าต่างสั่งของ
+                    
+                } else { 
+                    showCustomAlert('ผิดพลาด', 'ส่งออเดอร์ไม่สำเร็จ: ' + data.error, '<i class="fas fa-exclamation-circle text-red-500"></i>'); 
+                }
             }).catch(err => showCustomAlert('Connection Error', 'ตรวจสอบอินเทอร์เน็ตของคุณ')).finally(() => setLoading('btnSubmitOrder', false, 'ยืนยันรายการ'));
         }
 
@@ -1181,13 +1183,28 @@
             .then(res => res.json())
             .then(data => { 
                 if (data.result === 'success') { 
+                    
+                    // --- 🛑 2. เพิ่มระบบ Auto Lock: เช็คสถานะร้าน Real-time ---
+                    if (data.isStoreOpen !== undefined) {
+                        isStoreOpen = data.isStoreOpen;
+                        updateStoreUI(); // อัปเดตปุ่มเขียว/แดง
+                        
+                        // ถ้าเป็นลูกค้า และร้านปิด -> เด้งหน้าต่างล็อคทันที
+                        if (isCustomerMode && !isStoreOpen) {
+                            document.getElementById('storeClosedModal').classList.remove('hidden');
+                        } else if (isCustomerMode && isStoreOpen) {
+                            // ถ้าร้านกลับมาเปิด -> ปลดล็อค
+                            document.getElementById('storeClosedModal').classList.add('hidden');
+                        }
+                    }
+                    // -----------------------------------------------------
+
                     const waitingOrders = data.data.filter(o => o.status !== 'Served'); 
                     const waitingCount = waitingOrders.length; 
                     const badge = document.getElementById('kitchenBadge'); 
                     
                     if (waitingCount > 0) { badge.innerText = waitingCount; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); } 
                     
-                    // แจ้งเตือนร้านค้า (รายการใหม่)
                     if (!isCustomerMode && lastOrderCount !== -1 && waitingCount > lastOrderCount) { 
                         playNotificationSound(); 
                         showToast('มีรายการใหม่เข้ามา!', 'warning'); 
@@ -1195,20 +1212,15 @@
                     } 
                     lastOrderCount = waitingCount; 
                     
-                    // --- ส่วนแจ้งเตือนลูกค้า (Delivery Notification) ---
                     if (isCustomerMode) { 
                         document.getElementById('queueCountDisplay').innerText = waitingCount; 
-                        
-                        // หาออเดอร์ของลูกค้ารายนี้
                         const myOrders = data.data.filter(o => o.tableNo == customerTable);
-                        
                         myOrders.forEach(order => {
-                            // ถ้าสถานะเป็น Served และยังไม่เคยแจ้งเตือน
                             if (order.status === 'Served' && !notifiedOrders.has(order.orderId)) {
                                 document.getElementById('deliveryNotificationModal').classList.remove('hidden');
                                 playNotificationSound();
                                 speak("สินค้ากำลังไปส่งค่ะ");
-                                notifiedOrders.add(order.orderId); // จดจำว่าแจ้งแล้ว
+                                notifiedOrders.add(order.orderId); 
                             }
                         });
                     }
@@ -1551,7 +1563,4 @@
         }
     </script>
 </body>
-
 </html>
-
-
