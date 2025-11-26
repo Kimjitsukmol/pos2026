@@ -38,11 +38,11 @@
         </div>
         
         <div id="adminToolbar" class="flex gap-2 overflow-x-auto hide-scrollbar smooth-scroll items-center flex-1 justify-end min-w-0">
-             <div onclick="toggleStoreStatus()" class="cursor-pointer bg-black/20 hover:bg-black/30 rounded-full px-1 py-1 pr-3 flex items-center gap-2 transition mr-2 border border-white/10 group">
-                <div id="storeToggleBg" class="w-8 h-5 bg-green-500 rounded-full relative transition-colors duration-300">
-                    <div id="storeToggleDot" class="w-3 h-3 bg-white rounded-full absolute top-1 left-1 transition-transform duration-300 shadow-sm"></div>
+             <div onclick="toggleStoreStatus()" class="cursor-pointer bg-white/10 hover:bg-white/20 rounded-full px-2 py-1 flex items-center gap-2 transition mr-2 border border-white/20 group">
+                <div id="storeToggleBg" class="w-10 h-5 rounded-full relative transition-colors duration-300 shadow-inner flex items-center">
+                    <div id="storeToggleDot" class="w-4 h-4 bg-white rounded-full absolute shadow-md transform transition-transform duration-300 left-0.5"></div>
                 </div>
-                <span id="storeStatusText" class="text-xs font-bold text-white group-hover:text-blue-100">เปิดร้าน</span>
+                <span id="storeStatusText" class="text-xs font-bold text-white group-hover:text-blue-100 min-w-[35px]">เปิดร้าน</span>
             </div>
 
             <button onclick="openQRModal()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-sm transition border border-white/20 shrink-0 font-bold"><i class="fas fa-qrcode"></i> <span class="hidden sm:inline">QR ลูกค้า</span></button>
@@ -1042,6 +1042,13 @@
                 
                 // 3. แสดงช่องกรอกที่อยู่ทันที
                 addressSection.classList.remove('hidden');
+
+                // --- 🔴 เพิ่มใหม่: ดึงที่อยู่เก่ามาเติมให้อัตโนมัติ ---
+                const savedHouse = localStorage.getItem('customerAddrHouse');
+                const savedSoi = localStorage.getItem('customerAddrSoi');
+                if (savedHouse) document.getElementById('addrHouseNo').value = savedHouse;
+                if (savedSoi) document.getElementById('addrSoi').value = savedSoi;
+                // ------------------------------------------------
                 
                 // เติมค่าชื่อลูกค้าอัตโนมัติ (เพื่อไม่ให้ error ตอนบันทึก)
                 if(!tableInput.value) tableInput.value = customerTable || "ลูกค้า Online";
@@ -1078,18 +1085,29 @@
             const orderType = document.getElementById('orderType').value;
             let noteText = document.getElementById('orderNote').value;
             
+            // ... (โค้ดช่วงต้นเหมือนเดิม) ...
+            
             if (orderType === 'ส่งเดลิเวอรี่') {
                 const houseNo = document.getElementById('addrHouseNo').value.trim(); 
                 const soi = document.getElementById('addrSoi').value.trim();
                 
                 if (!houseNo || !soi) {
-                    showCustomAlert('ข้อมูลไม่ครบ', 'กรุณาระบุ "บ้านเลขที่" และ "ซอย/ถนน" ให้ครบถ้วน', '<i class="fas fa-map-marked-alt text-orange-500"></i>');
-                    setLoading('btnSubmitOrder', false, 'ยืนยันรายการ'); 
+                    // ... (ส่วนแจ้งเตือน Error เหมือนเดิม) ...
                     return; 
                 }
+
+                // --- 🔴 เพิ่มใหม่: บันทึกที่อยู่ลูกค้าไว้ใช้ครั้งหน้า ---
+                if (isCustomerMode) {
+                    localStorage.setItem('customerAddrHouse', houseNo);
+                    localStorage.setItem('customerAddrSoi', soi);
+                }
+                // --------------------------------------------------
+                
                 const addressStr = `[ส่งที่: ${houseNo} ${soi ? 'ซ.'+soi : ''}]`; 
                 noteText = noteText ? `${addressStr} ${noteText}` : addressStr; 
             }
+
+            // ... (ส่วนส่งข้อมูล API ด้านล่างเหมือนเดิม) ...
 
             const payload = { action: "saveOrder", tableNo: document.getElementById('tableNo').value || "หน้าร้าน", orderType: orderType, cartItems: cart.map(i => ({ name: i.name, qty: i.qty, price: i.price, spicy: "-" })), totalPrice: total, note: noteText };
             
@@ -1449,12 +1467,14 @@
             const text = document.getElementById('storeStatusText');
             
             if (isStoreOpen) {
-                bg.classList.replace('bg-gray-400', 'bg-green-500');
-                dot.classList.replace('translate-x-0', 'translate-x-4');
+                // สถานะเปิด: สีเขียว, ปุ่มเลื่อนไปขวา
+                bg.className = "w-10 h-5 rounded-full relative transition-colors duration-300 shadow-inner flex items-center bg-green-500";
+                dot.style.transform = "translateX(20px)"; // เลื่อนไปทางขวา
                 text.innerText = "เปิดร้าน";
             } else {
-                bg.classList.replace('bg-green-500', 'bg-gray-400');
-                dot.classList.replace('translate-x-4', 'translate-x-0');
+                // สถานะปิด: สีแดง, ปุ่มเลื่อนกลับมาซ้าย
+                bg.className = "w-10 h-5 rounded-full relative transition-colors duration-300 shadow-inner flex items-center bg-red-500";
+                dot.style.transform = "translateX(0px)"; // อยู่ทางซ้าย
                 text.innerText = "ปิดร้าน";
             }
         }
