@@ -180,6 +180,31 @@
         </div>
     </div>
 
+    <div id="deliveryNotificationModal" class="fixed inset-0 bg-black/80 hidden z-[120] flex items-center justify-center p-4 backdrop-blur-md animate-fade-in">
+        <div class="bg-white rounded-3xl shadow-[0_0_50px_rgba(37,99,235,0.25)] w-full max-w-sm overflow-hidden animate-pop relative">
+            <div class="bg-gradient-to-br from-green-400 to-green-600 h-32 flex items-center justify-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                <div class="bg-white/20 p-6 rounded-full shadow-lg backdrop-blur-sm animate-bounce">
+                    <i class="fas fa-shipping-fast text-5xl text-white"></i>
+                </div>
+            </div>
+            
+            <div class="p-8 text-center">
+                <h3 class="text-2xl font-extrabold text-gray-800 mb-2">สินค้ากำลังไปส่ง!</h3>
+                <div class="w-16 h-1 bg-green-500 mx-auto rounded-full mb-4"></div>
+                <p class="text-gray-500 mb-8 leading-relaxed">ทางร้านจัดเตรียมสินค้าเสร็จเรียบร้อยแล้ว<br>กรุณารอรับโทรศัพท์หรือรอรับสินค้าที่หน้าบ้านได้เลยค่ะ</p>
+                
+                <button onclick="closeModal('deliveryNotificationModal')" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-4 rounded-2xl shadow-lg transition transform active:scale-95 text-lg">
+                    รับทราบครับ/ค่ะ 👍
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
     <div id="confirmOrderModal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-end lg:items-center justify-center p-0 lg:p-4 backdrop-blur-sm">
         <div class="bg-white rounded-t-2xl lg:rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-slide-up h-[90vh] lg:h-auto flex flex-col">
             <div class="bg-blue-700 p-4 text-white flex justify-between items-center shrink-0"><h3 class="font-bold text-lg"><i class="fas fa-clipboard-check mr-2"></i>สรุปรายการขาย</h3><button onclick="closeModal('confirmOrderModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8"><i class="fas fa-times"></i></button></div>
@@ -357,6 +382,7 @@
         let isCustomerMode = false;
         let customerTable = "";
         let isQuickPayMode = false; 
+        let notifiedOrders = new Set();
 
         function speak(text) { if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang = 'th-TH'; utterance.rate = 1.0; window.speechSynthesis.speak(utterance); } }
         function playNotificationSound() { const beep = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg"); beep.play().catch(e=>console.log("Audio blocked", e)); }
@@ -941,6 +967,7 @@
             setTimeout(() => { document.getElementById('inputReceived').focus(); }, 100);
         }
 
+        // --- 1. ฟังก์ชันเปิดหน้าต่างยืนยัน (แก้ไข: ซ่อนชื่อ + บังคับที่อยู่) ---
         function openConfirmOrderModal() {
             document.getElementById('confirmOrderModal').classList.remove('hidden');
             
@@ -949,64 +976,125 @@
             
             // อ้างอิง Element
             const typeSelect = document.getElementById('orderType');
-            const typeDiv = typeSelect.parentElement; // div ที่ครอบ dropdown ประเภท
+            const typeDiv = typeSelect.parentElement; 
             const addressSection = document.getElementById('addressSection');
-            const tableDiv = document.getElementById('tableNo').parentElement; // div ที่ครอบช่องชื่อลูกค้า
+            const tableDiv = document.getElementById('tableNo').parentElement; 
+            const tableInput = document.getElementById('tableNo');
 
-            // --- 🔴 ส่วนที่แก้ไขตามโจทย์ ---
             if (isCustomerMode) {
+                // --- โหมดลูกค้า ---
                 // 1. บังคับเลือก "ส่งเดลิเวอรี่"
                 typeSelect.value = "ส่งเดลิเวอรี่";
                 
-                // 2. ซ่อน Dropdown ประเภท (ลูกค้าไม่ต้องเลือก)
+                // 2. ซ่อน Dropdown ประเภท และ ซ่อนช่องชื่อผู้รับ
                 typeDiv.classList.add('hidden');
+                tableDiv.classList.add('hidden'); // <--- ซ่อนช่องชื่อ
                 
                 // 3. แสดงช่องกรอกที่อยู่ทันที
                 addressSection.classList.remove('hidden');
                 
-                // (เสริม) เปลี่ยน Label ช่องชื่อ เป็น "ชื่อผู้รับ" เพื่อความชัดเจน
-                // แต่ยังคงแสดงช่องนี้ไว้นะครับ เพราะต้องรู้ว่าใครสั่ง
-                tableDiv.querySelector('label').innerText = "ชื่อผู้รับสินค้า";
-                document.getElementById('tableNo').placeholder = "ระบุชื่อของคุณ";
+                // เติมค่าชื่อลูกค้าอัตโนมัติ (เพื่อไม่ให้ error ตอนบันทึก)
+                if(!tableInput.value) tableInput.value = customerTable || "ลูกค้า Online";
                 
             } else {
-                // โหมดร้านค้า: แสดงปกติ
+                // --- โหมดร้านค้า ---
                 typeDiv.classList.remove('hidden');
-                toggleAddressFields(); // เช็คว่าจะโชว์ที่อยู่ไหมตามค่าเดิม
+                tableDiv.classList.remove('hidden'); // แสดงช่องชื่อปกติ
+                toggleAddressFields(); 
                 
-                // คืนค่า Label เดิม
                 tableDiv.querySelector('label').innerText = "ชื่อลูกค้า / คิวที่";
-                document.getElementById('tableNo').placeholder = "เช่น 1 หรือ A";
+                tableInput.placeholder = "เช่น 1 หรือ A";
             }
-            // --------------------------------
-        }
+        } // <--- วงเล็บนี้ที่เคยหายไปครับ
 
+        // --- 2. ฟังก์ชันสลับการแสดงที่อยู่ ---
         function toggleAddressFields() {
-            const type = document.getElementById('orderType').value; const addrSection = document.getElementById('addressSection');
+            const type = document.getElementById('orderType').value; 
+            const addrSection = document.getElementById('addressSection');
             if (type === 'ส่งเดลิเวอรี่') { addrSection.classList.remove('hidden'); } else { addrSection.classList.add('hidden'); }
         }
 
+        // --- 3. ฟังก์ชันบันทึกออเดอร์ (แก้ไข: ตรวจสอบข้อมูลก่อนส่ง) ---
         function submitOrder() {
             setLoading('btnSubmitOrder', true, 'กำลังบันทึก...');
             const total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
             const orderType = document.getElementById('orderType').value;
             let noteText = document.getElementById('orderNote').value;
+            
+            // --- ตรวจสอบข้อมูลที่อยู่ (Validation) ---
             if (orderType === 'ส่งเดลิเวอรี่') {
-                const houseNo = document.getElementById('addrHouseNo').value; const soi = document.getElementById('addrSoi').value;
-                if (houseNo || soi) { const addressStr = `[ส่งที่: ${houseNo} ${soi ? 'ซ.'+soi : ''}]`; noteText = noteText ? `${addressStr} ${noteText}` : addressStr; }
+                const houseNo = document.getElementById('addrHouseNo').value.trim(); 
+                const soi = document.getElementById('addrSoi').value.trim();
+                
+                // ถ้าเป็นลูกค้าและไม่ได้กรอกข้อมูล
+                if (!houseNo || !soi) {
+                    showCustomAlert('ข้อมูลไม่ครบ', 'กรุณาระบุ "บ้านเลขที่" และ "ซอย/ถนน" ให้ครบถ้วน เพื่อความรวดเร็วในการจัดส่ง', '<i class="fas fa-map-marked-alt text-orange-500"></i>');
+                    setLoading('btnSubmitOrder', false, 'ยืนยันรายการ'); 
+                    return; // หยุดการทำงาน
+                }
+                
+                const addressStr = `[ส่งที่: ${houseNo} ${soi ? 'ซ.'+soi : ''}]`; 
+                noteText = noteText ? `${addressStr} ${noteText}` : addressStr; 
             }
+
             const payload = { action: "saveOrder", tableNo: document.getElementById('tableNo').value || "หน้าร้าน", orderType: orderType, cartItems: cart.map(i => ({ name: i.name, qty: i.qty, price: i.price, spicy: "-" })), totalPrice: total, note: noteText };
-            fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => {
+            
+             fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => {
                 if(data.result === 'success') {
                     showToast('บันทึกรายการขายแล้ว!', 'success'); speak("บันทึกรายการแล้วค่ะ");
                     cart = []; renderCart(); toggleCart(false); closeModal('confirmOrderModal');
                     if(!isCustomerMode) document.getElementById('tableNo').value = '';
-                    document.getElementById('orderNote').value = ''; updateKitchenBadge();
+                    document.getElementById('orderNote').value = ''; 
+                    
+                    // รีเซ็ตช่องที่อยู่
+                    document.getElementById('addrHouseNo').value = '';
+                    document.getElementById('addrSoi').value = '';
+                    
+                    updateKitchenBadge();
                 } else { showCustomAlert('ผิดพลาด', 'ส่งออเดอร์ไม่สำเร็จ: ' + data.error, '<i class="fas fa-exclamation-circle text-red-500"></i>'); }
             }).catch(err => showCustomAlert('Connection Error', 'ตรวจสอบอินเทอร์เน็ตของคุณ')).finally(() => setLoading('btnSubmitOrder', false, 'ยืนยันรายการ'));
         }
 
-        function updateKitchenBadge() { return fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getOrders" }) }).then(res => res.json()).then(data => { if (data.result === 'success') { const waitingOrders = data.data.filter(o => o.status !== 'Served'); const waitingCount = waitingOrders.length; const badge = document.getElementById('kitchenBadge'); if (waitingCount > 0) { badge.innerText = waitingCount; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); } if (!isCustomerMode && lastOrderCount !== -1 && waitingCount > lastOrderCount) { playNotificationSound(); showToast('มีรายการใหม่เข้ามา!', 'warning'); if (!document.getElementById('kitchenModal').classList.contains('hidden')) { renderKitchen(data.data); } } lastOrderCount = waitingCount; if (isCustomerMode) { document.getElementById('queueCountDisplay').innerText = waitingCount; } } }).catch(e=>{}); }
+        // --- 4. ฟังก์ชันอัปเดตสถานะครัว (แก้ไข: เพิ่มการแจ้งเตือนลูกค้า) ---
+        function updateKitchenBadge() { 
+            return fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getOrders" }) })
+            .then(res => res.json())
+            .then(data => { 
+                if (data.result === 'success') { 
+                    const waitingOrders = data.data.filter(o => o.status !== 'Served'); 
+                    const waitingCount = waitingOrders.length; 
+                    const badge = document.getElementById('kitchenBadge'); 
+                    
+                    if (waitingCount > 0) { badge.innerText = waitingCount; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); } 
+                    
+                    // แจ้งเตือนร้านค้า (รายการใหม่)
+                    if (!isCustomerMode && lastOrderCount !== -1 && waitingCount > lastOrderCount) { 
+                        playNotificationSound(); 
+                        showToast('มีรายการใหม่เข้ามา!', 'warning'); 
+                        if (!document.getElementById('kitchenModal').classList.contains('hidden')) { renderKitchen(data.data); } 
+                    } 
+                    lastOrderCount = waitingCount; 
+                    
+                    // --- ส่วนแจ้งเตือนลูกค้า (Delivery Notification) ---
+                    if (isCustomerMode) { 
+                        document.getElementById('queueCountDisplay').innerText = waitingCount; 
+                        
+                        // หาออเดอร์ของลูกค้ารายนี้
+                        const myOrders = data.data.filter(o => o.tableNo == customerTable);
+                        
+                        myOrders.forEach(order => {
+                            // ถ้าสถานะเป็น Served และยังไม่เคยแจ้งเตือน
+                            if (order.status === 'Served' && !notifiedOrders.has(order.orderId)) {
+                                document.getElementById('deliveryNotificationModal').classList.remove('hidden');
+                                playNotificationSound();
+                                speak("สินค้ากำลังไปส่งค่ะ");
+                                notifiedOrders.add(order.orderId); // จดจำว่าแจ้งแล้ว
+                            }
+                        });
+                    }
+                } 
+            }).catch(e=>{}); 
+        }
         function openKitchenModal() { document.getElementById('kitchenModal').classList.remove('hidden'); fetchOrders(); }
         function fetchOrders() { const grid = document.getElementById('kitchenGrid'); grid.innerHTML = '<div class="col-span-full text-center py-20"><i class="fas fa-circle-notch fa-spin text-4xl text-orange-500"></i><p class="mt-2 text-gray-400">กำลังโหลดรายการ...</p></div>'; fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getOrders" }) }).then(res => res.json()).then(data => { if (data.result === 'success') { currentOrders = data.data; renderKitchen(currentOrders); updateKitchenBadge(); } else { grid.innerHTML = `<div class="col-span-full text-center text-red-500">Error: ${data.error}</div>`; } }); }
         function renderKitchen(orders) { const grid = document.getElementById('kitchenGrid'); grid.innerHTML = ''; if(!orders || orders.length === 0) { grid.innerHTML = '<div class="col-span-full flex flex-col items-center justify-center text-gray-300 py-20"><i class="fas fa-clipboard-check text-6xl mb-4"></i><p>ไม่มีรายการค้างส่ง</p></div>'; return; } grid.innerHTML = orders.map(order => { const isServed = order.status === 'Served'; const isTakeAway = order.orderType === 'ส่งเดลิเวอรี่'; const cardColor = isServed ? 'bg-green-50 border-green-200' : (isTakeAway ? 'bg-orange-50 border-orange-200' : 'bg-white border-blue-100'); const statusColor = isServed ? 'text-green-600' : (isTakeAway ? 'text-orange-600' : 'text-blue-600'); return `<div class="${cardColor} border-2 rounded-2xl p-4 shadow-sm relative flex flex-col animate-slide-up"><div class="flex justify-between items-start mb-3"><div><h4 class="font-bold text-xl text-gray-800">คิว/ชื่อ: ${order.tableNo}</h4><span class="text-xs font-bold px-2 py-0.5 rounded-full bg-white border shadow-sm ${statusColor}">${order.orderType}</span></div><div class="text-right"><div class="font-bold text-lg text-gray-800">${order.totalPrice}฿</div><div class="text-xs text-gray-400 font-mono">${new Date(order.timestamp).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})}</div></div></div>${order.note ? `<div class="bg-yellow-100 text-yellow-800 text-xs p-2 rounded-lg mb-3 font-medium"><i class="fas fa-sticky-note mr-1"></i> ${order.note}</div>` : ''}<div class="flex-1 space-y-2 mb-4 overflow-y-auto max-h-[200px]">${(order.items || []).map(i => `<div class="flex justify-between text-sm border-b border-dashed border-gray-300/50 pb-1 last:border-0"><span class="font-medium text-gray-700">${i.name} <span class="text-gray-400 text-xs">x${i.qty}</span></span></div>`).join('')}</div><div class="flex gap-2 mt-auto pt-3 border-t border-gray-200/50">${!isServed ? `<button onclick="markServed('${order.orderId}', this)" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-xl font-bold text-sm shadow transition"><i class="fas fa-check"></i> จัดของเสร็จ</button>` : '<div class="flex-1 text-center text-green-600 font-bold py-2"><i class="fas fa-check-circle"></i> เรียบร้อย</div>'}<button onclick="openPayment('${order.orderId}')" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl font-bold text-sm shadow transition"><i class="fas fa-money-bill"></i> ชำระเงิน</button></div></div>`; }).join(''); }
