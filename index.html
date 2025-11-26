@@ -324,7 +324,7 @@
 
     <script>
         // ใส่ URL ที่ได้จาก Web App Deployment ใหม่ที่นี่
-        const API_URL = "https://script.google.com/macros/s/AKfycbxxI-cnT3UMgkMTom64j-9GgnoDBWn0AFFIh5J4dw0LbHEMc_fGf0-vbESc208NLe5MPA/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbxRU82lpzKYr0LaYiaCtYURlvj85JQPukakpCIiM0FZGZqfIMo4n4tnyRSaRyrUyD-f6w/exec"; 
         
         // -------------------------------------------------------------
         // 🔴🔴 แก้ไขรหัสโฟลเดอร์ให้ตรงกับที่คุณให้มาแล้ว 🔴🔴
@@ -877,11 +877,20 @@
                 return;
             }
 
-            if (isCustomerMode) { 
-                isQuickPayMode = false; 
-                openConfirmOrderModal(); 
-            } else { 
-                quickCheckout(); 
+            if (isCustomerMode) {
+                // โหมดลูกค้า: แสดง "สั่งของ"
+                btn.innerHTML = '<span>สั่งของ</span> <i class="fas fa-paper-plane"></i>';
+                btn.classList.replace('from-gray-600', 'from-blue-600');
+                btn.classList.replace('from-green-600', 'from-blue-600');
+                btn.classList.replace('to-gray-700', 'to-blue-700');
+                btn.classList.replace('to-green-700', 'to-blue-700');
+            } else {
+                // โหมดร้านค้า: แสดง "คิดเงิน"
+                btn.innerHTML = '<span>คิดเงิน</span> <i class="fas fa-arrow-right"></i>';
+                btn.classList.replace('from-gray-600', 'from-blue-600');
+                btn.classList.replace('from-green-600', 'from-blue-600');
+                btn.classList.replace('to-gray-700', 'to-blue-700');
+                btn.classList.replace('to-green-700', 'to-blue-700');
             } 
         }
         
@@ -916,8 +925,42 @@
 
         function openConfirmOrderModal() {
             document.getElementById('confirmOrderModal').classList.remove('hidden');
+            
+            // สร้างรายการสรุปสินค้า
             document.getElementById('summaryList').innerHTML = cart.map(i => `<div class="flex justify-between border-b border-gray-200 border-dashed py-2 last:border-0"><span class="text-gray-700 text-sm">${i.name} x${i.qty}</span><span class="font-bold text-gray-800">${i.price*i.qty}</span></div>`).join('') + `<div class="flex justify-between font-bold mt-3 pt-3 border-t text-blue-600 text-lg"><span>รวมทั้งหมด</span><span>${document.getElementById('totalPrice').innerText}</span></div>`;
-            toggleAddressFields();
+            
+            // อ้างอิง Element
+            const typeSelect = document.getElementById('orderType');
+            const typeDiv = typeSelect.parentElement; // div ที่ครอบ dropdown ประเภท
+            const addressSection = document.getElementById('addressSection');
+            const tableDiv = document.getElementById('tableNo').parentElement; // div ที่ครอบช่องชื่อลูกค้า
+
+            // --- 🔴 ส่วนที่แก้ไขตามโจทย์ ---
+            if (isCustomerMode) {
+                // 1. บังคับเลือก "ส่งเดลิเวอรี่"
+                typeSelect.value = "ส่งเดลิเวอรี่";
+                
+                // 2. ซ่อน Dropdown ประเภท (ลูกค้าไม่ต้องเลือก)
+                typeDiv.classList.add('hidden');
+                
+                // 3. แสดงช่องกรอกที่อยู่ทันที
+                addressSection.classList.remove('hidden');
+                
+                // (เสริม) เปลี่ยน Label ช่องชื่อ เป็น "ชื่อผู้รับ" เพื่อความชัดเจน
+                // แต่ยังคงแสดงช่องนี้ไว้นะครับ เพราะต้องรู้ว่าใครสั่ง
+                tableDiv.querySelector('label').innerText = "ชื่อผู้รับสินค้า";
+                document.getElementById('tableNo').placeholder = "ระบุชื่อของคุณ";
+                
+            } else {
+                // โหมดร้านค้า: แสดงปกติ
+                typeDiv.classList.remove('hidden');
+                toggleAddressFields(); // เช็คว่าจะโชว์ที่อยู่ไหมตามค่าเดิม
+                
+                // คืนค่า Label เดิม
+                tableDiv.querySelector('label').innerText = "ชื่อลูกค้า / คิวที่";
+                document.getElementById('tableNo').placeholder = "เช่น 1 หรือ A";
+            }
+            // --------------------------------
         }
 
         function toggleAddressFields() {
