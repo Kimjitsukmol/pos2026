@@ -833,36 +833,60 @@
         }
 
         function renderCart() {
-            const container = document.getElementById('cartItems'); const totalEl = document.getElementById('totalPrice'); const btn = document.getElementById('btnOrder');
-            const countEl = document.getElementById('cartCountDesktop'); const mobileBar = document.getElementById('mobileBottomBar'); const mobileCount = document.getElementById('mobileCartCount'); const mobileTotal = document.getElementById('mobileCartTotal');
+            const container = document.getElementById('cartItems'); 
+            const totalEl = document.getElementById('totalPrice'); 
+            const btn = document.getElementById('btnOrder'); // ประกาศ btn ที่นี่
+            const countEl = document.getElementById('cartCountDesktop'); 
+            const mobileBar = document.getElementById('mobileBottomBar'); 
+            const mobileCount = document.getElementById('mobileCartCount'); 
+            const mobileTotal = document.getElementById('mobileCartTotal');
             
+            // กรณีตะกร้าว่าง
             if(cart.length === 0) {
                 container.innerHTML = '<div class="h-full flex flex-col items-center justify-center text-gray-400 opacity-60"><i class="fas fa-cash-register text-6xl mb-4"></i><p>สแกนสินค้า หรือ กดปุ่มเพื่อเปิด QR รับเงิน</p></div>';
                 
-                // --- แก้ไข: เปลี่ยนเป็นปุ่ม QR รับเงิน ---
                 btn.disabled = false; 
                 btn.innerHTML = '<span>QR รับเงิน</span> <i class="fas fa-qrcode"></i>';
-                btn.classList.replace('from-blue-600', 'from-green-600'); // เปลี่ยนเป็นสีเขียวให้ดูเหมือนเรื่องเงิน
+                btn.classList.replace('from-blue-600', 'from-green-600');
                 btn.classList.replace('to-blue-700', 'to-green-700');
-                // -------------------------------------
                 
-                totalEl.innerText = "0 ฿"; countEl.innerText = "0 รายการ"; mobileBar.classList.add('translate-y-[150%]'); return;
+                totalEl.innerText = "0 ฿"; 
+                countEl.innerText = "0 รายการ"; 
+                mobileBar.classList.add('translate-y-[150%]'); 
+                return;
             }
             
-            // คืนค่าปุ่มปกติ (สีฟ้า)
-            btn.innerHTML = '<span>คิดเงิน</span> <i class="fas fa-arrow-right"></i>';
-            btn.classList.replace('from-gray-600', 'from-blue-600'); // เผื่อกรณีเก่า
-            btn.classList.replace('from-green-600', 'from-blue-600');
-            btn.classList.replace('to-gray-700', 'to-blue-700');
-            btn.classList.replace('to-green-700', 'to-blue-700');
-            
+            // กรณีมีสินค้า (ต้องเช็คโหมดเพื่อเปลี่ยนปุ่ม)
+            if (isCustomerMode) {
+                // --- โหมดลูกค้า: ปุ่ม "สั่งของ" ---
+                btn.innerHTML = '<span>สั่งของ</span> <i class="fas fa-paper-plane"></i>';
+                btn.classList.replace('from-gray-600', 'from-blue-600');
+                btn.classList.replace('from-green-600', 'from-blue-600');
+                btn.classList.replace('to-gray-700', 'to-blue-700');
+                btn.classList.replace('to-green-700', 'to-blue-700');
+            } else {
+                // --- โหมดร้านค้า: ปุ่ม "คิดเงิน" ---
+                btn.innerHTML = '<span>คิดเงิน</span> <i class="fas fa-arrow-right"></i>';
+                btn.classList.replace('from-gray-600', 'from-blue-600');
+                btn.classList.replace('from-green-600', 'from-blue-600');
+                btn.classList.replace('to-gray-700', 'to-blue-700');
+                btn.classList.replace('to-green-700', 'to-blue-700');
+            }
+
+            // (ส่วนแสดงรายการสินค้าคงเดิม)
             let total = 0; let count = 0;
             container.innerHTML = cart.map((item, idx) => {
                 total += item.price * item.qty; count += item.qty;
                 return `<div class="flex justify-between items-start bg-white p-3 rounded-xl border border-gray-100 shadow-sm mb-2 animate-fade-in"><div class="flex-1"><h4 class="font-bold text-gray-800 leading-tight">${item.name}</h4><div class="text-xs text-gray-500 mt-1 flex gap-2"><span>${item.price}.-</span></div></div><div class="flex flex-col items-end gap-2"><div class="font-bold text-blue-600">${item.price * item.qty}</div><div class="flex items-center bg-gray-100 rounded-lg p-0.5 gap-1"><button onclick="removeFromCart(${idx})" class="w-7 h-7 flex items-center justify-center text-red-500 hover:bg-red-100 rounded-md transition"><i class="fas fa-trash-alt text-xs"></i></button><div class="w-px h-4 bg-gray-300 mx-1"></div><button onclick="updateQty(${idx}, -1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-white hover:shadow rounded-md transition">-</button><span class="w-6 text-center font-bold text-sm">${item.qty}</span><button onclick="updateQty(${idx}, 1)" class="w-7 h-7 flex items-center justify-center text-green-600 hover:bg-white hover:shadow rounded-md transition">+</button></div></div></div>`;
             }).join('');
+            
             const totalTxt = total.toLocaleString() + " ฿";
-            totalEl.innerText = totalTxt; countEl.innerText = count + " รายการ"; btn.disabled = false; mobileCount.innerText = count; mobileTotal.innerText = totalTxt;
+            totalEl.innerText = totalTxt; 
+            countEl.innerText = count + " รายการ"; 
+            btn.disabled = false; 
+            mobileCount.innerText = count; 
+            mobileTotal.innerText = totalTxt;
+            
             const isDrawerOpen = !document.getElementById('cartPanel').classList.contains('hidden');
             if (!isDrawerOpen && window.innerWidth < 1024) { mobileBar.classList.remove('translate-y-[150%]'); }
         }
@@ -871,26 +895,20 @@
         function removeFromCart(idx) { cart.splice(idx, 1); renderCart(); }
 
         function handleCheckoutClick() { 
-            // กรณีตะกร้าว่าง -> เปิดหน้าคิดเงินเลย (ยอด 0 บาท เพื่อโชว์ QR)
+            // กรณีตะกร้าว่าง -> เปิดหน้า QR รับเงิน (สำหรับร้านค้า) หรือ QR สั่ง (แล้วแต่ Logic)
             if (cart.length === 0) {
                 quickCheckout(); 
                 return;
             }
 
+            // ตรวจสอบโหมดเพื่อทำงานให้ถูกต้อง
             if (isCustomerMode) {
-                // โหมดลูกค้า: แสดง "สั่งของ"
-                btn.innerHTML = '<span>สั่งของ</span> <i class="fas fa-paper-plane"></i>';
-                btn.classList.replace('from-gray-600', 'from-blue-600');
-                btn.classList.replace('from-green-600', 'from-blue-600');
-                btn.classList.replace('to-gray-700', 'to-blue-700');
-                btn.classList.replace('to-green-700', 'to-blue-700');
+                // --- โหมดลูกค้า: ให้เปิดหน้าต่าง "ยืนยันการสั่ง" ---
+                isQuickPayMode = false; 
+                openConfirmOrderModal(); 
             } else {
-                // โหมดร้านค้า: แสดง "คิดเงิน"
-                btn.innerHTML = '<span>คิดเงิน</span> <i class="fas fa-arrow-right"></i>';
-                btn.classList.replace('from-gray-600', 'from-blue-600');
-                btn.classList.replace('from-green-600', 'from-blue-600');
-                btn.classList.replace('to-gray-700', 'to-blue-700');
-                btn.classList.replace('to-green-700', 'to-blue-700');
+                // --- โหมดร้านค้า: ให้เปิดหน้าต่าง "คิดเงิน" ---
+                quickCheckout(); 
             } 
         }
         
