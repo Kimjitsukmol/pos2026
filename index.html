@@ -1421,7 +1421,97 @@
         }
         function openKitchenModal() { document.getElementById('kitchenModal').classList.remove('hidden'); fetchOrders(); }
         function fetchOrders() { const grid = document.getElementById('kitchenGrid'); grid.innerHTML = '<div class="col-span-full text-center py-20"><i class="fas fa-circle-notch fa-spin text-4xl text-orange-500"></i><p class="mt-2 text-gray-400">กำลังโหลดรายการ...</p></div>'; fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getOrders" }) }).then(res => res.json()).then(data => { if (data.result === 'success') { currentOrders = data.data; renderKitchen(currentOrders); updateKitchenBadge(); } else { grid.innerHTML = `<div class="col-span-full text-center text-red-500">Error: ${data.error}</div>`; } }); }
-        function renderKitchen(orders) { const grid = document.getElementById('kitchenGrid'); grid.innerHTML = ''; if(!orders || orders.length === 0) { grid.innerHTML = '<div class="col-span-full flex flex-col items-center justify-center text-gray-300 py-20"><i class="fas fa-clipboard-check text-6xl mb-4"></i><p>ไม่มีรายการค้างส่ง</p></div>'; return; } grid.innerHTML = orders.map(order => { const isServed = order.status === 'Served'; const isTakeAway = order.orderType === 'ส่งเดลิเวอรี่'; const cardColor = isServed ? 'bg-green-50 border-green-200' : (isTakeAway ? 'bg-orange-50 border-orange-200' : 'bg-white border-blue-100'); const statusColor = isServed ? 'text-green-600' : (isTakeAway ? 'text-orange-600' : 'text-blue-600'); return `<div class="${cardColor} border-2 rounded-2xl p-4 shadow-sm relative flex flex-col animate-slide-up"><div class="flex justify-between items-start mb-3"><div><h4 class="font-bold text-xl text-gray-800">คิว/ชื่อ: ${order.tableNo}</h4><span class="text-xs font-bold px-2 py-0.5 rounded-full bg-white border shadow-sm ${statusColor}">${order.orderType}</span></div><div class="text-right"><div class="font-bold text-lg text-gray-800">${order.totalPrice}฿</div><div class="text-xs text-gray-400 font-mono">${new Date(order.timestamp).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})}</div></div></div>${order.note ? `<div class="bg-yellow-100 text-yellow-800 text-xs p-2 rounded-lg mb-3 font-medium"><i class="fas fa-sticky-note mr-1"></i> ${order.note}</div>` : ''}<div class="flex-1 space-y-2 mb-4 overflow-y-auto max-h-[200px]">${(order.items || []).map(i => `<div class="flex justify-between text-sm border-b border-dashed border-gray-300/50 pb-1 last:border-0"><span class="font-medium text-gray-700">${i.name} <span class="text-gray-400 text-xs">x${i.qty}</span></span></div>`).join('')}</div><div class="flex gap-2 mt-auto pt-3 border-t border-gray-200/50">${!isServed ? `<button onclick="markServed('${order.orderId}', this)" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-xl font-bold text-sm shadow transition"><i class="fas fa-check"></i> จัดของเสร็จ</button>` : '<div class="flex-1 text-center text-green-600 font-bold py-2"><i class="fas fa-check-circle"></i> เรียบร้อย</div>'}<button onclick="openPayment('${order.orderId}')" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl font-bold text-sm shadow transition"><i class="fas fa-money-bill"></i> ชำระเงิน</button></div></div>`; }).join(''); }
+        function renderKitchen(orders) { 
+            const grid = document.getElementById('kitchenGrid'); 
+            grid.innerHTML = ''; 
+            
+            if(!orders || orders.length === 0) { 
+                grid.innerHTML = '<div class="col-span-full flex flex-col items-center justify-center text-gray-300 py-20 animate-fade-in"><i class="fas fa-clipboard-check text-6xl mb-4"></i><p>ไม่มีรายการค้างส่ง</p></div>'; 
+                return; 
+            } 
+            
+            grid.innerHTML = orders.map(order => { 
+                const isServed = order.status === 'Served'; 
+                const isTakeAway = order.orderType === 'ส่งเดลิเวอรี่'; 
+                
+                const cardBorder = isServed ? 'border-green-400' : (isTakeAway ? 'border-orange-400' : 'border-blue-400');
+                const headerBg = isServed ? 'bg-green-500' : (isTakeAway ? 'bg-orange-500' : 'bg-blue-600');
+                const bgClass = isServed ? 'bg-green-50' : 'bg-white';
+                
+                const timeDiff = Math.floor((new Date() - new Date(order.timestamp)) / 60000);
+                let timeAgoText = timeDiff < 1 ? 'เมื่อสักครู่' : `${timeDiff} นาทีที่แล้ว`;
+                if(timeDiff > 15 && !isServed) timeAgoText = `<span class="text-red-500 font-bold animate-pulse"><i class="fas fa-exclamation-circle"></i> ${timeAgoText}</span>`;
+
+                return `
+                <div class="${bgClass} border-2 ${cardBorder} rounded-2xl shadow-lg relative flex flex-col animate-slide-up overflow-hidden">
+                    
+                    <div class="${headerBg} p-3 text-white flex justify-between items-center shadow-md">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-white/20 px-3 py-1 rounded-lg text-center min-w-[50px]">
+                                <div class="text-[10px] font-bold opacity-80">คิว/โต๊ะ</div>
+                                <div class="text-2xl font-extrabold leading-none">${order.tableNo}</div>
+                            </div>
+                            <span class="text-sm font-bold bg-black/20 px-2 py-0.5 rounded-md border border-white/10">${order.orderType}</span>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-mono font-bold text-lg leading-none">${new Date(order.timestamp).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})}</div>
+                            <div class="text-[10px] font-medium mt-0.5 opacity-90">${timeAgoText}</div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 flex-1 flex flex-col gap-3">
+                        ${order.note ? `<div class="bg-yellow-100 border-l-4 border-yellow-400 text-yellow-900 text-xs p-2 rounded-r font-bold"><i class="fas fa-comment-dots"></i> ${order.note}</div>` : ''}
+
+                        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                            <div class="flex text-[10px] text-gray-500 font-bold bg-gray-100 px-3 py-2 border-b border-gray-200 uppercase tracking-wide">
+                                <div class="flex-1">ชื่อสินค้า</div>
+                                <div class="w-14 text-right">หน่วยละ</div>
+                                <div class="w-12 text-center">จำนวน</div>
+                                <div class="w-16 text-right">รวม</div>
+                            </div>
+                            
+                            <div class="divide-y divide-gray-100 max-h-[250px] overflow-y-auto custom-scrollbar">
+                                ${(order.items || []).map(i => `
+                                    <div class="flex items-center px-3 py-2.5 hover:bg-gray-50 transition">
+                                        <div class="flex-1 font-bold text-gray-700 text-sm pr-2 leading-tight">
+                                            ${i.name}
+                                        </div>
+                                        <div class="w-14 text-right text-xs text-gray-400 font-mono">
+                                            ${i.price}
+                                        </div>
+                                        <div class="w-12 text-center">
+                                            <span class="text-lg font-extrabold text-gray-800">${i.qty}</span>
+                                        </div>
+                                        <div class="w-16 text-right font-bold text-blue-600 text-sm">
+                                            ${(i.price * i.qty).toLocaleString()}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            
+                            <div class="bg-gray-50 px-3 py-2 border-t border-gray-200 flex justify-between items-center">
+                                <span class="text-xs font-bold text-gray-500">ยอดสุทธิ</span>
+                                <span class="text-lg font-extrabold text-blue-600">${order.totalPrice.toLocaleString()} ฿</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-gray-50 border-t border-gray-200 flex gap-2">
+                        ${!isServed ? `
+                            <button onclick="markServed('${order.orderId}', this)" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-bold text-base shadow transition transform active:scale-95">
+                                <i class="fas fa-check-circle"></i> จัดเสร็จ
+                            </button>` 
+                        :   `<div class="flex-1 text-center text-green-600 font-bold py-2.5 bg-green-100 rounded-xl border border-green-200">
+                                <i class="fas fa-check-double"></i> เรียบร้อย
+                            </div>`
+                        }
+                        <button onclick="openPayment('${order.orderId}')" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl font-bold text-base shadow transition transform active:scale-95">
+                             ชำระเงิน
+                        </button>
+                    </div>
+                </div>`; 
+            }).join(''); 
+        }
         function markServed(orderId, btn) { const originalContent = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>'; fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "updateOrderStatus", orderId: orderId, status: "Served" }) }).then(() => { fetchOrders(); showToast('สถานะอัปเดตแล้ว', 'success'); }).catch(() => { btn.disabled = false; btn.innerHTML = originalContent; }); }
         
         function openPayment(orderId) { 
@@ -1548,7 +1638,6 @@
             .then(r => r.json())
             .then(d => { 
                 if(d.result === 'success') { 
-                    // 1. บันทึกข้อมูลลงตัวแปร Global เพื่อให้ openBillDetail เรียกใช้ได้
                     historyBills = d.data; 
 
                     if(historyBills.length === 0) {
@@ -1556,17 +1645,23 @@
                         return;
                     }
 
-                    // 2. สร้างตารางแบบคลิกได้ (onclick="openBillDetail")
+                    // 🟢 แก้ไขส่วนแสดงผลตาราง (เพิ่มวันที่)
                     list.innerHTML = historyBills.map((b, index) => {
+                        let dateStr = "-";
                         let timeStr = "-";
                         try {
-                            timeStr = new Date(b.date).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
+                            const d = new Date(b.date);
+                            // แยกวันที่ (เช่น 28/11/68)
+                            dateStr = d.toLocaleDateString('th-TH', { day: '2-digit', month: '2-digit', year: '2-digit' });
+                            // แยกเวลา (เช่น 12:30)
+                            timeStr = d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
                         } catch(e) {}
 
                         return `
                         <tr onclick="openBillDetail(${index})" class="hover:bg-blue-50 transition duration-150 cursor-pointer group border-b border-gray-100 last:border-0">
-                            <td class="p-3 text-gray-500 font-mono align-top pt-3 group-hover:text-blue-600">
-                                ${timeStr}
+                            <td class="p-3 font-mono align-top pt-3 group-hover:text-blue-600">
+                                <div class="text-[10px] text-gray-400 font-bold leading-none mb-1">${dateStr}</div>
+                                <div class="text-sm font-bold text-gray-700">${timeStr}</div>
                             </td>
                             <td class="p-3 text-gray-700 align-top pt-3">
                                 <span class="line-clamp-1 leading-relaxed font-medium group-hover:text-blue-800">${b.itemSummary}</span>
