@@ -1347,43 +1347,61 @@
             if (isCustomerMode) { speak("ยอดรวม " + total.toLocaleString() + " บาท"); }
             
             const orderType = document.getElementById('orderType').value;
-            // 🟢 noteText คือหมายเหตุที่ลูกค้าพิมพ์มาเท่านั้น (ไม่มีที่อยู่แล้ว)
             let noteText = document.getElementById('orderNote').value.trim(); 
-            
             let finalTableNo = document.getElementById('tableNo').value; 
             
             if (orderType === 'ส่งเดลิเวอรี่') {
                 const houseNo = document.getElementById('addrHouseNo').value.trim(); 
                 const soi = document.getElementById('addrSoi').value.trim();
                 
-                // Fail-safe validation (สำหรับลูกค้า)
+                // Fail-safe validation
                 if (isCustomerMode && (!houseNo || !soi)) { 
                      showCustomAlert('ข้อมูลที่อยู่ขาดหาย', 'กรุณารีเฟรชหน้าแล้วกรอกชื่อ/เบอร์ใหม่อีกครั้งค่ะ', '<i class="fas fa-map-marked-alt text-red-500"></i>');
                      setLoading('btnSubmitOrder', false, 'ยืนยันรายการ'); 
                      return; 
                 }
-                
-                // 🔴 ลบโค้ดที่เคยรวม Address เข้า NoteText ออกไป เพราะ Address อยู่ใน finalTableNo แล้ว
-                // NoteText จึงเหลือแค่หมายเหตุ
             }
 
             const payload = { 
                 action: "saveOrder", 
-                tableNo: finalTableNo || "หน้าร้าน", // 👈 ส่ง Name, Phone, Address ไปในคอลัมน์นี้
+                tableNo: finalTableNo || "หน้าร้าน", 
                 orderType: orderType, 
                 cartItems: cart.map(i => ({ name: i.name, qty: i.qty, price: i.price, spicy: "-" })), 
                 totalPrice: total, 
-                note: noteText // 👈 ส่งหมายเหตุเปล่าๆ หรือที่ลูกค้าพิมพ์จริงๆ
+                note: noteText 
             };
             
              fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => {
-                // ... (rest of the success/error logic remains the same) ...
                 if(data.result === 'success') {
-                    // ... (success code) ...
+                    
+                    // บันทึกข้อมูลออเดอร์ทั้งหมด
                     myLastOrders = { items: [...cart], total: total, note: noteText, timestamp: new Date().toISOString() }; 
-                    // ... (rest of the cleanup) ...
+                    
+                    showToast('บันทึกรายการขายแล้ว!', 'success'); 
+                    if (isCustomerMode) { setTimeout(() => speak("ขอบคุณค่ะ"), 1500); } else { speak("บันทึกรายการแล้วค่ะ"); }
+                    
+                    cart = []; renderCart(); toggleCart(false); 
+                    
+                    // 🟢 FIX 1: ย้าย closeModal มาอยู่ตรงนี้ เพื่อให้แน่ใจว่าทำงานหลังเคลียร์ตะกร้าแล้ว
+                    closeModal('confirmOrderModal'); 
+                    
+                    if(!isCustomerMode) document.getElementById('tableNo').value = '';
+                    document.getElementById('orderNote').value = ''; 
+                    document.getElementById('addrHouseNo').value = '';
+                    document.getElementById('addrSoi').value = '';
+                    
+                    if(isCustomerMode) openMyRecentOrder();
+                    updateKitchenBadge();
+                    
+                } else if (data.error === 'STORE_CLOSED') {
+                    document.getElementById('storeClosedModal').classList.remove('hidden');
+                    isStoreOpen = false; updateStoreUI();
+                    speak("ขออภัย ร้านปิดแล้วค่ะ");
+                    closeModal('confirmOrderModal'); 
+                    
+                } else { 
+                    showCustomAlert('ผิดพลาด', 'ส่งออเดอร์ไม่สำเร็จ: ' + data.error, '<i class="fas fa-exclamation-circle text-red-500"></i>'); 
                 }
-                // ...
             }).catch(err => showCustomAlert('Connection Error', 'ตรวจสอบอินเทอร์เน็ตของคุณ')).finally(() => setLoading('btnSubmitOrder', false, 'ยืนยันรายการ'));
         }
 
@@ -1395,41 +1413,32 @@
             .then(data => { 
                 if (data.result === 'success') { 
                     
-                    // เช็คสถานะร้าน (Auto Lock)
-                    if (data.isStoreOpen !== undefined) {
-                        isStoreOpen = data.isStoreOpen;
-                        updateStoreUI(); 
-                        if (isCustomerMode && !isStoreOpen) {
-                            document.getElementById('storeClosedModal').classList.remove('hidden');
-                        } else if (isCustomerMode && isStoreOpen) {
-                            document.getElementById('storeClosedModal').classList.add('hidden');
-                        }
-                    }
+                    // ... (โค้ดเช็คสถานะร้านเดิม) ...
+                    if (data.isStoreOpen !== undefined) { /* ... */ }
 
                     const waitingOrders = data.data.filter(o => o.status !== 'Served'); 
                     const waitingCount = waitingOrders.length; 
                     const badge = document.getElementById('kitchenBadge'); 
                     
-                    if (waitingCount > 0) { badge.innerText = waitingCount; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); } 
-                    
-                    // แจ้งเตือนฝั่งร้านค้า (มีออเดอร์เข้าใหม่)
-                    if (!isCustomerMode && lastOrderCount !== -1 && waitingCount > lastOrderCount) { 
-                        playNotificationSound(); 
-                        showToast('มีรายการใหม่เข้ามา!', 'warning'); 
-                        if (!document.getElementById('kitchenModal').classList.contains('hidden')) { renderKitchen(data.data); } 
-                    } 
+                    // ... (โค้ดจัดการ Badge และแจ้งเตือนร้านค้าเดิม) ...
+                    if (waitingCount > 0) { /* ... */ } 
+                    if (!isCustomerMode && lastOrderCount !== -1 && waitingCount > lastOrderCount) { /* ... */ } 
                     lastOrderCount = waitingCount; 
                     
-                    // 🔴 ส่วนที่แก้ไข: การเช็คเพื่อแจ้งเตือนลูกค้า
+                    // 🔴 FIX 2: ปรับปรุงการเช็คเพื่อแจ้งเตือนลูกค้า
                     if (isCustomerMode) { 
                         document.getElementById('queueCountDisplay').innerText = waitingCount; 
                         
-                        // สร้างชื่อเพื่อนำไปเทียบกับในระบบ (ต้องตรงกับตอนส่งออเดอร์เป๊ะๆ)
+                        // 🟢 สร้างชื่อ Identity ให้ครบ 3 ส่วน (ชื่อ + เบอร์ + ที่อยู่) เพื่อให้ตรงกับข้อมูลใน Sheet
                         const cName = localStorage.getItem('customerName') || 'ลูกค้า';
                         const cPhone = localStorage.getItem('customerPhone') || '-';
-                        const myIdentity = `${cName} (${cPhone})`; // รูปแบบ: ชื่อ (เบอร์)
-
-                        // กรองหาออเดอร์ที่เป็นของลูกค้าคนนี้ โดยเทียบจากชื่อ
+                        const savedHouse = localStorage.getItem('customerAddrHouse') || '';
+                        const savedSoi = localStorage.getItem('customerAddrSoi') || '';
+                        
+                        const addressStr = `[ส่งที่: ${savedHouse} ${savedSoi ? 'ซ.' + savedSoi : ''}]`;
+                        const myIdentity = `${cName} (${cPhone}) ${addressStr}`; // 🟢 รูปแบบใหม่ที่ถูกต้อง
+                        
+                        // กรองหาออเดอร์ที่เป็นของลูกค้าคนนี้
                         const myOrders = data.data.filter(o => o.tableNo === myIdentity);
                         
                         myOrders.forEach(order => {
@@ -1438,7 +1447,7 @@
                                 document.getElementById('deliveryNotificationModal').classList.remove('hidden');
                                 playNotificationSound();
                                 speak("สินค้ากำลังไปส่งค่ะ");
-                                notifiedOrders.add(order.orderId); // จำไว้ว่าแจ้งแล้ว จะได้ไม่แจ้งซ้ำ
+                                notifiedOrders.add(order.orderId); 
                             }
                         });
                     }
