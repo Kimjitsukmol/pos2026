@@ -2086,14 +2086,44 @@
             const modal = document.getElementById('myOrderModal');
             const content = document.getElementById('myOrderContent');
             
-            if (myLastOrders.length === 0) {
-                content.innerHTML = '<div class="text-center py-10"><i class="fas fa-shopping-basket text-4xl text-gray-300 mb-2"></i><p class="text-gray-400">ยังไม่มีรายการที่สั่งล่าสุด</p></div>';
-            } else {
-                let html = '<div class="space-y-2">';
-                let total = 0;
+            if (myLastOrders.length > 0) { 
+                const total = myLastOrders.reduce((sum, i) => sum + (i.price * i.qty), 0);
+                
+                // ดึงข้อมูลลูกค้าจาก LocalStorage
+                const cName = localStorage.getItem('customerName') || 'ลูกค้า';
+                const cPhone = localStorage.getItem('customerPhone') || '-';
+                const houseNo = localStorage.getItem('customerAddrHouse') || 'ไม่ระบุ';
+                const soi = localStorage.getItem('customerAddrSoi') || '';
+
+                // สร้าง string ที่อยู่
+                const addressString = `บ. ${houseNo}${soi ? ' ซ.' + soi : ''}`;
+                
+                let html = `
+                    <div class="text-center mb-6">
+                        <h3 class="text-xl font-extrabold text-blue-600 mb-1">ใบเสร็จรับเงิน (ออเดอร์ล่าสุด)</h3>
+                        <p class="text-xs text-gray-500">ขอบคุณที่ใช้บริการค่ะ</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-200 shadow-inner">
+                        <div class="font-bold text-sm text-gray-700 mb-2 border-b pb-2 border-dashed">
+                           <i class="fas fa-user-tag mr-2 text-blue-600"></i> ผู้สั่ง: ${cName} 
+                           <span class="text-xs text-gray-500">(${cPhone})</span>
+                        </div>
+                        
+                        <div class="text-sm text-gray-600">
+                           <i class="fas fa-map-marker-alt mr-2 text-red-500"></i>
+                           ที่อยู่จัดส่ง: <span class="font-bold">${addressString}</span>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-2 border-t pt-2">
+                           เวลาสั่ง: ${new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                `;
+
                 myLastOrders.forEach(item => {
                     const itemTotal = item.price * item.qty;
-                    total += itemTotal;
                     html += `
                         <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-gray-200 shadow-sm">
                             <div>
@@ -2104,6 +2134,7 @@
                         </div>
                     `;
                 });
+                
                 html += `</div>
                     <div class="mt-4 pt-4 border-t border-dashed border-gray-300 flex justify-between items-center">
                         <span class="text-gray-600 font-bold">รวมทั้งหมด</span>
@@ -2115,6 +2146,8 @@
                     </div>
                 `;
                 content.innerHTML = html;
+            } else {
+                 content.innerHTML = '<div class="text-center p-10 text-gray-400">ยังไม่มีรายการสั่งซื้อล่าสุด</div>';
             }
             modal.classList.remove('hidden');
         }
