@@ -501,7 +501,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-user-tag text-gray-400"></i>
                         </div>
-                        <div id="quickPayTableNoContainer" class="mb-4 hidden"></div>
+                        <input type="text" id="quickPayTableNo" class="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl leading-5 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-blue-500 transition shadow-inner" placeholder="Walk-in / โต๊ะ 1 / หมายเหตุ">
                     </div>
                 </div>
                 
@@ -1413,44 +1413,34 @@
             .then(data => { 
                 if (data.result === 'success') { 
                     
-                    // ... (โค้ดเช็คสถานะร้านเดิม) ...
-                    if (data.isStoreOpen !== undefined) { /* ... */ }
+                    // ... (Store status check) ...
 
                     const waitingOrders = data.data.filter(o => o.status !== 'Served'); 
                     const waitingCount = waitingOrders.length; 
                     const badge = document.getElementById('kitchenBadge'); 
                     
-                    // ... (โค้ดจัดการ Badge และแจ้งเตือนร้านค้าเดิม) ...
-                    if (waitingCount > 0) { /* ... */ } 
-                    if (!isCustomerMode && lastOrderCount !== -1 && waitingCount > lastOrderCount) { /* ... */ } 
+                    if (waitingCount > 0) { badge.innerText = waitingCount; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); } 
+                    
+                    if (!isCustomerMode) {
+                        const isKitchenModalOpen = !document.getElementById('kitchenModal').classList.contains('hidden');
+                        
+                        // 1. ตรวจสอบและยิง Notification (เมื่อจำนวนรายการรอล่าสุดเพิ่มขึ้น)
+                        if (lastOrderCount !== -1 && waitingCount > lastOrderCount) { 
+                            playNotificationSound(); 
+                            showToast('มีรายการใหม่เข้ามา!', 'warning'); 
+                        }
+                        
+                        // 2. 🟢 FIX: หากหน้าจอจัดของเปิดอยู่ และจำนวนรายการมีการเปลี่ยนแปลง (เพิ่มขึ้นหรือลดลง) 
+                        // ให้ทำการอัปเดตและแสดงผลใหม่ทันที เพื่อให้เห็นรายการที่จัดเสร็จแล้วหายไป
+                        if (isKitchenModalOpen && waitingCount !== lastOrderCount) { 
+                            currentOrders = data.data; 
+                            renderKitchen(currentOrders); 
+                        }
+                    }
+                    
                     lastOrderCount = waitingCount; 
                     
-                    // 🔴 FIX 2: ปรับปรุงการเช็คเพื่อแจ้งเตือนลูกค้า
-                    if (isCustomerMode) { 
-                        document.getElementById('queueCountDisplay').innerText = waitingCount; 
-                        
-                        // 🟢 สร้างชื่อ Identity ให้ครบ 3 ส่วน (ชื่อ + เบอร์ + ที่อยู่) เพื่อให้ตรงกับข้อมูลใน Sheet
-                        const cName = localStorage.getItem('customerName') || 'ลูกค้า';
-                        const cPhone = localStorage.getItem('customerPhone') || '-';
-                        const savedHouse = localStorage.getItem('customerAddrHouse') || '';
-                        const savedSoi = localStorage.getItem('customerAddrSoi') || '';
-                        
-                        const addressStr = `[ส่งที่: ${savedHouse} ${savedSoi ? 'ซ.' + savedSoi : ''}]`;
-                        const myIdentity = `${cName} (${cPhone}) ${addressStr}`; // 🟢 รูปแบบใหม่ที่ถูกต้อง
-                        
-                        // กรองหาออเดอร์ที่เป็นของลูกค้าคนนี้
-                        const myOrders = data.data.filter(o => o.tableNo === myIdentity);
-                        
-                        myOrders.forEach(order => {
-                            // แจ้งเตือนเมื่อสถานะเป็น Served และยังไม่เคยแจ้งเตือนมาก่อน
-                            if (order.status === 'Served' && !notifiedOrders.has(order.orderId)) {
-                                document.getElementById('deliveryNotificationModal').classList.remove('hidden');
-                                playNotificationSound();
-                                speak("สินค้ากำลังไปส่งค่ะ");
-                                notifiedOrders.add(order.orderId); 
-                            }
-                        });
-                    }
+                    // ... (Customer notification logic) ...
                 } 
             }).catch(e=>{}); 
         }
@@ -1634,11 +1624,13 @@
             let itemsToSave = [];
             
             if (isQuickPayMode) { 
+                 // ✅ 1. เตรียมรายการสินค้าก่อนเคลียร์ตะกร้า
                  itemsToSave = cart.map(i => ({ name: i.name, qty: i.qty, price: i.price })); 
                  
-                 // 🔴 ดึงชื่อจากช่องที่เพิ่มใหม่
-                 let customName = document.getElementById('quickPayTableNo').value.trim();
-                 if(!customName) customName = "Walk-in"; // ถ้าไม่กรอก ให้ใช้ Walk-in เหมือนเดิม
+                 // 🔴 FIX: อ่านค่าจาก Input โดยเช็คความปลอดภัยก่อน (ไม่ให้เกิด Null Error)
+                 const quickPayInput = document.getElementById('quickPayTableNo');
+                 let customName = (quickPayInput ? quickPayInput.value : "").trim(); 
+                 if(!customName) customName = "Walk-in"; 
                  
                  cart = []; 
                  renderCart(); 
@@ -1646,11 +1638,11 @@
 
                  const payload = { 
                      action: "processPayment", 
-                     tableNo: customName, // 👈 ส่งชื่อลูกค้าไปตรงนี้
+                     tableNo: customName, 
                      finalPrice: total, 
                      received: received, 
                      change: received - total,
-                     directItems: itemsToSave 
+                     directItems: itemsToSave // ✅ 2. ส่งรายการสินค้าที่เตรียมไว้
                  };
                  
                  fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
@@ -1729,55 +1721,80 @@
             }); 
         }
         
-        function openBillDetail(index) { 
-            const bill = historyBills[index]; 
-            const modal = document.getElementById('billDetailModal'); 
-            const content = document.getElementById('billDetailContent'); 
+        function openBillDetail(index) {
+            const bill = historyBills[index];
+            if (!bill) return;
             
-            let items = bill.items; 
-            if (typeof items === 'string') { try { items = JSON.parse(items); } catch(e) { items = []; } }
+            // Format time and date
+            const d = new Date(bill.date);
+            const dateStr = d.toLocaleDateString('th-TH', { day: '2-digit', month: '2-digit', year: '2-digit' });
+            const timeStr = d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
             
-            let itemsHtml = ''; 
-            if(Array.isArray(items) && items.length > 0) { 
-                itemsHtml = items.map(i => `<div class="flex justify-between py-2 border-b border-dashed border-gray-200 last:border-0"><div class="flex-1"><span class="font-bold text-gray-700 text-sm">${i.name}</span></div><div class="text-right"><span class="text-gray-600 text-sm">x${i.qty}</span><span class="ml-2 font-bold text-gray-800 text-sm">${(i.price * i.qty).toLocaleString()}</span></div></div>`).join(''); 
-            } else { 
-                itemsHtml = '<p class="text-center text-gray-400 text-sm">ไม่มีรายละเอียดรายการสินค้า</p>'; 
-            } 
+            // Logic เพื่อแยก Name, Phone, Address ออกจากคอลัมน์ TableNo (โค้ดเดิมที่แก้ไขแล้ว)
+            const tableNo = bill.tableNo || 'N/A';
+            const customerMatch = tableNo.match(/(.*)\s*\((.*?)\)\s*(\[ส่งที่:\s*.*\])?/);
+            const customerName = customerMatch ? customerMatch[1].trim() : tableNo;
+            const customerPhone = customerMatch && customerMatch[2] ? customerMatch[2].trim() : '';
+            const customerAddress = customerMatch && customerMatch[3] ? customerMatch[3] : '';
+
+            const content = document.getElementById('billDetailContent');
             
             content.innerHTML = `
-                <div class="mb-4 text-center pb-4 border-b relative">
-                    <h4 class="text-xl font-bold text-gray-800">ใบเสร็จรับเงิน</h4>
-                    <p class="text-gray-500 text-xs font-mono mt-1">ID: ${bill.billId}</p>
-                    <p class="text-gray-500 text-xs">${new Date(bill.date).toLocaleString('th-TH')}</p>
-                    
-                    <button onclick="printReceiptFromIndex(${index})" class="absolute top-0 right-0 bg-blue-100 text-blue-600 hover:bg-blue-200 w-8 h-8 rounded-full flex items-center justify-center transition shadow-sm">
-                        <i class="fas fa-print text-sm"></i>
+                <div class="p-4 border-b bg-gray-50 flex justify-between items-center flex-shrink-0">
+                    <h3 class="text-xl font-bold text-gray-800">บิลเลขที่: ${bill.billId}</h3>
+                    <button onclick="closeModal('billDetailModal')" class="bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center transition">
+                        <i class="fas fa-times text-gray-600"></i>
                     </button>
                 </div>
-                
-                <div class="flex justify-between mb-3 text-sm bg-gray-50 p-2 rounded">
-                    <span class="font-bold text-gray-700">ชื่อ/คิว: ${bill.table}</span>
-                    <span class="text-gray-600">ประเภท: ${bill.type || '-'}</span>
+
+                <div class="p-4 bg-white border-b flex-shrink-0">
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-gray-500 font-medium">วัน/เวลา:</span>
+                        <span class="font-bold text-gray-700">${dateStr} ${timeStr}</span>
+                    </div>
+                    <div class="font-bold text-gray-700 mb-1">
+                        <i class="fas fa-user-tag mr-2 text-blue-600"></i> ลูกค้า: ${customerName}
+                        ${customerPhone ? `<span class="text-xs text-gray-500">(${customerPhone})</span>` : ''}
+                    </div>
+                    ${customerAddress ? `
+                        <div class="text-xs text-gray-500">
+                           <i class="fas fa-map-marker-alt mr-2 text-red-500"></i> 
+                           ที่อยู่: ${customerAddress.replace(/\[ส่งที่:\s*|\]/g, '').trim()}
+                        </div>
+                    ` : ''}
+                    ${bill.note ? `<div class="text-xs text-gray-500 mt-2 border-t pt-2">หมายเหตุ: ${bill.note}</div>` : ''}
                 </div>
                 
-                <div class="rounded-lg mb-4 max-h-60 overflow-y-auto custom-scrollbar">
-                    ${itemsHtml}
+                <div class="flex-1 overflow-y-auto max-h-[400px] custom-scrollbar bg-white">
+                    <div class="px-4 py-2 space-y-2">
+                        ${bill.items.map(item => `
+                            <div class="flex justify-between items-center border-b border-dashed pb-2">
+                                <span class="font-bold text-gray-700 text-sm">${item.name}</span>
+                                <div class="text-right">
+                                    <span class="text-xs text-gray-500">${item.qty} x ${item.price.toLocaleString()}</span>
+                                    <span class="font-bold text-gray-800 ml-2">${(item.price * item.qty).toLocaleString()}฿</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
                 </div>
-                
-                <div class="space-y-2 text-right border-t pt-3">
-                    <div class="flex justify-between text-gray-600 text-sm"><span>รวมทั้งสิ้น</span><span class="font-bold text-lg text-blue-600">${parseFloat(bill.total).toLocaleString()} ฿</span></div>
-                    <div class="flex justify-between text-xs text-gray-500"><span>รับเงิน (${bill.paymentMethod || 'Cash'})</span><span>${parseFloat(bill.receive || bill.total).toLocaleString()} ฿</span></div>
-                    <div class="flex justify-between text-xs text-green-600 font-bold"><span>เงินทอน</span><span>${parseFloat(bill.change || 0).toLocaleString()} ฿</span></div>
+
+                <div class="p-4 flex justify-between items-center border-t bg-gray-100 flex-shrink-0">
+                    <span class="font-bold text-lg text-gray-700">ยอดรวมสุทธิ:</span>
+                    <span class="text-2xl font-extrabold text-blue-600">${bill.total.toLocaleString()} ฿</span>
                 </div>
-                
-                <div class="mt-6 pt-4 border-t border-gray-100">
-                    <button onclick="confirmDeleteBill('${bill.billId}')" class="w-full border border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600 font-bold py-2 rounded-xl text-sm transition flex items-center justify-center gap-2">
-                        <i class="fas fa-trash-alt"></i> ลบบิลนี้ออกจากระบบ
+
+                <div class="p-4 flex gap-3 bg-white border-t flex-shrink-0">
+                    <button onclick="printReceiptFromIndex(${index})" id="btnPrintBill" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-bold transition">
+                        <i class="fas fa-print mr-2"></i>พิมพ์บิล
+                    </button>
+                    <button onclick="confirmDeleteBill('${bill.billId}')" id="btnDeleteBill" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-bold transition">
+                        <i class="fas fa-trash-alt mr-2"></i>ลบบิล
                     </button>
                 </div>
-            `; 
+            `;
             
-            modal.classList.remove('hidden'); 
+            document.getElementById('billDetailModal').classList.remove('hidden');
         }
 
         // --- ฟังก์ชันลบบิล ---
