@@ -484,6 +484,15 @@
         <div class="bg-white rounded-t-2xl lg:rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-slide-up h-auto flex flex-col max-h-[90vh]">
             <div class="bg-green-600 p-4 text-white flex justify-between items-center shrink-0"><h3 class="font-bold text-lg">ชำระเงิน</h3><button onclick="closeModal('paymentModal')" class="bg-white/20 rounded-full w-8 h-8"><i class="fas fa-times"></i></button></div>
             <div class="p-6 flex-1 overflow-y-auto">
+                <div id="quickPayTableNoContainer" class="mb-4 hidden animate-fade-in">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">ระบุชื่อลูกค้า / เลขโต๊ะ / หมายเหตุ</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user-tag text-gray-400"></i>
+                        </div>
+                        <input type="text" id="quickPayTableNo" class="w-full border-2 border-gray-200 rounded-xl p-3 pl-10 text-lg font-bold text-gray-700 focus:border-blue-500 outline-none bg-gray-50 focus:bg-white transition" placeholder="Walk-in (ลูกค้าทั่วไป)">
+                    </div>
+                </div>
                 
                 <!-- NEW: Bank QR Code Section with Upload -->
                 <div class="mb-6 flex flex-col items-center">
@@ -1240,13 +1249,16 @@
             const total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
             currentPayOrder = { orderId: null, totalPrice: total };
             
+            // 🔴 แสดงช่องกรอกชื่อ
+            document.getElementById('quickPayTableNoContainer').classList.remove('hidden');
+            document.getElementById('quickPayTableNo').value = ''; // เคลียร์ค่าเดิม
+            
             initBankQR();
             document.getElementById('paymentModal').classList.remove('hidden'); 
-            document.getElementById('payTotalDisplay').innerText = total.toLocaleString(); // ใส่ comma ให้สวยงาม
+            document.getElementById('payTotalDisplay').innerText = total.toLocaleString(); 
             document.getElementById('inputReceived').value = ''; 
             document.getElementById('changeDisplay').innerText = '0.00'; 
             
-            // ปรับปุ่ม: ถ้ายอด 0 (QR รับเงิน) ให้เปิดปุ่มได้รับเงินเลย, ถ้ามียอดต้องรอใส่เงิน
             const btnConfirm = document.getElementById('btnConfirmPay');
             if (total === 0) {
                 btnConfirm.disabled = false;
@@ -1255,13 +1267,10 @@
                 btnConfirm.disabled = true;
             }
 
-            // --- แก้ไข: พูดเฉพาะเมื่อยอดมากกว่า 0 ---
-            if (total > 0) {
-                speak("ยอดรวม " + total + " บาท"); 
-            }
-            // ------------------------------------
-
-            setTimeout(() => { document.getElementById('inputReceived').focus(); }, 100);
+            if (total > 0) { speak("ยอดรวม " + total + " บาท"); }
+            
+            // โฟกัสไปที่ช่องชื่อลูกค้าก่อน (ถ้ากด Enter จะข้ามไปช่องเงิน)
+            setTimeout(() => { document.getElementById('quickPayTableNo').focus(); }, 100);
         }
 
         // --- 1. ฟังก์ชันเปิดหน้าต่างยืนยัน (แก้ไข: ซ่อนชื่อ + บังคับที่อยู่) ---
@@ -1428,26 +1437,23 @@
         }
 
         // --- 4. ฟังก์ชันอัปเดตสถานะครัว (แก้ไข: เพิ่มการแจ้งเตือนลูกค้า) ---
+        // --- 4. ฟังก์ชันอัปเดตสถานะครัว (แก้ไข: ปรับปรุงการแจ้งเตือนให้ตรงกับชื่อลูกค้า) ---
         function updateKitchenBadge() { 
             return fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getOrders" }) })
             .then(res => res.json())
             .then(data => { 
                 if (data.result === 'success') { 
                     
-                    // --- 🛑 2. เพิ่มระบบ Auto Lock: เช็คสถานะร้าน Real-time ---
+                    // เช็คสถานะร้าน (Auto Lock)
                     if (data.isStoreOpen !== undefined) {
                         isStoreOpen = data.isStoreOpen;
-                        updateStoreUI(); // อัปเดตปุ่มเขียว/แดง
-                        
-                        // ถ้าเป็นลูกค้า และร้านปิด -> เด้งหน้าต่างล็อคทันที
+                        updateStoreUI(); 
                         if (isCustomerMode && !isStoreOpen) {
                             document.getElementById('storeClosedModal').classList.remove('hidden');
                         } else if (isCustomerMode && isStoreOpen) {
-                            // ถ้าร้านกลับมาเปิด -> ปลดล็อค
                             document.getElementById('storeClosedModal').classList.add('hidden');
                         }
                     }
-                    // -----------------------------------------------------
 
                     const waitingOrders = data.data.filter(o => o.status !== 'Served'); 
                     const waitingCount = waitingOrders.length; 
@@ -1455,6 +1461,7 @@
                     
                     if (waitingCount > 0) { badge.innerText = waitingCount; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); } 
                     
+                    // แจ้งเตือนฝั่งร้านค้า (มีออเดอร์เข้าใหม่)
                     if (!isCustomerMode && lastOrderCount !== -1 && waitingCount > lastOrderCount) { 
                         playNotificationSound(); 
                         showToast('มีรายการใหม่เข้ามา!', 'warning'); 
@@ -1462,15 +1469,25 @@
                     } 
                     lastOrderCount = waitingCount; 
                     
+                    // 🔴 ส่วนที่แก้ไข: การเช็คเพื่อแจ้งเตือนลูกค้า
                     if (isCustomerMode) { 
                         document.getElementById('queueCountDisplay').innerText = waitingCount; 
-                        const myOrders = data.data.filter(o => o.tableNo == customerTable);
+                        
+                        // สร้างชื่อเพื่อนำไปเทียบกับในระบบ (ต้องตรงกับตอนส่งออเดอร์เป๊ะๆ)
+                        const cName = localStorage.getItem('customerName') || 'ลูกค้า';
+                        const cPhone = localStorage.getItem('customerPhone') || '-';
+                        const myIdentity = `${cName} (${cPhone})`; // รูปแบบ: ชื่อ (เบอร์)
+
+                        // กรองหาออเดอร์ที่เป็นของลูกค้าคนนี้ โดยเทียบจากชื่อ
+                        const myOrders = data.data.filter(o => o.tableNo === myIdentity);
+                        
                         myOrders.forEach(order => {
+                            // แจ้งเตือนเมื่อสถานะเป็น Served และยังไม่เคยแจ้งเตือนมาก่อน
                             if (order.status === 'Served' && !notifiedOrders.has(order.orderId)) {
                                 document.getElementById('deliveryNotificationModal').classList.remove('hidden');
                                 playNotificationSound();
                                 speak("สินค้ากำลังไปส่งค่ะ");
-                                notifiedOrders.add(order.orderId); 
+                                notifiedOrders.add(order.orderId); // จำไว้ว่าแจ้งแล้ว จะได้ไม่แจ้งซ้ำ
                             }
                         });
                     }
@@ -1574,10 +1591,22 @@
         
         function openPayment(orderId) { 
             isQuickPayMode = false;
+            
+            // 🔴 ซ่อนช่องกรอกชื่อ (เพราะมีข้อมูลจากออเดอร์อยู่แล้ว)
+            document.getElementById('quickPayTableNoContainer').classList.add('hidden');
+            
             currentPayOrder = currentOrders.find(o => o.orderId === orderId); 
             if(!currentPayOrder) return; 
+            
             initBankQR();
-            document.getElementById('paymentModal').classList.remove('hidden'); document.getElementById('payTotalDisplay').innerText = currentPayOrder.totalPrice; document.getElementById('inputReceived').value = ''; document.getElementById('changeDisplay').innerText = '0.00'; document.getElementById('btnConfirmPay').disabled = true; speak("ยอดรวม " + currentPayOrder.totalPrice + " บาท"); setTimeout(() => { document.getElementById('inputReceived').focus(); }, 100);
+            document.getElementById('paymentModal').classList.remove('hidden'); 
+            document.getElementById('payTotalDisplay').innerText = currentPayOrder.totalPrice.toLocaleString(); 
+            document.getElementById('inputReceived').value = ''; 
+            document.getElementById('changeDisplay').innerText = '0.00'; 
+            document.getElementById('btnConfirmPay').disabled = true; 
+            
+            speak("ยอดรวม " + currentPayOrder.totalPrice + " บาท"); 
+            setTimeout(() => { document.getElementById('inputReceived').focus(); }, 100);
         }
         
         function addMoney(amount) { const input = document.getElementById('inputReceived'); input.value = Number(input.value) + amount; calcChange(); }
@@ -1644,24 +1673,24 @@
             
             let itemsToSave = [];
             
-            // === แก้ไขส่วนนี้ ===
             if (isQuickPayMode) { 
-                // ดึงสินค้าจากตะกร้าปัจจุบัน
                  itemsToSave = cart.map(i => ({ name: i.name, qty: i.qty, price: i.price })); 
                  
-                 // เคลียร์ตะกร้าหน้าเว็บ
+                 // 🔴 ดึงชื่อจากช่องที่เพิ่มใหม่
+                 let customName = document.getElementById('quickPayTableNo').value.trim();
+                 if(!customName) customName = "Walk-in"; // ถ้าไม่กรอก ให้ใช้ Walk-in เหมือนเดิม
+                 
                  cart = []; 
                  renderCart(); 
                  toggleCart(false); 
 
-                 // ส่งไปบันทึก Bill โดยตรง (เพิ่ม parameter directItems)
                  const payload = { 
                      action: "processPayment", 
-                     tableNo: "Walk-in", 
+                     tableNo: customName, // 👈 ส่งชื่อลูกค้าไปตรงนี้
                      finalPrice: total, 
                      received: received, 
                      change: received - total,
-                     directItems: itemsToSave // ส่งรายการสินค้าไปเลย
+                     directItems: itemsToSave 
                  };
                  
                  fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
@@ -1676,7 +1705,7 @@
                  .catch(err => showCustomAlert('Error', 'บันทึกบิลไม่สำเร็จ: ' + err));
 
             } else {
-                // กรณีจ่ายจาก QR (Logic เดิม)
+                // กรณีจ่ายจาก QR/ออเดอร์ค้าง (Logic เดิม)
                 fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "processPayment", orderId: orderId, finalPrice: total, received: received, change: received - total }) })
                 .then(res => res.json())
                 .then(data => { if(data.result === 'success') { showToast('ชำระเงินเรียบร้อย', 'success'); fetchOrders(); } });
