@@ -58,10 +58,10 @@
 
         <div id="customerToolbar" class="hidden flex items-center justify-end gap-2 flex-1">
              <button onclick="openMyRecentOrder()" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1 border border-white/30 active:scale-95 transition">
-                <i class="fas fa-receipt"></i> รายการที่สั่ง
+                <i class="fas fa-receipt"></i>
             </button>
             
-            <div class="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1 animate-pulse"><i class="fas fa-clock"></i> รออีก <span id="queueCountDisplay">0</span> คิว</div>
+            <div class="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1 animate-pulse"><i class="fas fa-clock"></i><span id="queueCountDisplay">0</span> คิว</div>
             <span class="bg-white/20 px-3 py-1 rounded-full text-sm font-bold text-white"><i class="fas fa-user mr-1"></i> <span id="customerTableDisplay">...</span></span>
         </div>
     </nav>
@@ -1692,10 +1692,38 @@
         }
 
         function sendAddMenu(payload) {
-             fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r=>r.json()).then(d=>{ 
-                 if(d.result === 'success') { showToast('เพิ่มสินค้าแล้ว', 'success'); closeModal('addModal'); fetchMenu(); document.getElementById('addMenuForm').reset(); } 
-                 else { showCustomAlert('ผิดพลาด', 'เพิ่มสินค้าไม่สำเร็จ: ' + d.error, '<i class="fas fa-exclamation-circle text-red-500"></i>'); } 
-             }).catch(err => { showCustomAlert('Connection Error', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้'); }).finally(()=>setLoading('btnSaveMenu', false, 'บันทึก')); 
+             fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
+             .then(r => r.json())
+             .then(d => { 
+                 if(d.result === 'success') { 
+                     
+                     // ✅ ส่วนที่เพิ่ม: สร้างข้อมูลสินค้า แล้วจับยัดลงตะกร้าเลย
+                     const newItem = {
+                         id: d.id || payload.id,      // ใช้ ID ที่ส่งกลับมาจาก Server หรือที่กรอกไป
+                         name: payload.name,
+                         price: parseFloat(payload.price),
+                         category: payload.category || 'ทั่วไป',
+                         image: '',                   // สินค้าเพิ่มเร็วจะยังไม่มีรูป
+                         spicy: '-'
+                     };
+                     
+                     addItemToCart(newItem, "-"); // เพิ่มลงตะกร้าทันที
+
+                     document.getElementById('searchInput').value = '';
+                     
+                     showToast('เพิ่มและลงตะกร้าแล้ว', 'success'); 
+                     closeModal('addModal'); 
+                     fetchMenu(); // โหลดข้อมูลใหม่เงียบๆ
+                     document.getElementById('addMenuForm').reset(); 
+
+                 } else { 
+                     showCustomAlert('ผิดพลาด', 'เพิ่มสินค้าไม่สำเร็จ: ' + d.error, '<i class="fas fa-exclamation-circle text-red-500"></i>'); 
+                 } 
+             })
+             .catch(err => { 
+                 showCustomAlert('Connection Error', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้'); 
+             })
+             .finally(() => setLoading('btnSaveMenu', false, 'บันทึก')); 
         }
         
         function confirmDeleteMenu() { setLoading('btnDeleteMenu', true, 'ลบ...'); fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "deleteMenu", id: document.getElementById('eId').value }) }).then(r=>r.json()).then(d=>{ if(d.result === 'success') { showToast('ลบสินค้าแล้ว', 'success'); closeModal('editMenuModal'); fetchMenu(); } else { showCustomAlert('ผิดพลาด', 'ลบสินค้าไม่สำเร็จ: ' + d.error, '<i class="fas fa-exclamation-circle text-red-500"></i>'); } }).catch(err => showCustomAlert('Connection Error', 'ตรวจสอบอินเทอร์เน็ตของคุณ')).finally(()=>setLoading('btnDeleteMenu', false, 'ลบ')); }
