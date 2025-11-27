@@ -2268,13 +2268,6 @@
             .then(data => {
                 if(data.result === 'success') {
 
-                    myLastOrders = { 
-                        items: [...cart], 
-                        total: total,
-                        note: noteText,  // <--- บันทึก Note ที่มีที่อยู่ไว้
-                        timestamp: new Date().toISOString()
-                    };
-
                     showToast('บันทึกรายการขายแล้ว!', 'success');
                     // Login สำเร็จ
                     localStorage.setItem('isLoggedIn', 'true');
