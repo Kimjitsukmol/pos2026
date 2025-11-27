@@ -8,6 +8,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* เพิ่ม Animation Blob */
+        @keyframes blob { 
+            0% { transform: translate(0px, 0px) scale(1); } 
+            33% { transform: translate(30px, -50px) scale(1.1); } 
+            66% { transform: translate(-20px, 20px) scale(0.9); } 
+            100% { transform: translate(0px, 0px) scale(1); } 
+        }
+        .animate-blob { animation: blob 7s infinite; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
         body { font-family: 'Kanit', sans-serif; touch-action: manipulation; }
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -27,6 +37,111 @@
 
 <body class="bg-gray-100 h-screen flex flex-col overflow-hidden text-gray-800">
 
+    <div id="loginScreen" class="fixed inset-0 z-[9999] bg-gradient-to-br from-blue-900 via-blue-800 to-gray-900 flex items-center justify-center p-4 transition-all duration-500">
+        <div class="absolute inset-0 overflow-hidden opacity-20 pointer-events-none">
+            <div class="absolute top-0 left-0 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+            <div class="absolute top-0 right-0 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+            <div class="absolute -bottom-8 left-20 w-64 h-64 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
+        </div>
+
+        <div class="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-3xl shadow-2xl w-full max-w-sm relative overflow-hidden animate-slide-up">
+            <div class="text-center mb-6">
+                <div class="w-20 h-20 bg-gradient-to-tr from-blue-500 to-cyan-400 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4 transform rotate-3 hover:rotate-6 transition">
+                    <i class="fas fa-store text-4xl text-white"></i>
+                </div>
+                <h2 class="text-3xl font-extrabold text-white tracking-wide">ร้านเจ้พิน</h2>
+                <p class="text-blue-200 text-sm mt-1">ระบบจัดการร้านค้า (POS)</p>
+            </div>
+
+            <div id="loginErrorBox" class="hidden bg-red-500/20 border border-red-500/50 rounded-xl p-3 mb-4 flex items-center gap-3 animate-pulse">
+                <div class="bg-red-500 rounded-full w-6 h-6 flex items-center justify-center shrink-0">
+                    <i class="fas fa-exclamation text-white text-xs"></i>
+                </div>
+                <p id="loginErrorMsg" class="text-red-100 text-sm font-bold">รหัสผ่านไม่ถูกต้อง</p>
+            </div>
+
+            <form id="loginForm" class="space-y-5">
+                <div class="space-y-1">
+                    <label class="text-blue-200 text-xs font-bold uppercase ml-1">เบอร์โทรศัพท์</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="fas fa-phone text-blue-300"></i></div>
+                        <input type="tel" id="loginPhone" class="w-full bg-black/20 border border-white/10 rounded-xl py-3.5 pl-11 pr-4 text-white placeholder-blue-300/50 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-black/30 transition text-lg font-bold tracking-wide" placeholder="08X-XXX-XXXX" required>
+                    </div>
+                </div>
+                
+                <div class="space-y-1">
+                    <label class="text-blue-200 text-xs font-bold uppercase ml-1">รหัสผ่าน</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="fas fa-lock text-blue-300"></i></div>
+                        <input type="password" id="loginPass" class="w-full bg-black/20 border border-white/10 rounded-xl py-3.5 pl-11 pr-4 text-white placeholder-blue-300/50 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-black/30 transition text-lg tracking-widest" placeholder="••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" id="btnLogin" class="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold py-4 rounded-xl shadow-lg transform transition active:scale-95 text-lg mt-4 flex justify-center items-center gap-2">
+                    <span>เข้าสู่ระบบ</span> <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+            <p class="text-center text-white/20 text-xs mt-6">Secure System V.1.0</p>
+        </div>
+    </div>
+
+    <div id="logoutModal" class="fixed inset-0 z-[10000] bg-black/80 hidden flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop relative">
+            <div class="bg-red-500 h-24 flex items-center justify-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
+                <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg relative z-10">
+                    <i class="fas fa-power-off text-3xl text-white"></i>
+                </div>
+            </div>
+            
+            <div class="p-8 text-center">
+                <h3 class="text-2xl font-extrabold text-gray-800 mb-2">ออกจากระบบ?</h3>
+                <p class="text-gray-500 mb-8 text-sm">คุณต้องการจบการทำงานและกลับสู่หน้า<br>เข้าสู่ระบบใช่หรือไม่?</p>
+                
+                <div class="flex gap-3">
+                    <button onclick="closeModal('logoutModal')" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-3.5 rounded-xl transition">
+                        ยกเลิก
+                    </button>
+                    <button onclick="confirmLogout()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-red-200 transition transform active:scale-95">
+                        ใช่, ออกจากระบบ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="changePassModal" class="fixed inset-0 bg-black/80 hidden z-[150] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop">
+            <div class="bg-gray-800 p-5 text-white flex justify-between items-center">
+                <h3 class="font-bold text-lg"><i class="fas fa-key mr-2 text-yellow-400"></i>เปลี่ยนรหัสผ่าน</h3>
+                <button onclick="closeModal('changePassModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-200 text-sm text-yellow-800 flex items-start gap-2">
+                    <i class="fas fa-info-circle mt-0.5"></i>
+                    <span>ระบุเบอร์โทรศัพท์และรหัสผ่านใหม่ที่ต้องการใช้งาน</span>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-600 text-sm font-bold mb-1">เบอร์โทรศัพท์</label>
+                    <input type="tel" id="changePassPhone" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-blue-500 outline-none text-lg font-bold tracking-wide" placeholder="08X-XXX-XXXX">
+                </div>
+
+                <div>
+                    <label class="block text-gray-600 text-sm font-bold mb-1">รหัสผ่านใหม่</label>
+                    <input type="password" id="newPasswordInput" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-blue-500 outline-none text-lg font-bold text-center tracking-widest" placeholder="ตั้งรหัสผ่านใหม่">
+                </div>
+                
+                <button onclick="submitChangePassword()" id="btnSubmitChangePass" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 rounded-xl shadow-lg transition">
+                    บันทึกรหัสผ่านใหม่
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+
+
     <!-- Navbar -->
     <nav class="bg-gradient-to-r from-blue-700 to-blue-900 text-white p-3 shadow-lg flex justify-between items-center z-30 shrink-0 gap-3">
         <div class="flex items-center gap-2 overflow-hidden shrink-0">
@@ -39,6 +154,13 @@
         </div>
         
         <div id="adminToolbar" class="flex gap-2 overflow-x-auto hide-scrollbar smooth-scroll items-center flex-1 justify-end min-w-0">
+            <button onclick="logout()" class="bg-red-500/20 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-sm transition border border-red-500/30 shrink-0 font-bold mr-1 group">
+                <i class="fas fa-power-off group-hover:scale-110 transition-transform"></i>
+            </button>
+            
+            <button onclick="openChangePassModal()" class="bg-yellow-500/20 hover:bg-yellow-500 text-white px-3 py-1.5 rounded-lg text-sm transition border border-yellow-500/30 shrink-0 font-bold mr-2 group">
+                <i class="fas fa-key text-yellow-400 group-hover:text-white transition-colors"></i>
+            </button>
              <div onclick="toggleStoreStatus()" class="cursor-pointer bg-white/10 hover:bg-white/20 rounded-full px-2 py-1 flex items-center gap-2 transition mr-2 border border-white/20 group">
                 <div id="storeToggleBg" class="w-10 h-5 rounded-full relative transition-colors duration-300 shadow-inner flex items-center">
                     <div id="storeToggleDot" class="w-4 h-4 bg-white rounded-full absolute shadow-md transform transition-transform duration-300 left-0.5"></div>
@@ -449,7 +571,7 @@
 
     <script>
         // ใส่ URL ที่ได้จาก Web App Deployment ใหม่ที่นี่
-        const API_URL = "https://script.google.com/macros/s/AKfycbz2iYKi8l94peEcsAiQvXEHgF2awm5Uqzj02CGsn5um8_UwdAYlUFschdP43FXq2K_hdQ/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbxggUeGfsTOM5MG6FIQI7KPCQEfYok9GhrVcuSNuMTTbgXvnqsU1MTxAjmMQyuEaFboPA/exec"; 
         
         // -------------------------------------------------------------
         // 🔴🔴 แก้ไขรหัสโฟลเดอร์ให้ตรงกับที่คุณให้มาแล้ว 🔴🔴
@@ -1828,6 +1950,179 @@
             }
             modal.classList.remove('hidden');
         }
+
+       // ==========================================
+        // 🔐 LOGIN SYSTEM (UPDATED)
+        // ==========================================
+        
+        // เช็คสถานะ Login ตอนเปิดเว็บ
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const loginScreen = document.getElementById('loginScreen');
+            
+            if (isLoggedIn === 'true') {
+                loginScreen.classList.add('hidden');
+                initStoreStatus(); 
+            } else {
+                loginScreen.classList.remove('hidden');
+            }
+        }
+
+        // ฟังก์ชันสั่ง Login
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // ซ่อน Error เก่าก่อน (ถ้ามี)
+            const errorBox = document.getElementById('loginErrorBox');
+            errorBox.classList.add('hidden');
+            
+            const phone = document.getElementById('loginPhone').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+            
+            setLoading('btnLogin', true, 'กำลังตรวจสอบ...');
+            
+            fetch(API_URL, { 
+                method: 'POST', 
+                body: JSON.stringify({ action: "login", phone: phone, password: pass }) 
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.result === 'success') {
+                    // Login สำเร็จ
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userPhone', phone);
+                    
+                    showToast('เข้าสู่ระบบสำเร็จ', 'success');
+                    
+                    // เอฟเฟกต์ปิดหน้า Login
+                    const screen = document.getElementById('loginScreen');
+                    screen.style.opacity = '0';
+                    setTimeout(() => {
+                        screen.classList.add('hidden');
+                        initStoreStatus(); 
+                    }, 500);
+                    
+                } else {
+                    // 🔴 แสดง Error ที่กล่องแดง ในหน้า Login
+                    document.getElementById('loginErrorMsg').innerText = data.error || 'รหัสผ่านไม่ถูกต้อง';
+                    errorBox.classList.remove('hidden');
+                    
+                    // สั่นกล่อง Login เล็กน้อย
+                    const card = document.querySelector('#loginScreen > div');
+                    card.classList.add('animate-pulse');
+                    setTimeout(() => card.classList.remove('animate-pulse'), 500);
+                }
+            })
+            .catch(err => {
+                // แสดง Error ที่กล่องแดง
+                document.getElementById('loginErrorMsg').innerText = 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้';
+                errorBox.classList.remove('hidden');
+            })
+            .finally(() => {
+                setLoading('btnLogin', false, 'เข้าสู่ระบบ');
+            });
+        });
+
+        // 🔴 ฟังก์ชัน Logout (เรียก Modal สวยๆ)
+        function logout() {
+            document.getElementById('logoutModal').classList.remove('hidden');
+        }
+
+        // 🔴 ฟังก์ชันยืนยัน Logout (ทำงานจริง)
+        function confirmLogout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userPhone');
+            location.reload(); 
+        }
+
+        // --- ระบบเปลี่ยนรหัสผ่าน (เหมือนเดิม) ---
+        // --- ระบบเปลี่ยนรหัสผ่าน (Updated) ---
+        function openChangePassModal() {
+            // ดึงเบอร์ปัจจุบันมาเติมให้ก่อน (ถ้ามี) เพื่อความสะดวก แต่แก้ไขได้
+            const currentPhone = localStorage.getItem('userPhone') || '';
+            document.getElementById('changePassPhone').value = currentPhone;
+            
+            document.getElementById('newPasswordInput').value = '';
+            document.getElementById('changePassModal').classList.remove('hidden');
+            
+            // โฟกัสที่ช่องเบอร์โทร
+            setTimeout(() => document.getElementById('changePassPhone').focus(), 300);
+        }
+
+        function submitChangePassword() {
+            // 🔴 รับค่าจากช่องกรอกข้อมูลแทนการดึงจาก LocalStorage อย่างเดียว
+            const phoneVal = document.getElementById('changePassPhone').value.trim();
+            const newPass = document.getElementById('newPasswordInput').value.trim();
+            
+            if (!phoneVal) { alert("กรุณาระบุเบอร์โทรศัพท์"); return; }
+            if (!newPass) { alert("กรุณากรอกรหัสผ่านใหม่"); return; }
+
+            setLoading('btnSubmitChangePass', true, 'กำลังบันทึก...');
+            
+            fetch(API_URL, { 
+                method: 'POST', 
+                body: JSON.stringify({ action: "changePassword", phone: phoneVal, newPassword: newPass }) 
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.result === 'success') {
+                    showToast('เปลี่ยนรหัสผ่านเรียบร้อย', 'success');
+                    closeModal('changePassModal');
+                    
+                    // อัปเดตเบอร์ในเครื่องให้ตรงกับที่เพิ่งเปลี่ยน (เผื่อเปลี่ยนเบอร์อื่น)
+                    localStorage.setItem('userPhone', phoneVal);
+                } else {
+                    alert('เปลี่ยนรหัสไม่สำเร็จ: ' + data.error);
+                }
+            })
+            .catch(err => { alert('Error: ' + err); })
+            .finally(() => { setLoading('btnSubmitChangePass', false, 'บันทึกรหัสผ่านใหม่'); });
+        }
+
+        // ==========================================
+        // 🛡️ SECURITY: ป้องกันพิมพ์ไทยในรหัสผ่าน
+        // ==========================================
+        function setupPasswordRestrictions() {
+            const passwordFields = ['loginPass', 'newPasswordInput'];
+            
+            passwordFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', function(e) {
+                        // Regex: ตรวจหาช่วง Unicode ภาษาไทย (\u0E00-\u0E7F)
+                        const thaiRegex = /[\u0E00-\u0E7F]/g;
+                        
+                        if (thaiRegex.test(this.value)) {
+                            // ถ้าเจอไทย ให้ลบทิ้งทันที
+                            this.value = this.value.replace(thaiRegex, '');
+                            
+                            // แจ้งเตือนเบาๆ (สั่นกล่อง หรือขึ้น Toast)
+                            showToast('รหัสผ่านต้องเป็นภาษาอังกฤษ/ตัวเลขเท่านั้น', 'warning');
+                            
+                            // ทำเอฟเฟกต์สั่นเตือนที่ช่อง input
+                            this.classList.add('border-red-500', 'animate-pulse');
+                            setTimeout(() => {
+                                this.classList.remove('border-red-500', 'animate-pulse');
+                            }, 500);
+                        }
+                    });
+                }
+            });
+        }
+
+
+        
+        /// Window Load
+        const originalOnload = window.onload;
+        window.onload = () => {
+            checkLoginStatus(); 
+            initStoreStatus(); // โหลดสถานะร้าน
+            
+            // 👇 เพิ่มบรรทัดนี้ครับ
+            setupPasswordRestrictions(); // เปิดระบบป้องกันพิมพ์ไทย
+            
+            if (originalOnload) originalOnload();
+        };
         
     </script>
 </body>
