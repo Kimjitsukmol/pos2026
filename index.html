@@ -139,7 +139,36 @@
         </div>
     </div>
 
-
+    <div id="customerIdentityModal" class="fixed inset-0 z-[200] bg-gray-900 flex items-center justify-center p-4 hidden animate-fade-in bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop relative">
+            <div class="bg-blue-600 h-32 flex items-center justify-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-white/10 opacity-50"></div>
+                <div class="w-20 h-20 bg-white text-blue-600 rounded-full flex items-center justify-center shadow-lg text-3xl animate-bounce">
+                    <i class="fas fa-user-edit"></i>
+                </div>
+            </div>
+            
+            <div class="p-8">
+                <h2 class="text-2xl font-extrabold text-center text-gray-800 mb-2">ยินดีต้อนรับครับ</h2>
+                <p class="text-center text-gray-500 mb-6 text-sm">กรุณาระบุตัวตนเพื่อให้ทางร้าน<br>ติดต่อกลับกรณีสินค้าหมดหรือจัดส่งนะคะ</p>
+                
+                <form id="customerIdentityForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">ชื่อเล่น / ชื่อของคุณ</label>
+                        <input type="text" id="custIdName" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-blue-500 outline-none font-bold text-lg bg-gray-50" placeholder="เช่น พี่หนุ่ม, น้องพลอย" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">เบอร์โทรศัพท์ (สำหรับติดต่อ)</label>
+                        <input type="tel" id="custIdPhone" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-blue-500 outline-none font-bold text-lg bg-gray-50 tracking-wider" placeholder="08X-XXX-XXXX" required minlength="9" maxlength="10">
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition transform active:scale-95 text-lg mt-4">
+                        เริ่มสั่งอาหาร <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 
 
     <!-- Navbar -->
@@ -1294,7 +1323,7 @@
             setLoading('btnSubmitOrder', true, 'กำลังบันทึก...');
             const total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
             
-            // --- 🛑 เพิ่มใหม่: ตรวจสอบขั้นต่ำ 100 บาท (เฉพาะโหมดลูกค้า) ---
+            // --- 🛑 1. ตรวจสอบขั้นต่ำ 100 บาท (เฉพาะโหมดลูกค้า) ---
             if (isCustomerMode && total < 100) {
                 // คำนวณยอดที่ขาด
                 const diff = 100 - total;
@@ -1319,6 +1348,22 @@
             
             const orderType = document.getElementById('orderType').value;
             let noteText = document.getElementById('orderNote').value;
+
+            // --- 🟢 2. ส่วนที่เพิ่มใหม่: จัดการชื่อและเบอร์โทรลูกค้า ---
+            let finalTableNo = document.getElementById('tableNo').value; // ค่าตั้งต้น
+
+            if (isCustomerMode) {
+                // ดึงชื่อและเบอร์จากที่ลงทะเบียนไว้ (จาก localStorage)
+                const cName = localStorage.getItem('customerName') || 'ลูกค้า';
+                const cPhone = localStorage.getItem('customerPhone') || '-';
+                
+                // จัดรูปแบบชื่อที่จะส่งไปครัว: "ชื่อ (เบอร์)" 
+                finalTableNo = `${cName} (${cPhone})`;
+            } else {
+                // ถ้าเป็นร้านค้า ก็ใช้ค่าจากช่อง input หรือถ้าว่างให้เป็น "หน้าร้าน"
+                finalTableNo = finalTableNo || "หน้าร้าน";
+            }
+            // -----------------------------------------------------
             
             if (orderType === 'ส่งเดลิเวอรี่') {
                 const houseNo = document.getElementById('addrHouseNo').value.trim(); 
@@ -1339,29 +1384,42 @@
                 noteText = noteText ? `${addressStr} ${noteText}` : addressStr; 
             }
 
-            const payload = { action: "saveOrder", tableNo: document.getElementById('tableNo').value || "หน้าร้าน", orderType: orderType, cartItems: cart.map(i => ({ name: i.name, qty: i.qty, price: i.price, spicy: "-" })), totalPrice: total, note: noteText };
+            // ส่งข้อมูลไป Server (ใช้ finalTableNo ที่เราสร้างใหม่)
+            const payload = { 
+                action: "saveOrder", 
+                tableNo: finalTableNo, // 👈 ใช้ตัวแปรนี้ส่งไป
+                orderType: orderType, 
+                cartItems: cart.map(i => ({ name: i.name, qty: i.qty, price: i.price, spicy: "-" })), 
+                totalPrice: total, 
+                note: noteText 
+            };
             
              fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => {
                 if(data.result === 'success') {
-                    // ... (โค้ด Success เดิม) ...
+                    
                     myLastOrders = [...cart]; 
                     showToast('บันทึกรายการขายแล้ว!', 'success'); 
+                    
                     if (isCustomerMode) { setTimeout(() => speak("ขอบคุณค่ะ"), 1500); } else { speak("บันทึกรายการแล้วค่ะ"); }
+                    
                     cart = []; renderCart(); toggleCart(false); closeModal('confirmOrderModal');
+                    
                     if(!isCustomerMode) document.getElementById('tableNo').value = '';
+                    
                     document.getElementById('orderNote').value = ''; 
                     document.getElementById('addrHouseNo').value = '';
                     document.getElementById('addrSoi').value = '';
+                    
                     if(isCustomerMode) openMyRecentOrder();
                     updateKitchenBadge();
                     
                 } else if (data.error === 'STORE_CLOSED') {
-                    // 🛑 1. ดักจับ Error ร้านปิดตรงนี้
+                    // 🛑 ดักจับ Error ร้านปิด
                     document.getElementById('storeClosedModal').classList.remove('hidden');
                     isStoreOpen = false;
                     updateStoreUI();
                     speak("ขออภัย ร้านปิดแล้วค่ะ");
-                    closeModal('confirmOrderModal'); // ปิดหน้าต่างสั่งของ
+                    closeModal('confirmOrderModal'); 
                     
                 } else { 
                     showCustomAlert('ผิดพลาด', 'ส่งออเดอร์ไม่สำเร็จ: ' + data.error, '<i class="fas fa-exclamation-circle text-red-500"></i>'); 
@@ -2052,32 +2110,71 @@
         
         // เช็คสถานะ Login ตอนเปิดเว็บ
         // เช็คสถานะ Login ตอนเปิดเว็บ (แก้ไข: ลูกค้าไม่ต้อง Login)
+        // เช็คสถานะ Login ตอนเปิดเว็บ (แก้ไข: เพิ่มการยืนยันตัวตนลูกค้า)
         function checkLoginStatus() {
             const loginScreen = document.getElementById('loginScreen');
             
-            // 1. 🟢 เช็คว่าเป็น "โหมดลูกค้า" หรือไม่ (ดูจาก URL Parameter)
+            // 1. 🟢 เช็คว่าเป็น "โหมดลูกค้า" หรือไม่
             const urlParams = new URLSearchParams(window.location.search);
             const isCustomer = urlParams.get('mode') === 'customer';
             
-            // ถ้าเป็นลูกค้า ให้ผ่านได้เลย (ซ่อนหน้า Login)
             if (isCustomer || (typeof isCustomerMode !== 'undefined' && isCustomerMode)) {
                 loginScreen.classList.add('hidden');
-                initStoreStatus(); // เริ่มโหลดข้อมูลร้าน
-                return; // จบการทำงาน (ไม่ต้องเช็ค Password)
+                
+                // 👇 เพิ่มตรงนี้: เช็คว่าลูกค้าเคยลงทะเบียนหรือยัง?
+                checkCustomerIdentity(); 
+                
+                initStoreStatus(); 
+                return; 
             }
 
             // 2. 🔐 ถ้าเป็นร้านค้า (Admin) ให้เช็ค Login ตามปกติ
             const isLoggedIn = localStorage.getItem('isLoggedIn');
-            
             if (isLoggedIn === 'true') {
-                // ถ้า Login แล้ว ให้ซ่อนหน้า Login
                 loginScreen.classList.add('hidden');
                 initStoreStatus(); 
             } else {
-                // ถ้ายังไม่ Login ให้แสดงหน้า Login
                 loginScreen.classList.remove('hidden');
             }
         }
+
+        // --- 🟢 ฟังก์ชันใหม่: จัดการการลงทะเบียนลูกค้า ---
+        function checkCustomerIdentity() {
+            const savedName = localStorage.getItem('customerName');
+            const savedPhone = localStorage.getItem('customerPhone');
+            
+            if (!savedName || !savedPhone) {
+                // ถ้ายังไม่มีข้อมูล ให้เด้ง Modal บังคับกรอก
+                document.getElementById('customerIdentityModal').classList.remove('hidden');
+            } else {
+                // ถ้ามีแล้ว ให้แสดงชื่อที่มุมขวาบน (Customer Toolbar)
+                document.getElementById('customerTableDisplay').innerText = savedName;
+            }
+        }
+
+        // ดักจับการกดปุ่มบันทึกข้อมูลลูกค้า
+        document.getElementById('customerIdentityForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('custIdName').value.trim();
+            const phone = document.getElementById('custIdPhone').value.trim();
+            
+            if(name && phone) {
+                if(phone.length < 9 || isNaN(phone)) {
+                    showToast('เบอร์โทรศัพท์ไม่ถูกต้อง', 'warning');
+                    return;
+                }
+                
+                // บันทึกใส่เครื่อง
+                localStorage.setItem('customerName', name);
+                localStorage.setItem('customerPhone', phone);
+                
+                // ปิดหน้าต่าง และเริ่มใช้งาน
+                document.getElementById('customerIdentityModal').classList.add('hidden');
+                document.getElementById('customerTableDisplay').innerText = name;
+                showToast(`ยินดีต้อนรับคุณ ${name}`, 'success');
+                speak("ยินดีต้อนรับค่ะ");
+            }
+        });
 
         // ฟังก์ชันสั่ง Login
         document.getElementById('loginForm').addEventListener('submit', function(e) {
