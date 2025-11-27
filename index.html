@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ร้านเจ้พิน ค้าส่ง-ปลีก POS</title>
+    <title>ร้านเจ้พิน POS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -24,6 +24,7 @@
         @keyframes pulse-blue { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); } 70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(37, 99, 235, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); } }
     </style>
 </head>
+
 <body class="bg-gray-100 h-screen flex flex-col overflow-hidden text-gray-800">
 
     <!-- Navbar -->
@@ -82,7 +83,7 @@
             <div class="p-2 bg-white shadow-sm border-b border-gray-200 flex gap-2 overflow-x-auto whitespace-nowrap z-10 shrink-0 smooth-scroll hide-scrollbar" id="categoryBar"></div>
 
             <!-- MENU GRID -->
-            <div class="flex-1 overflow-y-auto p-4 pb-24 lg:pb-4 relative custom-scrollbar bg-gray-100" id="menuContainer">
+            <div class="flex-1 overflow-y-auto p-4 pb-24 md:pb-4 relative custom-scrollbar bg-gray-100" id="menuContainer">
                 <div id="loadingMenu" class="absolute inset-0 flex flex-col items-center justify-center bg-white/80 z-20 backdrop-blur-sm hidden"><i class="fas fa-circle-notch fa-spin text-4xl text-blue-500 mb-3"></i><p class="text-gray-500 font-medium animate-pulse">กำลังโหลดข้อมูลสินค้า...</p></div>
                 <div id="menuGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4 content-start"></div>
                 
@@ -98,7 +99,7 @@
         </div>
 
         <!-- Right: Cart Area -->
-        <div id="cartPanel" class="hidden lg:flex flex-col w-full lg:w-[400px] bg-white shadow-2xl border-l border-gray-200 z-40 fixed inset-0 lg:static lg:h-auto animate-slide-up lg:animate-none">
+        <div id="cartPanel" class="hidden md:flex flex-col w-full md:w-[320px] lg:w-[400px] bg-white shadow-2xl border-l border-gray-200 z-40 fixed inset-0 md:static md:h-auto animate-slide-up md:animate-none">
             <div class="lg:hidden bg-blue-700 text-white p-4 flex justify-between items-center shadow-md shrink-0"><h2 class="text-xl font-bold"><i class="fas fa-shopping-cart mr-2"></i>ตะกร้าสินค้า</h2><button onclick="toggleCart(false)" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8 flex items-center justify-center"><i class="fas fa-chevron-down"></i></button></div>
             
             <!-- Cart Header with Hold/Recall -->
@@ -121,7 +122,7 @@
         </div>
 
         <!-- Mobile Bottom Bar -->
-        <div id="mobileBottomBar" onclick="toggleCart(true)" class="lg:hidden fixed bottom-4 left-4 right-4 bg-gray-900 text-white p-4 rounded-2xl shadow-2xl flex justify-between items-center z-20 cursor-pointer transform transition-all duration-300 translate-y-[150%] active:scale-95 border border-gray-700/50 backdrop-blur-md bg-opacity-95">
+        <div id="mobileBottomBar" onclick="toggleCart(true)" class="md:hidden fixed bottom-4 left-4 right-4 bg-gray-900 text-white p-4 rounded-2xl shadow-2xl flex justify-between items-center z-20 cursor-pointer transform transition-all duration-300 translate-y-[150%] active:scale-95 border border-gray-700/50 backdrop-blur-md bg-opacity-95">
             <div class="flex items-center gap-3"><div class="bg-blue-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold shadow-lg ring-2 ring-blue-900" id="mobileCartCount">0</div><div class="flex flex-col"><span class="text-xs text-gray-400">ยอดรวม</span><span class="font-bold text-lg leading-none" id="mobileCartTotal">0 ฿</span></div></div>
             <div class="flex items-center gap-2 text-blue-400 font-bold text-sm">ดูตะกร้า <i class="fas fa-chevron-up"></i></div>
         </div>
@@ -233,7 +234,7 @@
             </div>
             
             <div class="bg-gray-900/50 p-4 border-t border-gray-700">
-                <p class="text-xs text-gray-500">ร้านเจ้พิน ค้าส่ง-ปลีก</p>
+                <p class="text-xs text-gray-500">ร้านเจ้พิน ขายของชำ</p>
             </div>
         </div>
     </div>
@@ -277,6 +278,31 @@
         </div>
     </div>
 
+
+
+    <div id="deleteBillModal" class="fixed inset-0 bg-black/80 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop text-center relative">
+            <div class="bg-red-100 p-6 flex justify-center items-center">
+                <div class="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                    <i class="fas fa-trash-alt text-4xl text-white"></i>
+                </div>
+            </div>
+            <div class="p-6">
+                <h3 class="text-2xl font-extrabold text-gray-800 mb-2">ลบบิลนี้ใช่ไหม?</h3>
+                <p class="text-gray-500 text-sm mb-6">การกระทำนี้จะลบข้อมูลออกจากระบบถาวร<br>และยอดขายของวันนี้จะลดลงทันที</p>
+                <input type="hidden" id="deleteBillIdTarget">
+                
+                <div class="flex gap-3">
+                    <button onclick="closeModal('deleteBillModal')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-xl transition">
+                        ยกเลิก
+                    </button>
+                    <button onclick="executeDeleteBill()" id="btnConfirmDeleteBill" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-lg transition transform active:scale-95">
+                        ยืนยันลบ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <div id="confirmOrderModal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-end lg:items-center justify-center p-0 lg:p-4 backdrop-blur-sm">
@@ -423,7 +449,7 @@
 
     <script>
         // ใส่ URL ที่ได้จาก Web App Deployment ใหม่ที่นี่
-        const API_URL = "https://script.google.com/macros/s/AKfycbxsEVswZLqeeijj4NAjeErT2mNaFbGdotAf_ZSo44APCCKgbDlGFf8DVG5FxpsiNRBLzQ/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbz2iYKi8l94peEcsAiQvXEHgF2awm5Uqzj02CGsn5um8_UwdAYlUFschdP43FXq2K_hdQ/exec"; 
         
         // -------------------------------------------------------------
         // 🔴🔴 แก้ไขรหัสโฟลเดอร์ให้ตรงกับที่คุณให้มาแล้ว 🔴🔴
@@ -778,12 +804,35 @@
         }
 
         function scanBarcode(code) {
-            // แก้ไขการเปรียบเทียบ ID ให้เป็น String ทั้งคู่เพื่อความชัวร์ (เพิ่ม .trim() เพื่อตัดช่องว่างใน ID ที่มาจาก Sheet)
-            const item = menuData.find(m => String(m.id).trim() === String(code)) || menuData.find(m => m.name.toLowerCase() === code.toLowerCase());
+            // แปลงรหัสเป็น String และตัดช่องว่างหน้าหลังออกเพื่อความชัวร์
+            const cleanCode = String(code).trim();
+            const lowerCode = cleanCode.toLowerCase();
+
+            // 1. ลองค้นหาจาก ID (บาร์โค้ด) ใน masterData ก่อน (ข้อมูลครบกว่า)
+            let item = masterData.find(m => String(m.id).trim() === cleanCode);
+            
+            // 2. ถ้าไม่เจอใน master ให้หาใน menuData (เผื่อเป็นสินค้าใหม่ที่ยังไม่อัปเดตเข้า master)
+            if (!item) {
+                item = menuData.find(m => String(m.id).trim() === cleanCode);
+            }
+
+            // 3. ถ้ายังไม่เจอ ID ให้ลองหาจาก "ชื่อสินค้า" (แบบตรงตัวเป๊ะๆ)
+            if (!item) {
+                item = masterData.find(m => m.name.toLowerCase() === lowerCode) || 
+                       menuData.find(m => m.name.toLowerCase() === lowerCode);
+            }
+
+            // --- ตรวจสอบผลลัพธ์ ---
             if(item) {
-                addItemToCart(item, "-"); document.getElementById('searchInput').value = ''; showToast(`เพิ่ม ${item.name} แล้ว`, 'success');
+                // ✅ กรณีเจอสินค้า: เพิ่มลงตะกร้าเลย
+                addItemToCart(item, "-"); 
+                document.getElementById('searchInput').value = ''; 
+                showToast(`เพิ่ม ${item.name} แล้ว`, 'success');
             } else {
-                playNotificationSound(); openQuickAddModal(code);
+                // ❌ กรณีไม่เจอสินค้าจริงๆ: ค่อยเปิดหน้าต่างเพิ่มสินค้า
+                speak("ไม่มี");
+                playNotificationSound(); 
+                openQuickAddModal(cleanCode);
             }
         }
         
@@ -1417,13 +1466,182 @@
         }
         
         function openBillDetail(index) { 
-            const bill = historyBills[index]; const modal = document.getElementById('billDetailModal'); const content = document.getElementById('billDetailContent'); 
-            let items = bill.items; if (typeof items === 'string') { try { items = JSON.parse(items); } catch(e) { items = []; } }
+            const bill = historyBills[index]; 
+            const modal = document.getElementById('billDetailModal'); 
+            const content = document.getElementById('billDetailContent'); 
+            
+            let items = bill.items; 
+            if (typeof items === 'string') { try { items = JSON.parse(items); } catch(e) { items = []; } }
+            
             let itemsHtml = ''; 
-            if(Array.isArray(items) && items.length > 0) { itemsHtml = items.map(i => `<div class="flex justify-between py-2 border-b border-dashed border-gray-200 last:border-0"><div class="flex-1"><span class="font-bold text-gray-700 text-sm">${i.name}</span></div><div class="text-right"><span class="text-gray-600 text-sm">x${i.qty}</span><span class="ml-2 font-bold text-gray-800 text-sm">${(i.price * i.qty).toLocaleString()}</span></div></div>`).join(''); } else { itemsHtml = '<p class="text-center text-gray-400 text-sm">ไม่มีรายละเอียดรายการสินค้า</p>'; } 
-            content.innerHTML = `<div class="mb-4 text-center pb-4 border-b"><h4 class="text-xl font-bold text-gray-800">ใบเสร็จรับเงิน</h4><p class="text-gray-500 text-xs font-mono mt-1">ID: ${bill.billId}</p><p class="text-gray-500 text-xs">${new Date(bill.date).toLocaleString('th-TH')}</p></div><div class="flex justify-between mb-3 text-sm bg-gray-50 p-2 rounded"><span class="font-bold text-gray-700">ชื่อ/คิว: ${bill.table}</span><span class="text-gray-600">ประเภท: ${bill.type || '-'}</span></div><div class="rounded-lg mb-4 max-h-60 overflow-y-auto custom-scrollbar">${itemsHtml}</div><div class="space-y-2 text-right border-t pt-3"><div class="flex justify-between text-gray-600 text-sm"><span>รวมทั้งสิ้น</span><span class="font-bold text-lg text-blue-600">${parseFloat(bill.total).toLocaleString()} ฿</span></div><div class="flex justify-between text-xs text-gray-500"><span>รับเงิน (${bill.paymentMethod || 'Cash'})</span><span>${parseFloat(bill.receive || bill.total).toLocaleString()} ฿</span></div><div class="flex justify-between text-xs text-green-600 font-bold"><span>เงินทอน</span><span>${parseFloat(bill.change || 0).toLocaleString()} ฿</span></div></div>`; 
+            if(Array.isArray(items) && items.length > 0) { 
+                itemsHtml = items.map(i => `<div class="flex justify-between py-2 border-b border-dashed border-gray-200 last:border-0"><div class="flex-1"><span class="font-bold text-gray-700 text-sm">${i.name}</span></div><div class="text-right"><span class="text-gray-600 text-sm">x${i.qty}</span><span class="ml-2 font-bold text-gray-800 text-sm">${(i.price * i.qty).toLocaleString()}</span></div></div>`).join(''); 
+            } else { 
+                itemsHtml = '<p class="text-center text-gray-400 text-sm">ไม่มีรายละเอียดรายการสินค้า</p>'; 
+            } 
+            
+            content.innerHTML = `
+                <div class="mb-4 text-center pb-4 border-b relative">
+                    <h4 class="text-xl font-bold text-gray-800">ใบเสร็จรับเงิน</h4>
+                    <p class="text-gray-500 text-xs font-mono mt-1">ID: ${bill.billId}</p>
+                    <p class="text-gray-500 text-xs">${new Date(bill.date).toLocaleString('th-TH')}</p>
+                    
+                    <button onclick="printReceiptFromIndex(${index})" class="absolute top-0 right-0 bg-blue-100 text-blue-600 hover:bg-blue-200 w-8 h-8 rounded-full flex items-center justify-center transition shadow-sm">
+                        <i class="fas fa-print text-sm"></i>
+                    </button>
+                </div>
+                
+                <div class="flex justify-between mb-3 text-sm bg-gray-50 p-2 rounded">
+                    <span class="font-bold text-gray-700">ชื่อ/คิว: ${bill.table}</span>
+                    <span class="text-gray-600">ประเภท: ${bill.type || '-'}</span>
+                </div>
+                
+                <div class="rounded-lg mb-4 max-h-60 overflow-y-auto custom-scrollbar">
+                    ${itemsHtml}
+                </div>
+                
+                <div class="space-y-2 text-right border-t pt-3">
+                    <div class="flex justify-between text-gray-600 text-sm"><span>รวมทั้งสิ้น</span><span class="font-bold text-lg text-blue-600">${parseFloat(bill.total).toLocaleString()} ฿</span></div>
+                    <div class="flex justify-between text-xs text-gray-500"><span>รับเงิน (${bill.paymentMethod || 'Cash'})</span><span>${parseFloat(bill.receive || bill.total).toLocaleString()} ฿</span></div>
+                    <div class="flex justify-between text-xs text-green-600 font-bold"><span>เงินทอน</span><span>${parseFloat(bill.change || 0).toLocaleString()} ฿</span></div>
+                </div>
+                
+                <div class="mt-6 pt-4 border-t border-gray-100">
+                    <button onclick="confirmDeleteBill('${bill.billId}')" class="w-full border border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600 font-bold py-2 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                        <i class="fas fa-trash-alt"></i> ลบบิลนี้ออกจากระบบ
+                    </button>
+                </div>
+            `; 
+            
             modal.classList.remove('hidden'); 
         }
+
+        // --- ฟังก์ชันลบบิล ---
+        function confirmDeleteBill(billId) {
+            document.getElementById('deleteBillIdTarget').value = billId;
+            document.getElementById('deleteBillModal').classList.remove('hidden');
+        }
+
+        function executeDeleteBill() {
+            const billId = document.getElementById('deleteBillIdTarget').value;
+            setLoading('btnConfirmDeleteBill', true, 'กำลังลบ...');
+            
+            fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "deleteBill", billId: billId }) })
+            .then(res => res.json())
+            .then(data => {
+                if(data.result === 'success') {
+                    showToast('ลบบิลเรียบร้อยแล้ว', 'success');
+                    closeModal('deleteBillModal');
+                    closeModal('billDetailModal');
+                    openHistoryModal(); // โหลดประวัติใหม่
+                    openSalesModal();   // รีเฟรชยอดขาย (ถ้าเปิดอยู่)
+                } else {
+                    showCustomAlert('ผิดพลาด', 'ไม่สามารถลบบิลได้: ' + data.error, '<i class="fas fa-exclamation-circle text-red-500"></i>');
+                }
+            })
+            .catch(err => showCustomAlert('Connection Error', 'ตรวจสอบอินเทอร์เน็ต'))
+            .finally(() => setLoading('btnConfirmDeleteBill', false, 'ยืนยันลบ'));
+        }
+
+        // --- ฟังก์ชันพิมพ์ใบเสร็จ (58mm) ---
+        function printReceipt(bill) {
+            // เตรียมรายการสินค้า
+            let items = bill.items;
+            if (typeof items === 'string') { try { items = JSON.parse(items); } catch(e) { items = []; } }
+            
+            let itemsHtml = items.map(i => `
+                <tr>
+                    <td style="text-align: left; padding: 2px 0;">${i.name}<br><span style="font-size: 10px; color: #666;">x${i.qty}</span></td>
+                    <td style="text-align: right; vertical-align: top; padding: 2px 0;">${(i.price * i.qty).toLocaleString()}</td>
+                </tr>
+            `).join('');
+
+            // สร้างหน้าต่างใหม่สำหรับพิมพ์
+            const printWindow = window.open('', '', 'width=300,height=600');
+            
+            // HTML สำหรับใบเสร็จ 58mm
+            const receiptHtml = `
+                <html>
+                <head>
+                    <title>Print Receipt</title>
+                    <style>
+                        body { font-family: 'Courier New', monospace; margin: 0; padding: 10px; width: 58mm; color: #000; font-size: 12px; }
+                        .header { text-align: center; margin-bottom: 10px; }
+                        .store-name { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+                        .divider { border-top: 1px dashed #000; margin: 5px 0; }
+                        table { width: 100%; border-collapse: collapse; }
+                        .total-section { margin-top: 10px; font-weight: bold; font-size: 14px; }
+                        .footer { text-align: center; margin-top: 15px; font-size: 10px; }
+                        @media print {
+                            @page { margin: 0; size: 58mm auto; }
+                            body { margin: 0; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div class="store-name">ร้านเจ้พิน ขายของชำ</div>
+                        <div>ใบเสร็จรับเงิน</div>
+                    </div>
+                    
+                    <div class="divider"></div>
+                    <div style="font-size: 10px;">
+                        <div>วันที่: ${new Date(bill.date).toLocaleString('th-TH')}</div>
+                        <div>Bill ID: ${bill.billId}</div>
+                        <div>ลูกค้า: ${bill.table} (${bill.type})</div>
+                    </div>
+                    <div class="divider"></div>
+
+                    <table>
+                        ${itemsHtml}
+                    </table>
+
+                    <div class="divider"></div>
+
+                    <table>
+                        <tr class="total-section">
+                            <td style="text-align: left;">รวมทั้งสิ้น</td>
+                            <td style="text-align: right;">${parseFloat(bill.total).toLocaleString()}</td>
+                        </tr>
+                        <tr style="font-size: 11px;">
+                            <td style="text-align: left;">รับเงิน</td>
+                            <td style="text-align: right;">${parseFloat(bill.receive || bill.total).toLocaleString()}</td>
+                        </tr>
+                        <tr style="font-size: 11px;">
+                            <td style="text-align: left;">เงินทอน</td>
+                            <td style="text-align: right;">${parseFloat(bill.change || 0).toLocaleString()}</td>
+                        </tr>
+                    </table>
+
+                    <div class="footer">
+                        ขอบคุณที่อุดหนุนครับ/ค่ะ<br>
+                        Powered by ICE KANJANAWAT POS
+                    </div>
+
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 100);
+                        }
+                    <\/script>
+                <\/body>
+                <\/html>
+            `;
+
+            printWindow.document.write(receiptHtml);
+            printWindow.document.close();
+        }
+        
+        function printReceiptFromIndex(index) {
+            const bill = historyBills[index];
+            if(bill) {
+                printReceipt(bill);
+            } else {
+                showCustomAlert('Error', 'ไม่พบข้อมูลบิล');
+            }
+        }
+
+
 
         document.getElementById('editMenuForm').addEventListener('submit', function(e) { e.preventDefault(); setLoading('btnEditSave', true, 'กำลังบันทึก...'); const payload = { action: "editMenu", id: document.getElementById('eId').value, name: document.getElementById('eName').value, price: document.getElementById('ePrice').value, category: document.getElementById('eCategory').value, spicy: "-" }; fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r=>r.json()).then(d=>{ if(d.result==='success') { showToast('แก้ไขสำเร็จ', 'success'); closeModal('editMenuModal'); fetchMenu(); } }).finally(()=>setLoading('btnEditSave', false, 'บันทึก')); });
         
@@ -1444,7 +1662,7 @@
                     const payload = { action: "addMenu", name: document.getElementById('mName').value, price: document.getElementById('mPrice').value, category: document.getElementById('mCategory').value, spicy: "-", image: base64Data, mimeType: "image/jpeg", fileName: file.name.replace(/\.[^/.]+$/, "") + ".jpg" };
                     if (mCode) { payload.id = mCode; }
                     sendAddMenu(payload);
-                }).catch(err => { console.error(err); setLoading('btnSaveMenu', false, 'บันทึก'); showCustomAlert('Error', 'ไม่สามารถประมวลผลรูปภาพได้'); });
+                } ).catch(err => { console.error(err); setLoading('btnSaveMenu', false, 'บันทึก'); showCustomAlert('Error', 'ไม่สามารถประมวลผลรูปภาพได้'); });
             } else {
                  setLoading('btnSaveMenu', true, 'กำลังบันทึก...'); 
                  const payload = { action: "addMenu", name: document.getElementById('mName').value, price: document.getElementById('mPrice').value, category: document.getElementById('mCategory').value, spicy: "-", image: "", mimeType: "", fileName: "" };
@@ -1582,6 +1800,7 @@
             }
             modal.classList.remove('hidden');
         }
+        
     </script>
 </body>
 </html>
