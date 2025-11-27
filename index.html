@@ -1956,14 +1956,30 @@
         // ==========================================
         
         // เช็คสถานะ Login ตอนเปิดเว็บ
+        // เช็คสถานะ Login ตอนเปิดเว็บ (แก้ไข: ลูกค้าไม่ต้อง Login)
         function checkLoginStatus() {
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
             const loginScreen = document.getElementById('loginScreen');
             
+            // 1. 🟢 เช็คว่าเป็น "โหมดลูกค้า" หรือไม่ (ดูจาก URL Parameter)
+            const urlParams = new URLSearchParams(window.location.search);
+            const isCustomer = urlParams.get('mode') === 'customer';
+            
+            // ถ้าเป็นลูกค้า ให้ผ่านได้เลย (ซ่อนหน้า Login)
+            if (isCustomer || (typeof isCustomerMode !== 'undefined' && isCustomerMode)) {
+                loginScreen.classList.add('hidden');
+                initStoreStatus(); // เริ่มโหลดข้อมูลร้าน
+                return; // จบการทำงาน (ไม่ต้องเช็ค Password)
+            }
+
+            // 2. 🔐 ถ้าเป็นร้านค้า (Admin) ให้เช็ค Login ตามปกติ
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            
             if (isLoggedIn === 'true') {
+                // ถ้า Login แล้ว ให้ซ่อนหน้า Login
                 loginScreen.classList.add('hidden');
                 initStoreStatus(); 
             } else {
+                // ถ้ายังไม่ Login ให้แสดงหน้า Login
                 loginScreen.classList.remove('hidden');
             }
         }
