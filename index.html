@@ -749,7 +749,28 @@
             }
         }
         
-        function checkPaymentEnter(e) { if(e.key === 'Enter') { e.preventDefault(); if(!document.getElementById('btnConfirmPay').disabled) { confirmPayment(); } else { playNotificationSound(); } } }
+        function checkPaymentEnter(e) { 
+            if(e.key === 'Enter') { 
+                e.preventDefault(); 
+                
+                const inputVal = Number(document.getElementById('inputReceived').value);
+                
+                // --- 🔴 เงื่อนไขใหม่: ถ้าช่องเงินเป็น 0 หรือว่างเปล่า ---
+                if (inputVal === 0) {
+                    setExactMoney();  // เรียกฟังก์ชันใส่ยอดเงินให้พอดี (มีอยู่แล้วในระบบ)
+                    confirmPayment(); // สั่งบันทึกปิดบิลทันที
+                    return;
+                }
+                // ----------------------------------------------------
+
+                // กรณีปกติ (มีการพิมพ์ยอดเงินเข้ามาแล้ว)
+                if(!document.getElementById('btnConfirmPay').disabled) { 
+                    confirmPayment(); 
+                } else { 
+                    playNotificationSound(); // เสียงเตือนถ้าเงินยังไม่ครบ
+                } 
+            } 
+        }
 
         function addManualItem(price) {
             const manualItem = { id: "MANUAL-" + Date.now(), name: "สินค้าทั่วไป", price: price, category: "เบ็ดเตล็ด", image: "", isHidden: true };
