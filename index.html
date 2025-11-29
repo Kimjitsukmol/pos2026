@@ -518,63 +518,62 @@
     
     <div id="kitchenModal" class="fixed inset-0 bg-gray-100 hidden z-50 flex flex-col animate-slide-up"><div class="bg-orange-600 p-4 text-white flex justify-between items-center shadow-md shrink-0"><h3 class="font-bold text-lg"><i class="fas fa-box mr-2"></i>รายการต้องจัดเตรียม (หลังร้าน)</h3><div class="flex gap-2"><button onclick="fetchOrders()" class="bg-white/20 rounded px-3 py-1"><i class="fas fa-sync-alt"></i></button><button onclick="closeModal('kitchenModal')" class="bg-white/20 rounded px-3 py-1"><i class="fas fa-times"></i></button></div></div><div class="flex-1 overflow-y-auto p-4 bg-gray-100 custom-scrollbar"><div id="kitchenGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-10"></div></div></div>
     
-    <!-- Payment Modal (Updated: Dynamic PromptPay) -->
-    <div id="paymentModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
-        <div class="absolute inset-0" onclick="closeModal('paymentModal')"></div>
+    <div id="paymentModal" class="fixed inset-0 z-[100] hidden flex items-start justify-start">
+    <div class="absolute inset-0" onclick="closeModal('paymentModal')"></div>
 
-        <div class="bg-white rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.2)] w-full max-w-xs overflow-hidden animate-pop relative border border-gray-200">
+    <div id="draggableModal" class="bg-white rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.2)] w-full max-w-xs overflow-hidden animate-pop absolute border border-gray-200" style="left: 20%; top: 15%;">
+        
+        <div id="modalHeader" class="bg-blue-900 p-3 text-white flex justify-between items-center shrink-0 cursor-move">
+            <h3 class="font-bold text-base"><i class="fas fa-hand-holding-usd mr-2"></i>รับเงิน</h3>
+            <button onclick="closeModal('paymentModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-6 h-6 flex items-center justify-center transition"><i class="fas fa-times text-xs"></i></button>
+        </div>
+        
+        <div class="p-4">
+            <div id="quickPayTableNoContainer" class="hidden"><input type="text" id="quickPayTableNo"></div>
             
-            <div class="bg-blue-900 p-3 text-white flex justify-between items-center shrink-0">
-                <h3 class="font-bold text-base"><i class="fas fa-hand-holding-usd mr-2"></i>รับเงิน</h3>
-                <button onclick="closeModal('paymentModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-6 h-6 flex items-center justify-center transition"><i class="fas fa-times text-xs"></i></button>
-            </div>
-            
-            <div class="p-4">
-                <div id="quickPayTableNoContainer" class="hidden"><input type="text" id="quickPayTableNo"></div>
-                
-                <div class="bg-gray-50 p-2 rounded-xl border border-gray-100 text-center mb-2">
-                    <div class="relative overflow-hidden rounded-lg bg-white h-64 flex items-center justify-center cursor-pointer group" onclick="handleQRClick()">
-                        <img id="bankQRImage" src="" class="h-full w-auto object-contain" alt="QR">
-                        <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                            <span class="text-white text-xs font-bold"><i class="fas fa-expand"></i> ดูรูปเต็ม</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex gap-2 mt-2 justify-center">
-                        <button onclick="openPromptPayModal()" class="flex-1 bg-blue-100 text-blue-600 px-2 py-1.5 rounded-lg text-[10px] font-bold hover:bg-blue-200 transition">
-                            <i class="fas fa-cog mr-1"></i> ตั้งค่าพร้อมเพย์
-                        </button>
-                        <button onclick="checkAndUseOriginalQR()" class="flex-1 bg-gray-200 text-gray-600 px-2 py-1.5 rounded-lg text-[10px] font-bold hover:bg-gray-300 transition">
-                            <i class="fas fa-image mr-1"></i> ใช้รูปเดิม
-                        </button>
-                    </div>
-                    <input type="file" id="bankQRInput" class="hidden" accept="image/*" onchange="uploadBankQRFile(this)">
-                </div>
-
-                <div class="flex justify-between items-end px-4 mb-2 h-8">
-                    <div class="text-xs font-bold text-gray-500">
-                        ยอดรวม: <span id="modalTotalPay" class="text-blue-600 text-base ml-1">0</span> ฿
-                    </div>
-                    <div id="modalChangeBox" class="text-xs font-bold text-gray-500 opacity-0 transform translate-y-2 transition-all duration-300">
-                        เงินทอน: <span id="modalChangePay" class="text-green-600 text-lg ml-1 drop-shadow-sm">0</span> ฿
+            <div class="bg-gray-50 p-2 rounded-xl border border-gray-100 text-center mb-2">
+                <div class="relative overflow-hidden rounded-lg bg-white h-64 flex items-center justify-center cursor-pointer group" onclick="handleQRClick()">
+                    <img id="bankQRImage" src="" class="h-full w-auto object-contain" alt="QR">
+                    <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                        <span class="text-white text-xs font-bold"><i class="fas fa-expand"></i> ดูรูปเต็ม</span>
                     </div>
                 </div>
                 
-                <div class="mb-3 relative text-center">
-                    <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-wide">ยอดเงินที่รับ</label>
-                    <div class="relative">
-                        <input type="number" id="inputReceived" oninput="calcChange()" onkeydown="checkPaymentEnter(event)" 
-                               class="w-1/3 mx-auto block text-base font-bold text-center border border-blue-500 rounded-lg p-1 text-blue-600 placeholder-gray-200 focus:ring-2 focus:ring-blue-100 outline-none transition-all shadow-inner bg-blue-50/50" 
-                               placeholder="0">
-                    </div>
+                <div class="flex gap-2 mt-2 justify-center">
+                    <button onclick="openPromptPayModal()" class="flex-1 bg-blue-100 text-blue-600 px-2 py-1.5 rounded-lg text-[10px] font-bold hover:bg-blue-200 transition">
+                        <i class="fas fa-cog mr-1"></i> ตั้งค่าพร้อมเพย์
+                    </button>
+                    <button onclick="checkAndUseOriginalQR()" class="flex-1 bg-gray-200 text-gray-600 px-2 py-1.5 rounded-lg text-[10px] font-bold hover:bg-gray-300 transition">
+                        <i class="fas fa-image mr-1"></i> ใช้รูปเดิม
+                    </button>
                 </div>
-
-                <button onclick="confirmPayment()" id="btnConfirmPay" class="w-1/2 mx-auto block bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-xl text-base shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition transform active:scale-95" disabled>
-                    รับเงิน (Enter)
-                </button>
+                <input type="file" id="bankQRInput" class="hidden" accept="image/*" onchange="uploadBankQRFile(this)">
             </div>
+
+            <div class="flex justify-between items-end px-4 mb-2 h-8">
+                <div class="text-xs font-bold text-gray-500">
+                    ยอดรวม: <span id="modalTotalPay" class="text-blue-600 text-base ml-1">0</span> ฿
+                </div>
+                <div id="modalChangeBox" class="text-xs font-bold text-gray-500 opacity-0 transform translate-y-2 transition-all duration-300">
+                    เงินทอน: <span id="modalChangePay" class="text-green-600 text-lg ml-1 drop-shadow-sm">0</span> ฿
+                </div>
+            </div>
+            
+            <div class="mb-3 relative text-center">
+                <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-wide">ยอดเงินที่รับ</label>
+                <div class="relative">
+                    <input type="number" id="inputReceived" oninput="calcChange()" onkeydown="checkPaymentEnter(event)" 
+                           class="w-1/3 mx-auto block text-base font-bold text-center border border-blue-500 rounded-lg p-1 text-blue-600 placeholder-gray-200 focus:ring-2 focus:ring-blue-100 outline-none transition-all shadow-inner bg-blue-50/50" 
+                           placeholder="0">
+                </div>
+            </div>
+
+            <button onclick="confirmPayment()" id="btnConfirmPay" class="w-1/2 mx-auto block bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-xl text-base shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition transform active:scale-95" disabled>
+                รับเงิน (Enter)
+            </button>
         </div>
     </div>
+</div>
     
     <div id="editMenuModal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-pop"><div class="bg-yellow-500 p-4 flex justify-between items-center text-white"><h3 class="font-bold text-lg text-black">แก้ไขข้อมูลสินค้า</h3><button onclick="closeModal('editMenuModal')" class="bg-black/10 rounded-full w-8 h-8 text-black"><i class="fas fa-times"></i></button></div><form id="editMenuForm" class="p-6 space-y-4"><input type="hidden" id="eId"><div><label class="label">ชื่อสินค้า</label><input type="text" id="eName" required class="input-box"></div><div class="flex gap-4"><div class="flex-1"><label class="label">ราคา</label><input type="number" id="ePrice" required class="input-box"></div><div class="flex-1"><label class="label">หมวดหมู่</label><select id="eCategory" class="input-box"></select></div></div><div class="flex gap-3 pt-2"><button type="button" onclick="deleteMenu()" id="btnDeleteMenu" class="flex-1 bg-red-50 text-red-600 font-bold py-3 rounded-xl border border-red-200">ลบ</button><button type="submit" id="btnEditSave" class="flex-[2] bg-yellow-500 text-black font-bold py-3 rounded-xl shadow">บันทึก</button></div></form></div></div>
     
@@ -2608,6 +2607,50 @@
             });
         }
 
+        // 🟢 NEW: ฟังก์ชันทำให้ Modal ลากได้
+function makeDraggable(draggableElement, dragHandle) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    
+    if (dragHandle) {
+        dragHandle.onmousedown = dragMouseDown;
+    } else {
+        draggableElement.onmousedown = dragMouseDown;
+    }
+
+    function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        
+        // รับตำแหน่งเริ่มต้นของเมาส์
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        
+        // คำนวณตำแหน่งใหม่ของเมาส์
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        
+        // กำหนดตำแหน่งใหม่ให้กับ Modal Card
+        draggableElement.style.top = (draggableElement.offsetTop - pos2) + "px";
+        draggableElement.style.left = (draggableElement.offsetLeft - pos1) + "px";
+    }
+
+    function closeDragElement() {
+        // หยุดการลากเมื่อปล่อยเมาส์
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
+}
+
 
         
         /// Window Load
@@ -2618,6 +2661,14 @@
             
             // 👇 เพิ่มบรรทัดนี้ครับ
             setupPasswordRestrictions(); // เปิดระบบป้องกันพิมพ์ไทย
+            
+            // 🔴 NEW: เรียกใช้งาน Make Draggable
+            const modal = document.getElementById("draggableModal");
+            const header = document.getElementById("modalHeader");
+            if (modal && header) {
+                makeDraggable(modal, header);
+            }
+            // ------------------------------------
             
             if (originalOnload) originalOnload();
         };
