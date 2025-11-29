@@ -183,17 +183,17 @@
 
 
     <!-- Navbar -->
-    <nav class="bg-gradient-to-r from-blue-700 to-blue-900 text-white p-3 shadow-lg flex justify-between items-center z-30 shrink-0 gap-3">
+    <nav class="bg-gradient-to-r from-blue-700 to-blue-900 text-white p-2 shadow-lg flex justify-between items-center z-30 shrink-0 gap-2">
         <div class="flex items-center gap-2 overflow-hidden shrink-0">
             <div class="bg-white text-blue-700 p-1.5 rounded-full w-9 h-9 flex items-center justify-center font-bold shadow shrink-0">🏪</div>
             <div class="flex flex-col">
                 <h1 class="text-lg font-bold tracking-wide whitespace-nowrap truncate hidden sm:block">ร้านเจ้พิน</h1>
                 <h1 class="text-lg font-bold tracking-wide whitespace-nowrap truncate sm:hidden">ร้านเจ้พิน</h1>
-                <span id="dateTimeDisplay" class="text-sm sm:text-2xl text-blue-200 font-mono leading-none">...</span>
+                <span id="dateTimeDisplay" class="text-xs sm:text-lg text-blue-200 font-mono leading-none">...</span>
             </div>
         </div>
         
-        <div id="adminToolbar" class="flex gap-2 overflow-x-auto hide-scrollbar smooth-scroll items-center flex-1 justify-end min-w-0">
+        <div id="adminToolbar" class="flex gap-2 overflow-x-auto hide-scrollbar smooth-scroll items-center min-w-0 ml-auto">
             <button onclick="logout()" class="bg-red-500/20 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-sm transition border border-red-500/30 shrink-0 font-bold mr-1 group">
                 <i class="fas fa-power-off group-hover:scale-110 transition-transform"></i>
             </button>
@@ -205,7 +205,7 @@
                 <div id="storeToggleBg" class="w-10 h-5 rounded-full relative transition-colors duration-300 shadow-inner flex items-center">
                     <div id="storeToggleDot" class="w-4 h-4 bg-white rounded-full absolute shadow-md transform transition-transform duration-300 left-0.5"></div>
                 </div>
-                <span id="storeStatusText" class="text-xs font-bold text-white group-hover:text-blue-100 min-w-[35px]">เปิดร้าน</span>
+                <span id="storeStatusText" class="text-xs font-bold text-white group-hover:text-blue-100 min-w-[35px]">เปิด</span>
             </div>
 
             <button onclick="openQRModal()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-sm transition border border-white/20 shrink-0 font-bold"><i class="fas fa-qrcode"></i> <span class="hidden sm:inline">QR ลูกค้า</span></button>
@@ -247,7 +247,7 @@
             <!-- MENU GRID -->
             <div class="flex-1 overflow-y-auto p-4 pb-24 lg:pb-4 relative custom-scrollbar bg-gray-100" id="menuContainer">
                 <div id="loadingMenu" class="absolute inset-0 flex flex-col items-center justify-center bg-white/80 z-20 backdrop-blur-sm hidden"><i class="fas fa-circle-notch fa-spin text-4xl text-blue-500 mb-3"></i><p class="text-gray-500 font-medium animate-pulse">กำลังโหลดข้อมูลสินค้า...</p></div>
-                <div id="menuGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4 content-start"></div>
+                <div id="menuGrid" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4 content-start"></div>
                 
                 <!-- No Results / Error State -->
                 <div id="noResults" class="hidden flex flex-col items-center justify-center py-10 text-gray-400 text-center">
@@ -261,14 +261,14 @@
         </div>
 
         <!-- Right: Cart Area -->
-        <div id="cartPanel" class="hidden lg:flex flex-col w-full lg:w-[400px] bg-white shadow-2xl border-l border-gray-200 z-40 fixed inset-0 lg:static lg:h-auto animate-slide-up lg:animate-none">
+        <div id="cartPanel" class="hidden md:flex flex-col w-full md:w-[340px] lg:w-[400px] bg-white shadow-2xl border-l border-gray-200 z-40 fixed inset-0 md:static md:h-auto animate-slide-up md:animate-none">
             
             <div class="lg:hidden bg-blue-700 text-white p-4 flex justify-between items-center shadow-md shrink-0">
                 <h2 class="text-xl font-bold"><i class="fas fa-shopping-cart mr-2"></i>ตะกร้าสินค้า</h2>
                 <button onclick="toggleCart(false)" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8 flex items-center justify-center"><i class="fas fa-chevron-down"></i></button>
             </div>
             
-            <div class="hidden lg:flex flex-col bg-blue-50 border-b border-blue-100 shrink-0 relative overflow-hidden transition-all duration-500" id="cartHeaderArea">
+            <div class="hidden md:flex flex-col bg-blue-50 border-b border-blue-100 shrink-0 relative overflow-hidden transition-all duration-500" id="cartHeaderArea">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
                 
                 <div class="p-4 pb-2 flex items-center justify-between relative z-10">
@@ -312,7 +312,7 @@
         </div>
 
         <!-- Mobile Bottom Bar -->
-        <div id="mobileBottomBar" onclick="toggleCart(true)" class="lg:hidden fixed bottom-4 left-4 right-4 bg-gray-900 text-white p-4 rounded-2xl shadow-2xl flex justify-between items-center z-20 cursor-pointer transform transition-all duration-300 translate-y-[150%] active:scale-95 border border-gray-700/50 backdrop-blur-md bg-opacity-95">
+        <div id="mobileBottomBar" onclick="toggleCart(true)" class="md:hidden fixed bottom-4 left-4 right-4 bg-gray-900 text-white p-4 rounded-2xl shadow-2xl flex justify-between items-center z-20 cursor-pointer transform transition-all duration-300 translate-y-[150%] active:scale-95 border border-gray-700/50 backdrop-blur-md bg-opacity-95">
             <div class="flex items-center gap-3"><div class="bg-blue-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold shadow-lg ring-2 ring-blue-900" id="mobileCartCount">0</div><div class="flex flex-col"><span class="text-xs text-gray-400">ยอดรวม</span><span class="font-bold text-lg leading-none" id="mobileCartTotal">0 ฿</span></div></div>
             <div class="flex items-center gap-2 text-blue-400 font-bold text-sm">ดูตะกร้า <i class="fas fa-chevron-up"></i></div>
         </div>
@@ -872,58 +872,54 @@
         };
 
         function initGlobalShortcuts() {
-            document.addEventListener('keydown', function(event) {
-                
-                // --------------------------------------------------
-                // 🟢 แก้ไข: ปุ่ม '+' (คิดเงิน/ชำระเงิน)
-                // รองรับทั้ง NumpadAdd (แป้นตัวเลข) และ + ปกติ
-                // --------------------------------------------------
-                if (event.key === '+' || event.code === 'NumpadAdd' || event.key === 'Add') {
-                    
-                    // ⚠️ สำคัญมาก: คำสั่งนี้จะ "หยุด" ไม่ให้พิมพ์เครื่องหมาย + ลงไปในช่อง
-                    event.preventDefault(); 
-                    
-                    const paymentModal = document.getElementById('paymentModal');
-                    
-                    // ถ้าหน้าจอจ่ายเงินเปิดอยู่ -> ให้ปิด
-                    if (!paymentModal.classList.contains('hidden')) {
-                        closeModal('paymentModal');
-                    } else {
-                        // ถ้าปิดอยู่ -> ให้กดปุ่มคิดเงินทันที
-                        handleCheckoutClick();
-                    }
-                    return; // จบการทำงาน
-                }
-                
-                // --------------------------------------------------
-                // 🟢 แก้ไข: ปุ่ม '.' (โฟกัสช่องค้นหา)
-                // รองรับ NumpadDecimal, Decimal และ . ปกติ
-                // --------------------------------------------------
-                if (event.key === '.' || event.code === 'NumpadDecimal' || event.key === 'Decimal' || event.key === 'Separator') {
-                    
-                    const searchInput = document.getElementById('searchInput');
-                    const activeEl = document.activeElement;
+    // เพิ่มตัวแปร true ด้านหลังสุด เพื่อเปิดโหมด Capture (ทำงานก่อนช่องค้นหาแน่นอน)
+    document.addEventListener('keydown', function(event) {
+        
+        // --- 1. จัดการปุ่ม + (ชำระเงิน) ---
+        if (event.key === '+' || event.code === 'NumpadAdd' || event.key === 'Add') {
+            
+            const inputReceived = document.getElementById('inputReceived');
+            
+            // ข้อยกเว้นเดียว: ถ้ากำลังพิมพ์ตัวเลขใน "ช่องรับเงิน" ให้พิมพ์ได้ตามปกติ
+            if (document.activeElement === inputReceived) {
+                return; 
+            }
 
-                    // 1. ถ้ากำลังพิมพ์อยู่ใน "ช่องค้นหา" อยู่แล้ว -> ให้พิมพ์จุดได้ตามปกติ (อย่าขัดจังหวะ)
-                    if (activeEl === searchInput) { return; }
-
-                    // 2. ถ้ากำลังพิมพ์อยู่ใน "ช่องราคา" หรือ "ช่องใส่เงิน" (input type=number) -> ให้พิมพ์จุดทศนิยมได้
-                    if (activeEl.tagName === 'INPUT' && activeEl.type === 'number') { return; }
-                    
-                    // 3. นอกเหนือจากนั้น -> ให้ดึงเมาส์ไปที่ช่องค้นหาทันที
-                    event.preventDefault(); // ห้ามพิมพ์จุด
-                    searchInput.focus(); 
-                    searchInput.select();
-                }
-                
-                // --------------------------------------------------
-                // 🟢 เพิ่มเติม: ปุ่ม Enter (บน Numpad) ให้ทำงานเหมือน Enter ปกติ
-                // --------------------------------------------------
-                if (event.code === 'NumpadEnter') {
-                    // ปล่อยให้ทำงานตาม Event ปกติของ Enter ที่เขียนไว้ที่อื่น
-                }
-            });
+            // นอกเหนือจากนั้น "สั่งหยุด" ทุกอย่าง แล้วเปิดหน้าคิดเงินทันที
+            event.preventDefault();  // ห้ามพิมพ์ + ลงในช่องใดๆ
+            event.stopPropagation(); // ห้ามคำสั่งอื่นทำงานซ้อน
+            
+            const paymentModal = document.getElementById('paymentModal');
+            // ถ้าหน้าจอจ่ายเงินเปิดอยู่ -> ให้ปิด
+            if (!paymentModal.classList.contains('hidden')) {
+                closeModal('paymentModal');
+            } else {
+                // ถ้าปิดอยู่ -> ให้กดปุ่มคิดเงินทันที
+                handleCheckoutClick();
+            }
         }
+        
+        // --- 2. จัดการปุ่ม . (โฟกัสช่องค้นหา) ---
+        if (event.key === '.' || event.code === 'NumpadDecimal' || event.key === 'Decimal' || event.key === 'Separator') {
+            
+            const activeEl = document.activeElement;
+            const searchInput = document.getElementById('searchInput');
+
+            // ถ้ากำลังพิมพ์ราคาใน "ช่องรับเงิน" -> ยอมให้พิมพ์จุดทศนิยมได้
+            if (activeEl.tagName === 'INPUT' && activeEl.type === 'number') { 
+                return; 
+            }
+            
+            // นอกนั้น บังคับเคลียร์ช่องค้นหา แล้วโฟกัสใหม่ทันที
+            event.preventDefault(); // ห้ามพิมพ์ . ลงไป
+            event.stopPropagation(); // ห้ามคำสั่งอื่นทำงานซ้อน
+            
+            searchInput.focus(); 
+            searchInput.value = ''; // ล้างค่าเก่าทิ้ง พร้อมยิงบาร์โค้ดใหม่
+        }
+
+    }, true); // <--- 🔴 สำคัญมาก: ต้องมี true ตรงนี้ เพื่อให้คำสั่งนี้ทำงานเป็นอันดับแรกสุด
+}
 
         function initQuickAddShortcuts() {
              const mPrice = document.getElementById('mPrice');
@@ -1000,9 +996,27 @@
         }
 
         function handleSearchKeydown(event) {
+            // --- 🔴 เพิ่มใหม่: ดักจับปุ่ม + และ . ในช่องนี้โดยเฉพาะ ---
+            
+            // 1. ถ้ากด + (NumpadAdd) ในช่องนี้ ให้หยุดพิมพ์ แล้วไปเรียก Global Shortcut แทน
+            if (event.key === '+' || event.code === 'NumpadAdd' || event.key === 'Add') {
+                event.preventDefault();
+                // เรียกฟังก์ชันคิดเงินเลย (เพื่อความชัวร์)
+                handleCheckoutClick();
+                return;
+            }
+
+            // 2. ถ้ากด . (NumpadDecimal) ในช่องนี้ ให้เคลียร์ค่าทิ้ง
+            if (event.key === '.' || event.code === 'NumpadDecimal' || event.key === 'Decimal') {
+                event.preventDefault();
+                document.getElementById('searchInput').value = ''; // เคลียร์ช่องให้ว่าง
+                return;
+            }
+            // -----------------------------------------------------
+
             const val = document.getElementById('searchInput').value;
             if (val === '') {
-                if (event.key === '0' || event.key === '.' || event.key === 'Decimal') { event.preventDefault(); return; }
+                if (event.key === '0') { event.preventDefault(); return; }
                 if (event.key === 'Enter') { event.preventDefault(); if (cart.length > 0) { updateQty(0, 1); } return; }
                 if (event.key === 'Backspace') { if (cart.length > 0) { if (cart[0].qty > 1) { updateQty(0, -1); } } return; }
             }
@@ -1160,15 +1174,25 @@
                 
                 grid.innerHTML = filtered.map((item) => {
                     const editBtnHtml = isCustomerMode ? '' : `<button onclick="handleEditClick('${item.id}', event)" class="absolute top-2 right-2 bg-white/80 hover:bg-white text-gray-400 hover:text-orange-500 w-8 h-8 rounded-full shadow-sm backdrop-blur-sm z-10 flex items-center justify-center transition-all duration-200"><i class="fas fa-pencil-alt text-xs"></i></button>`;
+                    // --- ส่วนที่แก้ไข: การจัดการรูปภาพ ---
                     const imageUrl = getDriveUrl(item.image);
                     const hasImage = imageUrl && imageUrl.length > 10;
                     let imageHtml;
-                    
+
                     if (hasImage) {
-                        imageHtml = `<img src="${imageUrl}" class="w-full h-full object-contain p-2 transition duration-500 group-hover:scale-110" loading="lazy" onerror="this.parentNode.innerHTML='<div class=\\'w-full h-full bg-blue-50 flex items-center justify-center text-5xl select-none text-blue-200\\'>${getCategoryEmoji(item.category)}</div>'">`;
+                        // กรณีมีรูป
+                        imageHtml = `<img src="${imageUrl}" class="w-full h-full object-contain p-2 transition duration-500 group-hover:scale-110" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+                                    <div class="hidden w-full h-full bg-gray-50 flex flex-col items-center justify-center select-none text-blue-200">
+                                        <i class="fas fa-box-open text-4xl mb-2 opacity-50"></i>
+                                        <div class="text-4xl">${getCategoryEmoji(item.category)}</div>
+                                    </div>`;
                     } else {
-                        const emoji = getCategoryEmoji(item.category); 
-                        imageHtml = `<img src="${imageUrl}" class="max-w-full max-h-full object-contain transition duration-500 group-hover:scale-110" transition duration-500 select-none drop-shadow-sm">${emoji}</div>`;
+                        // กรณีไม่มีรูป (แก้ไข HTML ให้ถูกต้อง ไม่หลุดกรอบ)
+                        const emoji = getCategoryEmoji(item.category);
+                        imageHtml = `<div class="w-full h-full bg-gray-50 flex flex-col items-center justify-center select-none text-blue-200 group-hover:bg-blue-50 transition-colors">
+                                        <i class="fas fa-box-open text-3xl sm:text-4xl mb-2 opacity-30 group-hover:opacity-50 transition-opacity"></i>
+                                        <div class="text-3xl sm:text-4xl filter drop-shadow-sm group-hover:scale-110 transition-transform duration-300">${emoji}</div>
+                                    </div>`;
                     }
 
                     return `
@@ -1754,7 +1778,7 @@
             // --------------------------------------------------------
             if(received >= total) { 
                 changeDisplay.innerText = change.toLocaleString() + " ฿";
-                changeDisplay.className = "text-8xl font-extrabold text-green-600 drop-shadow-md transition-all duration-300 scale-110";
+                changeDisplay.className = "text-5xl lg:text-7xl font-extrabold text-green-600 drop-shadow-md transition-all duration-300 scale-100 lg:scale-110 origin-right";
                 
                 inputEl.classList.replace('border-blue-500', 'border-green-500');
                 inputEl.classList.replace('text-blue-600', 'text-green-600');
@@ -2282,12 +2306,12 @@
                 // สถานะเปิด: สีเขียว, ปุ่มเลื่อนไปขวา
                 bg.className = "w-10 h-5 rounded-full relative transition-colors duration-300 shadow-inner flex items-center bg-green-500";
                 dot.style.transform = "translateX(20px)"; // เลื่อนไปทางขวา
-                text.innerText = "เปิดร้าน";
+                text.innerText = "เปิด";
             } else {
                 // สถานะปิด: สีแดง, ปุ่มเลื่อนกลับมาซ้าย
                 bg.className = "w-10 h-5 rounded-full relative transition-colors duration-300 shadow-inner flex items-center bg-red-500";
                 dot.style.transform = "translateX(0px)"; // อยู่ทางซ้าย
-                text.innerText = "ปิดร้าน";
+                text.innerText = "ปิด";
             }
         }
 
