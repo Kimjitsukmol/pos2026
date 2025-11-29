@@ -521,7 +521,7 @@
     <div id="paymentModal" class="fixed inset-0 z-[100] hidden flex items-start justify-start">
     <div class="absolute inset-0" onclick="closeModal('paymentModal')"></div>
 
-    <div id="draggableModal" class="bg-white rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.2)] w-full max-w-xs overflow-hidden animate-pop absolute border border-gray-200" style="left: 20%; top: 15%;">
+    <div id="draggableModal" class="bg-white rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.2)] w-full max-w-xs overflow-hidden animate-pop absolute border border-gray-200 z-[200]" style="left: 20%; top: 15%;">
         
         <div id="modalHeader" class="bg-blue-900 p-3 text-white flex justify-between items-center shrink-0 cursor-move">
             <h3 class="font-bold text-base"><i class="fas fa-hand-holding-usd mr-2"></i>รับเงิน</h3>
@@ -2226,7 +2226,9 @@
         function confirmDeleteMenu() { setLoading('btnDeleteMenu', true, 'ลบ...'); fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "deleteMenu", id: document.getElementById('eId').value }) }).then(r=>r.json()).then(d=>{ if(d.result === 'success') { showToast('ลบสินค้าแล้ว', 'success'); closeModal('editMenuModal'); fetchMenu(); } else { showCustomAlert('ผิดพลาด', 'ลบสินค้าไม่สำเร็จ: ' + d.error, '<i class="fas fa-exclamation-circle text-red-500"></i>'); } }).catch(err => showCustomAlert('Connection Error', 'ตรวจสอบอินเทอร์เน็ตของคุณ')).finally(()=>setLoading('btnDeleteMenu', false, 'ลบ')); }
         function deleteMenu() { openConfirmActionModal('ยืนยันการลบสินค้า', 'คุณแน่ใจหรือไม่ที่จะลบสินค้านี้? การกระทำนี้ไม่สามารถย้อนกลับได้', '<i class="fas fa-trash-alt"></i>', confirmDeleteMenu); }
         function openConfirmActionModal(title, msg, iconHtml, confirmHandler) { document.getElementById('confirmActionTitle').innerText = title; document.getElementById('confirmActionMsg').innerText = msg; document.getElementById('confirmActionIcon').innerHTML = iconHtml; const confirmBtn = document.getElementById('btnConfirmAction'); confirmBtn.onclick = () => { closeModal('confirmActionModal'); confirmHandler(); }; document.getElementById('confirmActionModal').classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function closeModal(id) { 
+            document.getElementById(id).classList.add('hidden'); 
+        }
         function showToast(msg, type='success') { const toast = document.getElementById('toast'); const iconContainer = toast.querySelector('div:first-child'); const icon = iconContainer.querySelector('i'); if (type === 'warning') { toast.classList.remove('border-green-500'); toast.classList.add('border-yellow-500'); iconContainer.classList.replace('bg-green-100', 'bg-yellow-100'); icon.classList.replace('text-green-600', 'text-yellow-600'); icon.className = 'fas fa-bell'; } else { toast.classList.add('border-green-500'); toast.classList.remove('border-yellow-500'); iconContainer.classList.replace('bg-yellow-100', 'bg-green-100'); icon.classList.replace('text-yellow-600', 'text-green-600'); icon.className = 'fas fa-check'; } document.getElementById('toastMsg').innerText = msg; toast.style.transform = 'translateX(0)'; setTimeout(() => { toast.style.transform = 'translateX(150%)'; }, 3000); }
         function showCustomAlert(title, msg, icon='<i class="fas fa-info-circle text-blue-500"></i>') { document.getElementById('alertTitle').innerText = title; document.getElementById('alertMsg').innerText = msg; document.getElementById('alertIcon').innerHTML = icon; document.getElementById('customAlert').classList.remove('hidden'); }
         function closeCustomAlert() { document.getElementById('customAlert').classList.add('hidden'); }
