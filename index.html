@@ -774,17 +774,28 @@
         }
 
         function checkAndUseOriginalQR() {
-            setLoading('btnUseOriginal', true, 'กำลังตรวจสอบ...'); 
-            fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "checkQR", folderId: QR_FOLDER_ID }) })
-            .then(res => res.json())
-            .then(data => {
-                if(data.result === 'success' && data.found && data.fileId) {
-                    localStorage.setItem('bankQRID', data.fileId); localStorage.removeItem('promptPayID');
-                    initBankQR(); showToast('นำรูปภาพเดิมมาใช้งานแล้ว', 'success');
-                } else { openManageQRModal(false); }
-            })
-            .catch(err => { console.error(err); openManageQRModal(false); showToast('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'warning'); })
-            .finally(() => { setLoading('btnUseOriginal', false, 'ใช้รูปภาพเดิม'); });
+            const savedQR = localStorage.getItem('bankQRID');
+            
+            if (savedQR) {
+                // 1. ลบ PromptPay ID ออกชั่วคราว (เพื่อให้ระบบเลิกสร้าง QR อัตโนมัติ)
+                localStorage.removeItem('promptPayID');
+                
+                // 2. เรียกฟังก์ชันแสดงรูปใหม่ (มันจะไปดึงรูปเดิมมาแสดงเพราะไม่มี PromptPay ID แล้ว)
+                initBankQR();
+                
+                // 3. แจ้งเตือน
+                showToast('กลับมาใช้รูป QR Code เดิมเรียบร้อย', 'success');
+                
+                // เอฟเฟกต์กระพริบที่รูปนิดนึงให้รู้ว่าเปลี่ยนแล้ว
+                const imgEl = document.getElementById('bankQRImage');
+                if(imgEl) {
+                    imgEl.classList.add('opacity-50');
+                    setTimeout(() => imgEl.classList.remove('opacity-50'), 300);
+                }
+            } else {
+                showToast('ไม่พบรูป QR Code เดิมในระบบ', 'warning');
+                speak("ไม่พบรูปเดิมค่ะ");
+            }
         }
 
         function openManageQRModal(hasFile) {
