@@ -2607,37 +2607,64 @@
             });
         }
 
-        // 🟢 NEW: ฟังก์ชันทำให้ Modal ลากได้
-function makeDraggable(draggableElement, dragHandle) {
+        function makeDraggable(draggableElement, dragHandle) {
     let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    
+
+    // 🔴 1. กำหนดเหตุการณ์สำหรับ Mouse และ Touch
     if (dragHandle) {
+        // สำหรับ Mouse
         dragHandle.onmousedown = dragMouseDown;
+        // สำหรับ Touch
+        dragHandle.ontouchstart = dragMouseDown; // ใช้ฟังก์ชันเดียวกัน
     } else {
         draggableElement.onmousedown = dragMouseDown;
+        draggableElement.ontouchstart = dragMouseDown;
     }
 
     function dragMouseDown(e) {
         e = e || window.event;
-        e.preventDefault();
+        // ป้องกันการทำงานเริ่มต้น เช่น การเลื่อนหน้าจอ (Scroll)
+        e.preventDefault(); 
         
-        // รับตำแหน่งเริ่มต้นของเมาส์
-        pos3 = e.clientX;
-        pos4 = e.clientY;
+        // 🔴 2. ตรวจสอบว่าเป็น Touch Event หรือไม่
+        let clientX = e.clientX;
+        let clientY = e.clientY;
+
+        if (e.touches && e.touches.length) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        }
+
+        // รับตำแหน่งเริ่มต้นของเมาส์/นิ้ว
+        pos3 = clientX;
+        pos4 = clientY;
         
         document.onmouseup = closeDragElement;
         document.onmousemove = elementDrag;
+        
+        // 🔴 3. ผูกเหตุการณ์ Touchmove และ Touchend
+        document.ontouchend = closeDragElement;
+        document.ontouchmove = elementDrag;
     }
 
     function elementDrag(e) {
         e = e || window.event;
         e.preventDefault();
         
-        // คำนวณตำแหน่งใหม่ของเมาส์
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
+        // 🔴 4. ตรวจสอบว่าเป็น Touch Event หรือไม่
+        let clientX = e.clientX;
+        let clientY = e.clientY;
+
+        if (e.touches && e.touches.length) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        }
+
+        // คำนวณตำแหน่งใหม่ของเมาส์/นิ้ว
+        pos1 = pos3 - clientX;
+        pos2 = pos4 - clientY;
+        pos3 = clientX;
+        pos4 = clientY;
         
         // กำหนดตำแหน่งใหม่ให้กับ Modal Card
         draggableElement.style.top = (draggableElement.offsetTop - pos2) + "px";
@@ -2645,9 +2672,13 @@ function makeDraggable(draggableElement, dragHandle) {
     }
 
     function closeDragElement() {
-        // หยุดการลากเมื่อปล่อยเมาส์
+        // หยุดการลากเมื่อปล่อยเมาส์/นิ้ว
         document.onmouseup = null;
         document.onmousemove = null;
+        
+        // 🔴 5. ยกเลิกเหตุการณ์ Touch
+        document.ontouchend = null;
+        document.ontouchmove = null;
     }
 }
 
