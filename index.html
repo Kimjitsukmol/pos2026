@@ -725,19 +725,23 @@
             const promptPayID = localStorage.getItem('promptPayID');
             const amount = currentPayOrder ? currentPayOrder.totalPrice : 0;
             const imgEl = document.getElementById('bankQRImage');
-            const labelEl = document.getElementById('ppLabel'); // ตัวต้นเหตุ (อาจจะไม่มีในหน้าใหม่)
+            const labelEl = document.getElementById('ppLabel'); 
 
-            if (!imgEl) return; // ถ้าไม่มีที่ใส่รูป ก็จบการทำงาน
+            if (!imgEl) return; 
 
+            // 🔴 1. ตรวจสอบ PromptPay ID ก่อน (ลำดับความสำคัญสูงกว่า)
             if (promptPayID) {
                 const payload = generatePayload(promptPayID, amount);
                 imgEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${payload}`;
-                // เช็คก่อนว่ามี labelEl ไหม ค่อยใส่ข้อความ
-                if (labelEl) labelEl.innerHTML = `พร้อมเพย์: ${promptPayID} <br><span class="text-blue-600 font-bold">ยอด: ${amount.toLocaleString()} ฿</span>`;
+                if (labelEl) labelEl.innerText = `พร้อมเพย์: ${promptPayID}`; 
+                
+            // 🟢 2. ถ้าไม่มี PromptPay ID แต่มี Bank QR ID
             } else if (savedQR) {
                 const url = getDriveUrl(savedQR);
                 imgEl.src = url + "&t=" + new Date().getTime();
                 if (labelEl) labelEl.innerText = "สแกนจ่ายเงิน (ภาพที่อัปโหลด)";
+                
+            // 3. ถ้าไม่มีทั้งสองอย่าง
             } else {
                 imgEl.src = "https://placehold.co/400x400?text=Set+PromptPay";
                 if (labelEl) labelEl.innerText = "ยังไม่ได้ตั้งค่าพร้อมเพย์";
@@ -760,10 +764,26 @@
         function savePromptPayID() {
             const newID = document.getElementById('ppInput').value;
             if (newID) {
+                // ... โค้ด validation เดิม ...
+                localStorage.setItem('promptPayID', cleanID); 
+                localStorage.removeItem('bankQRID'); // 🔴 บรรทัดนี้ทำให้ ID รูปเดิมหาย
+                showToast('บันทึก PromptPay แล้ว', 'success'); initBankQR(); closeModal('promptPayModal');
+            } else { clearPromptPayID(); }
+        }
+
+        function savePromptPayID() {
+            const newID = document.getElementById('ppInput').value;
+            if (newID) {
                 const cleanID = newID.trim().replace(/[^0-9]/g, '');
                 if (cleanID.length === 10 || cleanID.length === 13) {
-                    localStorage.setItem('promptPayID', cleanID); localStorage.removeItem('bankQRID');
-                    showToast('บันทึก PromptPay แล้ว', 'success'); initBankQR(); closeModal('promptPayModal');
+                    localStorage.setItem('promptPayID', cleanID); 
+                    
+                    // ✅ ลบเฉพาะโค้ดที่ลบ bankQRID ออก เพื่อให้ ID รูปภาพยังคงอยู่
+                    // localStorage.removeItem('bankQRID'); // ❌ ไม่ต้องลบแล้ว
+                    
+                    showToast('บันทึก PromptPay แล้ว', 'success'); 
+                    initBankQR(); 
+                    closeModal('promptPayModal');
                 } else { alert("เบอร์โทรต้องมี 10 หลัก หรือ เลขบัตร 13 หลัก"); }
             } else { clearPromptPayID(); }
         }
@@ -774,26 +794,26 @@
         }
 
         function checkAndUseOriginalQR() {
+            // 1. ตรวจสอบว่ามี ID รูปภาพอยู่ในเครื่องหรือไม่ (ID นี้จะไม่ถูกลบเมื่อตั้ง PromptPay)
             const savedQR = localStorage.getItem('bankQRID');
             
             if (savedQR) {
-                // 1. ลบ PromptPay ID ออกชั่วคราว (เพื่อให้ระบบเลิกสร้าง QR อัตโนมัติ)
+                // 2. ถ้ามีรูปภาพเดิม -> สั่งลบ PromptPay ID ทิ้ง
                 localStorage.removeItem('promptPayID');
                 
-                // 2. เรียกฟังก์ชันแสดงรูปใหม่ (มันจะไปดึงรูปเดิมมาแสดงเพราะไม่มี PromptPay ID แล้ว)
+                // 3. เรียกฟังก์ชันแสดงผล ซึ่งจะใช้ Bank QR ID แทน PromptPay ID ทันที
                 initBankQR();
                 
-                // 3. แจ้งเตือน
                 showToast('กลับมาใช้รูป QR Code เดิมเรียบร้อย', 'success');
                 
-                // เอฟเฟกต์กระพริบที่รูปนิดนึงให้รู้ว่าเปลี่ยนแล้ว
                 const imgEl = document.getElementById('bankQRImage');
                 if(imgEl) {
                     imgEl.classList.add('opacity-50');
                     setTimeout(() => imgEl.classList.remove('opacity-50'), 300);
                 }
             } else {
-                showToast('ไม่พบรูป QR Code เดิมในระบบ', 'warning');
+                // 4. ถ้าไม่มีรูปภาพอยู่ใน Local Storage เลย ให้แจ้งเตือนเหมือนเดิม
+                showToast('ไม่พบรูป QR Code เดิมในระบบ (กรุณาอัปโหลดก่อน)', 'warning');
                 speak("ไม่พบรูปเดิมค่ะ");
             }
         }
