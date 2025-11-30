@@ -875,12 +875,18 @@
             // ใช้ capture phase (true) เพื่อดักจับ Event ก่อนที่จะลงไปถึง Element ลูก
             document.addEventListener('keydown', function(event) {
                 
+                // เก็บค่าปุ่มที่กด เพื่อนำมาเช็คหลายๆ แบบ
+                const key = event.key;   // ตัวอักษรที่ออกมา เช่น ., +, a, 1
+                const code = event.code; // รหัสปุ่มบนแป้น เช่น NumpadDecimal, Period
+
                 // -----------------------------------------------------------
                 // 🔴 1. ปุ่ม + (Toggle Payment Modal) : เปิด/ปิด หน้ารับเงิน
                 // -----------------------------------------------------------
-                if (event.key === '+' || event.code === 'NumpadAdd' || event.key === 'Add') {
+                // เพิ่มเงื่อนไขเช็คละเอียดขึ้นสำหรับ Bluetooth Numpad
+                if (key === '+' || code === 'NumpadAdd' || key === 'Add' || code === 'Equal') {
                     event.preventDefault(); 
                     event.stopPropagation(); 
+                    event.stopImmediatePropagation(); // หยุดทุกอย่างทันที
                     
                     const paymentModal = document.getElementById('paymentModal');
 
@@ -890,15 +896,17 @@
                     } else {
                         handleCheckoutClick(); // ถ้าปิด -> เปิด
                     }
-                    return;
+                    return false;
                 }
                 
                 // -----------------------------------------------------------
                 // 🔴 2. ปุ่ม . (Decimal) : ปิดหน้ารับเงิน หรือ เคลียร์ช่องค้นหา
                 // -----------------------------------------------------------
-                if (event.key === '.' || event.code === 'NumpadDecimal' || event.key === 'Decimal' || event.key === 'Separator') {
+                // เพิ่มเงื่อนไข Period และ Comma (บางรุ่นส่งมาแบบนี้)
+                if (key === '.' || code === 'NumpadDecimal' || key === 'Decimal' || key === 'Separator' || code === 'Period') {
                     event.preventDefault(); // ห้ามพิมพ์ . เด็ดขาด
                     event.stopPropagation(); 
+                    event.stopImmediatePropagation(); // หยุดทุกอย่างทันที
                     
                     const paymentModal = document.getElementById('paymentModal');
                     const searchInput = document.getElementById('searchInput');
@@ -908,10 +916,13 @@
                         // 🟢 ถ้าเปิดอยู่ -> ให้ "ปิด" ลง
                         closeModal('paymentModal');
                     } else {
-                        // 🔵 ถ้าปิดอยู่ -> ให้ "โฟกัสช่องค้นหา" (การทำงานเดิม)
-                        searchInput.focus(); 
-                        searchInput.value = ''; 
+                        // 🔵 ถ้าปิดอยู่ -> ให้ "โฟกัสช่องค้นหา"
+                        if(searchInput) {
+                            searchInput.focus(); 
+                            searchInput.value = ''; 
+                        }
                     }
+                    return false;
                 }
 
             }, true); // <--- true สำคัญมาก ห้ามลบ
