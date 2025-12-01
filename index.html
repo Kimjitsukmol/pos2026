@@ -2973,7 +2973,8 @@ function numpadPress(num) {
     }
 }
 
-// 3. ฟังก์ชันปุ่มพิเศษ (ลบ, Enter)
+// ค้นหาฟังก์ชัน numpadAction แล้วแก้ส่วน action === 'enter' ใหม่ครับ
+
 function numpadAction(action) {
     const paymentModal = document.getElementById('paymentModal');
     const isPaymentOpen = !paymentModal.classList.contains('hidden');
@@ -2991,8 +2992,9 @@ function numpadAction(action) {
             // หน้าจ่ายเงิน: กด Enter = ยืนยันรับเงิน
             confirmPayment();
         } else {
-            // หน้าปกติ: กด Enter = ค้นหา/ยิงบาร์โค้ด
-            // จำลองการกดปุ่ม Enter จริงๆ
+            // 🔴 แก้ไขตรงนี้: เหลือแค่ dispatchEvent อย่างเดียวพอครับ
+            
+            // สร้าง Event จำลองการกด Enter
             const event = new KeyboardEvent('keydown', {
                 key: 'Enter',
                 code: 'Enter',
@@ -3000,15 +3002,11 @@ function numpadAction(action) {
                 keyCode: 13,
                 bubbles: true
             });
+            
+            // ส่งสัญญาณไปที่ Input (ตัว Input มี onkeydown รอรับอยู่แล้ว)
             targetInput.dispatchEvent(event);
             
-            // เรียกฟังก์ชัน handleSearchKeydown โดยตรงเผื่อ event ไม่ติด
-            handleSearchKeydown({ 
-                key: 'Enter', 
-                preventDefault: () => {}, 
-                stopPropagation: () => {},
-                target: targetInput
-            });
+            // ❌ ลบบรรทัดที่เรียก handleSearchKeydown(...) ทิ้งไปเลยครับ เพราะมันซ้ำซ้อน
         }
     }
 }
