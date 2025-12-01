@@ -43,6 +43,18 @@
         @keyframes pop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         .badge-pulse { animation: pulse-blue 2s infinite; }
         @keyframes pulse-blue { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); } 70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(37, 99, 235, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); } }
+
+        /* เพิ่มต่อท้ายใน <style> */
+
+        /* คลาสสำหรับเอฟเฟคปุ่มเด้ง */
+        .btn-pop {
+            transform: scale(1.25) !important; /* ขยายใหญ่ขึ้น 25% */
+            background-color: #bfdbfe !important; /* เปลี่ยนเป็นสีฟ้าอ่อน (bg-blue-200) */
+            color: #1d4ed8 !important; /* ตัวหนังสือสีน้ำเงินเข้ม */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2) !important;
+            z-index: 50; /* ให้ลอยอยู่เหนือปุ่มข้างๆ */
+            transition: all 0.1s ease-out; /* ความลื่นไหล */
+        }
     </style>
 </head>
 
@@ -677,20 +689,22 @@
     </div>
 
     <div class="p-2 grid grid-cols-3 gap-2 flex-1 overflow-auto bg-white/50">
-        <button onclick="numpadPress('7')" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">7</button>
-        <button onclick="numpadPress('8')" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">8</button>
-        <button onclick="numpadPress('9')" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">9</button>
+        <button onclick="numpadPress('7', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">7</button>
+        <button onclick="numpadPress('8', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">8</button>
+        <button onclick="numpadPress('9', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">9</button>
         
-        <button onclick="numpadPress('4')" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">4</button>
-        <button onclick="numpadPress('5')" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">5</button>
-        <button onclick="numpadPress('6')" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">6</button>
+        <button onclick="numpadPress('4', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">4</button>
+        <button onclick="numpadPress('5', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">5</button>
+        <button onclick="numpadPress('6', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">6</button>
         
-        <button onclick="numpadPress('1')" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">1</button>
-        <button onclick="numpadPress('2')" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">2</button>
-        <button onclick="numpadPress('3')" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">3</button>
+        <button onclick="numpadPress('1', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">1</button>
+        <button onclick="numpadPress('2', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">2</button>
+        <button onclick="numpadPress('3', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">3</button>
         
         <button onclick="numpadAction('del')" class="h-12 bg-red-100 shadow-sm rounded-xl font-bold text-lg text-red-600 hover:bg-red-200 hover:shadow-md transition active:scale-95"><i class="fas fa-backspace"></i></button>
-        <button onclick="numpadPress('0')" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">0</button>
+        
+        <button onclick="numpadPress('0', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">0</button>
+        
         <button onclick="numpadAction('enter')" class="h-12 bg-green-500 shadow-lg shadow-green-200 rounded-xl font-bold text-lg text-white hover:bg-green-600 transition active:scale-95">Enter</button>
     </div>
 
@@ -2945,9 +2959,23 @@ function toggleFloatingNumpad() {
     }
 }
 
-// 2. ฟังก์ชันกดตัวเลข
-function numpadPress(num) {
-    playNotificationSound(); // เสียงติ๊ดเบาๆ (ถ้ามี)
+// แก้ไขฟังก์ชัน numpadPress ให้รับ btnElement เพิ่มเข้ามา
+function numpadPress(num, btnElement) {
+    playNotificationSound(); 
+
+    // --- ส่วนเพิ่มเอฟเฟคขยายปุ่ม (Animation) ---
+    if (btnElement) {
+        // ลบ class เดิมก่อน (กันกดรัวแล้วค้าง)
+        btnElement.classList.remove('active:scale-95'); 
+        btnElement.classList.add('btn-pop');
+        
+        // รอ 150ms แล้วคืนค่าเดิม
+        setTimeout(() => {
+            btnElement.classList.remove('btn-pop');
+            btnElement.classList.add('active:scale-95');
+        }, 150);
+    }
+    // ----------------------------------------
     
     // เช็คว่าหน้า "รับเงิน" เปิดอยู่ไหม?
     const paymentModal = document.getElementById('paymentModal');
@@ -2961,14 +2989,13 @@ function numpadPress(num) {
     } else {
         // ถ้าอยู่หน้าปกติ -> ยิงเข้าช่องค้นหา/สแกน
         targetInput = document.getElementById('searchInput');
-        targetInput.focus(); // โฟกัสเพื่อให้พร้อมยิงบาร์โค้ดต่อ
+        targetInput.focus(); 
     }
 
     if (targetInput) {
         // เติมตัวเลขต่อท้าย
         targetInput.value += num;
-        
-        // Trigger Event เพื่อให้ระบบรู้ว่าค่าเปลี่ยน (สำคัญมากสำหรับการคำนวณเงินทอน)
+        // Trigger Event เพื่อให้ระบบคำนวณเงินทอน
         targetInput.dispatchEvent(new Event('input', { bubbles: true }));
     }
 }
