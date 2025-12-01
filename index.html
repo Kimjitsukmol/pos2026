@@ -8,6 +8,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+
+                /* เพิ่มต่อท้ายใน <style> */
+        @keyframes heartbeat { 
+            0% { transform: scale(1); } 
+            50% { transform: scale(1.15); } 
+            100% { transform: scale(1); } 
+        }
+        .animate-heartbeat { 
+            animation: heartbeat 1.2s infinite ease-in-out; 
+            display: inline-block; 
+        }
         /* เพิ่ม Animation Blob */
         @keyframes blob { 
             0% { transform: translate(0px, 0px) scale(1); } 
@@ -231,7 +242,7 @@
     <!-- Main Layout -->
     <div class="flex flex-1 overflow-hidden relative">
         <!-- Left: Menu Area -->
-        <div class="flex-1 flex flex-col bg-gray-100 h-full min-w-0">
+        <div id="leftPanel" class="flex-1 flex flex-col bg-gray-100 h-full min-w-0 transition-all duration-300">
             <!-- SEARCH BAR -->
             <div class="bg-white p-3 shadow-sm z-20 border-b border-gray-200">
                 <div class="relative">
@@ -531,28 +542,38 @@
         <div class="p-4">
             <div id="quickPayTableNoContainer" class="hidden"><input type="text" id="quickPayTableNo"></div>
             
-            <div class="bg-gray-50 p-2 rounded-xl border border-gray-100 text-center mb-2">
-                <div class="relative overflow-hidden rounded-lg bg-white h-64 flex items-center justify-center cursor-pointer group" onclick="handleQRClick()">
-                    <img id="bankQRImage" src="" class="h-full w-auto object-contain" alt="QR">
-                    <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                        <span class="text-white text-xs font-bold"><i class="fas fa-expand"></i> ดูรูปเต็ม</span>
-                    </div>
-                </div>
-                
-                <div class="flex gap-2 mt-2 justify-center">
-                    <button onclick="openPromptPayModal()" class="flex-1 bg-blue-100 text-blue-600 px-2 py-1.5 rounded-lg text-[10px] font-bold hover:bg-blue-200 transition">
-                        <i class="fas fa-cog mr-1"></i> ตั้งค่าพร้อมเพย์
-                    </button>
-                    <button onclick="checkAndUseOriginalQR()" class="flex-1 bg-gray-200 text-gray-600 px-2 py-1.5 rounded-lg text-[10px] font-bold hover:bg-gray-300 transition">
-                        <i class="fas fa-image mr-1"></i> ใช้รูปเดิม
-                    </button>
-                </div>
-                <input type="file" id="bankQRInput" class="hidden" accept="image/*" onchange="uploadBankQRFile(this)">
-            </div>
+            <div class="bg-gray-50 p-2 rounded-xl border border-gray-100 text-center mb-2 relative group-qr">
+    
+    <button onclick="togglePaymentMenu()" class="absolute top-3 right-3 z-20 w-8 h-8 bg-white/90 hover:bg-white rounded-full text-gray-500 hover:text-blue-600 shadow-md flex items-center justify-center transition backdrop-blur-sm border border-gray-200">
+        <i class="fas fa-ellipsis-v"></i>
+    </button>
+
+    <div id="paymentSettingsMenu" class="hidden absolute top-12 right-3 z-30 bg-white shadow-xl rounded-xl border border-gray-100 p-1.5 w-44 flex flex-col gap-1 animate-pop origin-top-right">
+        <button onclick="openPromptPayModal(); togglePaymentMenu()" class="text-left text-xs font-bold text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition flex items-center">
+            <i class="fas fa-cog w-6 text-center mr-1"></i> ตั้งค่าพร้อมเพย์
+        </button>
+        <button onclick="checkAndUseOriginalQR(); togglePaymentMenu()" class="text-left text-xs font-bold text-gray-600 hover:bg-gray-100 p-2 rounded-lg transition flex items-center">
+            <i class="fas fa-image w-6 text-center mr-1"></i> ใช้รูปเดิม
+        </button>
+        <div class="h-px bg-gray-100 my-0.5"></div>
+         <button onclick="document.getElementById('bankQRInput').click(); togglePaymentMenu()" class="text-left text-xs font-bold text-gray-500 hover:bg-gray-100 p-2 rounded-lg transition flex items-center">
+            <i class="fas fa-upload w-6 text-center mr-1"></i> อัปโหลดรูปใหม่
+        </button>
+    </div>
+
+    <div class="relative overflow-hidden rounded-lg bg-white h-64 flex items-center justify-center cursor-pointer group shadow-inner" onclick="handleQRClick()">
+        <img id="bankQRImage" src="" class="h-full w-auto object-contain p-2" alt="QR">
+        <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+            <span class="text-white text-xs font-bold"><i class="fas fa-expand"></i> ดูรูปเต็ม</span>
+        </div>
+    </div>
+    
+    <input type="file" id="bankQRInput" class="hidden" accept="image/*" onchange="uploadBankQRFile(this)">
+</div>
 
             <div class="flex justify-between items-end px-4 mb-2 h-8">
-                <div class="text-xs font-bold text-gray-500">
-                    ยอดรวม: <span id="modalTotalPay" class="text-blue-600 text-base ml-1">0</span> ฿
+                <div class="text-xs font-bold text-gray-500 flex items-baseline">
+                    ยอดรวม: <span id="modalTotalPay" class="text-blue-600 text-4xl font-extrabold ml-2 animate-heartbeat">0</span> <span class="ml-1 text-sm">฿</span>
                 </div>
                 <div id="modalChangeBox" class="text-xs font-bold text-gray-500 opacity-0 transform translate-y-2 transition-all duration-300">
                     เงินทอน: <span id="modalChangePay" class="text-green-600 text-lg ml-1 drop-shadow-sm">0</span> ฿
@@ -1449,59 +1470,61 @@
             } 
         }
         
-        function quickCheckout() {
-            isQuickPayMode = true;
-            const total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-            currentPayOrder = { orderId: null, totalPrice: total };
-            
-            const tableContainer = document.getElementById('quickPayTableNoContainer');
-            if (tableContainer) tableContainer.classList.add('hidden'); 
-            
-            try { initBankQR(); } catch(e) { console.log("QR Init Error", e); }
-            
-            const modal = document.getElementById('paymentModal');
-            if (modal) modal.classList.remove('hidden'); 
+        // ค้นหา function quickCheckout() แล้วแก้ตามนี้
+function quickCheckout() {
+    isQuickPayMode = true;
+    const total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+    currentPayOrder = { orderId: null, totalPrice: total };
+    
+    const tableContainer = document.getElementById('quickPayTableNoContainer');
+    if (tableContainer) tableContainer.classList.add('hidden'); 
+    
+    try { initBankQR(); } catch(e) { console.log("QR Init Error", e); }
+    
+    const modal = document.getElementById('paymentModal');
+    if (modal) modal.classList.remove('hidden'); 
 
-            // ตั้งค่ายอดรวม
-            const modalTotal = document.getElementById('modalTotalPay');
-            if(modalTotal) modalTotal.innerText = total.toLocaleString();
-            
-            // 🟢 แก้ใหม่: รีเซ็ตกล่องเงินทอนให้คืนค่าเดิม (แก้คำว่า "ขาด" กลับเป็น "เงินทอน")
-            const modalChangeBox = document.getElementById('modalChangeBox');
-            if(modalChangeBox) {
-                modalChangeBox.classList.add('opacity-0', 'translate-y-2'); // ซ่อน
-                // คืนค่า HTML กลับเป็น "เงินทอน: 0"
-                modalChangeBox.innerHTML = `เงินทอน: <span id="modalChangePay" class="text-green-600 text-lg ml-1 drop-shadow-sm">0</span> ฿`;
-            }
-            // ----------------------------------------------------
-            
-            // เคลียร์ช่องกรอกเงิน
-            const inputRec = document.getElementById('inputReceived');
-            if (inputRec) {
-                inputRec.value = ''; 
-                setTimeout(() => { inputRec.focus(); }, 100);
-            }
-            
-            // รีเซ็ตหน้าจอหลัก
-            const totalPriceEl = document.getElementById('totalPrice');
-            const changeWrapper = document.getElementById('changeWrapper');
-            if (totalPriceEl) {
-                totalPriceEl.classList.remove('text-4xl', 'translate-y-[-10px]');
-                totalPriceEl.classList.add('text-7xl');
-            }
-            if (changeWrapper) {
-                changeWrapper.classList.add('hidden', 'opacity-0', 'translate-y-4');
-                changeWrapper.classList.remove('flex', 'opacity-100', 'translate-y-0');
-            }
-            
-            const btnConfirm = document.getElementById('btnConfirmPay');
-            if (btnConfirm) {
-                btnConfirm.disabled = true;
-                btnConfirm.classList.add('opacity-50', 'cursor-not-allowed');
-            }
+    // 🔴 [เพิ่ม] สั่งเบลอแผงด้านซ้าย และลดความสว่างลงนิดหน่อยเพื่อให้ตะกร้าเด่นขึ้น
+    const leftPanel = document.getElementById('leftPanel');
+    if(leftPanel) leftPanel.classList.add('blur-sm', 'opacity-50', 'pointer-events-none');
+    // -------------------------------------------------------------
 
-            if (total > 0) { speak("ยอดรวม " + total + " บาท"); }
-        }
+    // ตั้งค่ายอดรวม
+    const modalTotal = document.getElementById('modalTotalPay');
+    if(modalTotal) modalTotal.innerText = total.toLocaleString();
+    
+    // ... (โค้ดส่วนที่เหลือในฟังก์ชันนี้เหมือนเดิม) ...
+    const modalChangeBox = document.getElementById('modalChangeBox');
+    if(modalChangeBox) {
+        modalChangeBox.classList.add('opacity-0', 'translate-y-2'); 
+        modalChangeBox.innerHTML = `เงินทอน: <span id="modalChangePay" class="text-green-600 text-5xl font-extrabold ml-2 drop-shadow-sm animate-heartbeat">0</span> <span class="ml-1 text-sm">฿</span>`;
+    }
+
+    const inputRec = document.getElementById('inputReceived');
+    if (inputRec) {
+        inputRec.value = ''; 
+        setTimeout(() => { inputRec.focus(); }, 100);
+    }
+    
+    const totalPriceEl = document.getElementById('totalPrice');
+    const changeWrapper = document.getElementById('changeWrapper');
+    if (totalPriceEl) {
+        totalPriceEl.classList.remove('text-4xl', 'translate-y-[-10px]');
+        totalPriceEl.classList.add('text-7xl');
+    }
+    if (changeWrapper) {
+        changeWrapper.classList.add('hidden', 'opacity-0', 'translate-y-4');
+        changeWrapper.classList.remove('flex', 'opacity-100', 'translate-y-0');
+    }
+    
+    const btnConfirm = document.getElementById('btnConfirmPay');
+    if (btnConfirm) {
+        btnConfirm.disabled = true;
+        btnConfirm.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+
+    if (total > 0) { speak("ยอดรวม " + total + " บาท"); }
+}
 
         // --- 1. ฟังก์ชันเปิดหน้าต่างยืนยัน (แก้ไข: ซ่อนชื่อ + บังคับที่อยู่) ---
         function openConfirmOrderModal() {
@@ -1794,10 +1817,9 @@
         }
         function markServed(orderId, btn) { const originalContent = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>'; fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "updateOrderStatus", orderId: orderId, status: "Served" }) }).then(() => { fetchOrders(); showToast('สถานะอัปเดตแล้ว', 'success'); }).catch(() => { btn.disabled = false; btn.innerHTML = originalContent; }); }
         
+        // ค้นหา function openPayment(orderId) แล้วแก้ตามนี้
         function openPayment(orderId) { 
             isQuickPayMode = false;
-            
-            // 🔴 ซ่อนช่องกรอกชื่อ (เพราะมีข้อมูลจากออเดอร์อยู่แล้ว)
             document.getElementById('quickPayTableNoContainer').classList.add('hidden');
             
             currentPayOrder = currentOrders.find(o => o.orderId === orderId); 
@@ -1805,6 +1827,12 @@
             
             initBankQR();
             document.getElementById('paymentModal').classList.remove('hidden'); 
+            
+            // 🔴 [เพิ่ม] สั่งเบลอแผงด้านซ้าย
+            const leftPanel = document.getElementById('leftPanel');
+            if(leftPanel) leftPanel.classList.add('blur-sm', 'opacity-50', 'pointer-events-none');
+            // -------------------------------------------------------------
+
             document.getElementById('payTotalDisplay').innerText = currentPayOrder.totalPrice.toLocaleString(); 
             document.getElementById('inputReceived').value = ''; 
             document.getElementById('changeDisplay').innerText = '0.00'; 
@@ -1861,7 +1889,7 @@
                 if(modalChangeBox) {
                     modalChangeBox.classList.remove('opacity-0', 'translate-y-2');
                     // เขียนทับ HTML ใหม่เพื่อแสดงเงินทอน
-                    modalChangeBox.innerHTML = `เงินทอน: <span id="modalChangePay" class="text-green-600 text-lg ml-1 font-extrabold drop-shadow-sm animate-pulse">${change.toLocaleString()}</span> ฿`;
+                    modalChangeBox.innerHTML = `เงินทอน: <span id="modalChangePay" class="text-green-600 text-5xl font-extrabold ml-2 drop-shadow-sm animate-heartbeat">${change.toLocaleString()}</span> <span class="ml-1 text-sm">฿</span>`;
                 }
             } else {
                 totalPriceEl.classList.add('text-7xl');
@@ -1872,7 +1900,7 @@
                      const missing = Math.abs(change);
                      modalChangeBox.classList.remove('opacity-0', 'translate-y-2');
                      // เขียนทับ HTML เพื่อแสดงยอดขาด
-                     modalChangeBox.innerHTML = `- <span class="text-red-500 text-lg ml-1 font-bold">${missing.toLocaleString()}</span> ฿`;
+                     modalChangeBox.innerHTML = `ขาด: <span class="text-red-500 text-4xl font-extrabold ml-2 animate-heartbeat">${missing.toLocaleString()}</span> <span class="ml-1 text-sm">฿</span>`;
                 }
             }
 
@@ -1917,6 +1945,10 @@
             const orderId = currentPayOrder.orderId;
             
             closeModal('paymentModal'); 
+
+            // 🔴 [เพิ่ม] ยกเลิกการเบลอทันที (เพื่อความชัวร์)
+            const leftPanel = document.getElementById('leftPanel');
+            if(leftPanel) leftPanel.classList.remove('blur-sm', 'opacity-50', 'pointer-events-none'); 
             
             speak("ขอบคุณค่ะ");
 
@@ -2353,8 +2385,16 @@
         function confirmDeleteMenu() { setLoading('btnDeleteMenu', true, 'ลบ...'); fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "deleteMenu", id: document.getElementById('eId').value }) }).then(r=>r.json()).then(d=>{ if(d.result === 'success') { showToast('ลบสินค้าแล้ว', 'success'); closeModal('editMenuModal'); fetchMenu(); } else { showCustomAlert('ผิดพลาด', 'ลบสินค้าไม่สำเร็จ: ' + d.error, '<i class="fas fa-exclamation-circle text-red-500"></i>'); } }).catch(err => showCustomAlert('Connection Error', 'ตรวจสอบอินเทอร์เน็ตของคุณ')).finally(()=>setLoading('btnDeleteMenu', false, 'ลบ')); }
         function deleteMenu() { openConfirmActionModal('ยืนยันการลบสินค้า', 'คุณแน่ใจหรือไม่ที่จะลบสินค้านี้? การกระทำนี้ไม่สามารถย้อนกลับได้', '<i class="fas fa-trash-alt"></i>', confirmDeleteMenu); }
         function openConfirmActionModal(title, msg, iconHtml, confirmHandler) { document.getElementById('confirmActionTitle').innerText = title; document.getElementById('confirmActionMsg').innerText = msg; document.getElementById('confirmActionIcon').innerHTML = iconHtml; const confirmBtn = document.getElementById('btnConfirmAction'); confirmBtn.onclick = () => { closeModal('confirmActionModal'); confirmHandler(); }; document.getElementById('confirmActionModal').classList.remove('hidden'); }
+        // ค้นหา function closeModal(id) แล้วแก้ตามนี้
         function closeModal(id) { 
             document.getElementById(id).classList.add('hidden'); 
+            
+            // 🔴 [เพิ่ม] ถ้าปิดหน้าต่างจ่ายเงิน ให้ยกเลิกการเบลอ
+            if (id === 'paymentModal') {
+                const leftPanel = document.getElementById('leftPanel');
+                if(leftPanel) leftPanel.classList.remove('blur-sm', 'opacity-50', 'pointer-events-none');
+            }
+            // -------------------------------------------------------------
         }
         function showToast(msg, type='success') { const toast = document.getElementById('toast'); const iconContainer = toast.querySelector('div:first-child'); const icon = iconContainer.querySelector('i'); if (type === 'warning') { toast.classList.remove('border-green-500'); toast.classList.add('border-yellow-500'); iconContainer.classList.replace('bg-green-100', 'bg-yellow-100'); icon.classList.replace('text-green-600', 'text-yellow-600'); icon.className = 'fas fa-bell'; } else { toast.classList.add('border-green-500'); toast.classList.remove('border-yellow-500'); iconContainer.classList.replace('bg-yellow-100', 'bg-green-100'); icon.classList.replace('text-yellow-600', 'text-green-600'); icon.className = 'fas fa-check'; } document.getElementById('toastMsg').innerText = msg; toast.style.transform = 'translateX(0)'; setTimeout(() => { toast.style.transform = 'translateX(150%)'; }, 3000); }
         function showCustomAlert(title, msg, icon='<i class="fas fa-info-circle text-blue-500"></i>') { document.getElementById('alertTitle').innerText = title; document.getElementById('alertMsg').innerText = msg; document.getElementById('alertIcon').innerHTML = icon; document.getElementById('customAlert').classList.remove('hidden'); }
@@ -2811,6 +2851,32 @@
     }
 }
 
+// ฟังก์ชันสำหรับเปิด/ปิดเมนู 3 จุด
+function togglePaymentMenu() {
+    const menu = document.getElementById('paymentSettingsMenu');
+    if (menu) {
+        // สลับ class hidden เพื่อแสดง/ซ่อน
+        if (menu.classList.contains('hidden')) {
+            menu.classList.remove('hidden');
+        } else {
+            menu.classList.add('hidden');
+        }
+    }
+}
+
+// เพิ่ม Event Listener: คลิกที่อื่นเพื่อปิดเมนู
+document.addEventListener('click', function(event) {
+    const menu = document.getElementById('paymentSettingsMenu');
+    const btn = document.querySelector('button[onclick="togglePaymentMenu()"]');
+    
+    // ถ้าคลิกนอกเมนู และไม่ได้คลิกที่ปุ่ม 3 จุด -> ให้ปิดเมนู
+    if (menu && !menu.classList.contains('hidden')) {
+        if (!menu.contains(event.target) && !btn.contains(event.target)) {
+            menu.classList.add('hidden');
+        }
+    }
+});
+
 
         
         /// Window Load
@@ -2832,6 +2898,9 @@
             
             if (originalOnload) originalOnload();
         };
+
+
+
         
     </script>
 </body>
