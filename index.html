@@ -304,7 +304,7 @@
         </div>
 
         <!-- Right: Cart Area -->
-        <div id="cartPanel" class="hidden md:flex flex-col w-full md:w-[340px] lg:w-[400px] bg-white shadow-2xl border-l border-gray-200 z-40 fixed inset-0 md:static md:h-auto animate-slide-up md:animate-none">
+        <div id="cartPanel" class="hidden md:flex flex-col w-full md:w-[340px] lg:w-[400px] bg-white shadow-2xl border-l border-gray-200 z-40 md:z-[160] fixed inset-0 md:relative md:h-auto animate-slide-up md:animate-none">
             
             <div class="lg:hidden bg-blue-700 text-white p-4 flex justify-between items-center shadow-md shrink-0">
                 <h2 class="text-xl font-bold"><i class="fas fa-shopping-cart mr-2"></i>ตะกร้าสินค้า</h2>
@@ -347,11 +347,55 @@
                 </div>
             </div>
 
-            <div class="p-4 bg-white border-t border-gray-200 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] shrink-0 pb-safe">
-                <button onclick="handleCheckoutClick()" id="btnOrder" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-200 text-lg transition transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex justify-center items-center gap-2" disabled>
-                    <span>คิดเงิน</span> <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
+            <div class="p-4 bg-white border-t border-gray-200 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] shrink-0 pb-safe md:hidden">
+    <button onclick="handleCheckoutClick()" id="btnOrderMobile" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-200 text-lg transition transform active:scale-95 flex justify-center items-center gap-2">
+        <span>คิดเงิน</span> <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+
+<div id="embeddedNumpadPanel" class="hidden md:flex flex-col bg-gray-50 border-t border-gray-300 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] shrink-0 transition-all duration-300 ease-in-out relative z-[200]">
+    
+    <div onclick="toggleEmbeddedNumpad()" class="h-6 flex items-center justify-center cursor-pointer hover:bg-blue-50 transition-colors group border-b border-gray-200 bg-white rounded-t-xl mx-2 -mt-3 shadow-sm relative z-10">
+        <div class="flex gap-1 group-hover:gap-1.5 transition-all duration-300">
+            <div class="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-blue-400"></div>
+            <div class="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-blue-400"></div>
+            <div class="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-blue-400"></div>
+        </div>
+    </div>
+
+    <div id="embeddedKeys" class="grid grid-cols-4 gap-2 p-3 pb-4">
+    
+        <button onclick="numpadPress('7', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">7</button>
+        <button onclick="numpadPress('8', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">8</button>
+        <button onclick="numpadPress('9', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">9</button>
+        <button onclick="numpadAction('del')" class="h-12 bg-red-50 border border-red-100 shadow-sm rounded-lg text-red-500 hover:bg-red-100 transition active:scale-95"><i class="fas fa-backspace"></i></button>
+
+        <button onclick="numpadPress('4', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">4</button>
+        <button onclick="numpadPress('5', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">5</button>
+        <button onclick="numpadPress('6', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">6</button>
+        
+        <button id="btnOrderDesktop" onclick="handleCheckoutClick()" class="h-12 bg-gradient-to-b from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg rounded-lg shadow-md border-b-4 border-green-800 active:border-b-0 active:translate-y-1 transition-all flex flex-col items-center justify-center gap-1">
+            <span class="text-xs font-normal opacity-80">คิดเงิน</span>
+        </button>
+
+        <button onclick="numpadPress('1', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">1</button>
+        <button onclick="numpadPress('2', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">2</button>
+        <button onclick="numpadPress('3', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">3</button>
+        
+        <button onclick="numpadAction('enter')" class="row-span-2 h-full bg-blue-600 border border-blue-700 shadow-md rounded-lg text-white font-bold text-xl hover:bg-blue-700 transition active:scale-95 flex flex-col items-center justify-center">
+            <i class="fas fa-arrow-left mb-1"></i> Enter
+        </button>
+
+        <button onclick="numpadPress('0', this)" class="col-span-3 h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">0</button>
+        
+    </div>
+    
+    <div id="minimizedBar" class="hidden px-4 pb-4 pt-1">
+         <button onclick="handleCheckoutClick()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow transition flex justify-center items-center gap-2">
+            <span>คิดเงินรวม</span> <span id="miniTotalDisplay" class="bg-blue-800 px-2 py-0.5 rounded text-sm">0 ฿</span>
+        </button>
+    </div>
+</div>
         </div>
 
         <!-- Mobile Bottom Bar -->
@@ -1100,107 +1144,68 @@
             .catch(err => console.error("โหลดสินค้าทั้งหมดไม่สำเร็จ", err));
         }
 
+        // ฟังก์ชันกลางสำหรับจัดการเมื่อกด Enter (เพิ่มสินค้าตามราคา หรือ ยิงบาร์โค้ด)
+function processSearchEnter() {
+    const searchInput = document.getElementById('searchInput');
+    const val = searchInput.value;
+    const trimVal = val.trim();
+
+    if(trimVal) { 
+        // ตรวจสอบว่าเป็นตัวเลข 1-4 หลักหรือไม่ (เช่น 20, 50, 100)
+        // ถ้าใช่ -> เพิ่มเป็นสินค้าทั่วไป (ราคา)
+        if (/^[0-9]{1,4}$/.test(trimVal)) { 
+            addManualItem(parseInt(trimVal)); 
+        } else { 
+            // ถ้าไม่ใช่ (เช่น มีตัวอักษร, มีจุด, หรือยาวเกิน 4 หลัก) -> ค้นหาบาร์โค้ด
+            scanBarcode(trimVal); 
+        } 
+    } else {
+        // กรณีช่องว่างแล้วกด Enter -> เพิ่มจำนวนสินค้าตัวบนสุด (ถ้ามี)
+        if (cart.length > 0) { updateQty(0, 1); } 
+    }
+}
         function handleSearchKeydown(event) {
-            const searchInput = document.getElementById('searchInput');
-            const paymentModal = document.getElementById('paymentModal');
+    const searchInput = document.getElementById('searchInput');
+    const paymentModal = document.getElementById('paymentModal');
 
-            // ============================================================
-            // 🔴 1. ปุ่ม + (Add) : สั่งเปิด/ปิด หน้ารับเงิน
-            // ============================================================
-            const isPlus = (
-                event.key === '+' || 
-                event.code === 'NumpadAdd' || 
-                event.key === 'Add' || 
-                event.code === 'Equal' || 
-                (event.key === '=' && event.shiftKey) || 
-                event.keyCode === 107 || 
-                event.which === 107
-            );
-
-            if (isPlus) {
-                event.preventDefault(); // ห้ามพิมพ์ +
-                event.stopPropagation();
-                
-                // เช็คสถานะหน้าต่างรับเงิน
-                if (paymentModal && !paymentModal.classList.contains('hidden')) {
-                    // ถ้าเปิดอยู่ -> ปิด
-                    closeModal('paymentModal');
-                    setTimeout(() => searchInput.focus(), 100); 
-                } else {
-                    // ถ้าปิดอยู่ -> เปิด
-                    // 🟢 สำคัญ: ต้องสั่ง Blur ช่องสแกนก่อน เพื่อให้คีย์บอร์ด Mobile/Tablet พับลง (ถ้ามี)
-                    // และป้องกันการแย่งโฟกัสกับช่องรับเงิน
-                    searchInput.blur(); 
-                    handleCheckoutClick();
-                }
-                return;
-            }
-
-            // ============================================================
-            // 🔴 2. ปุ่ม . (Decimal) : เคลียร์ช่อง
-            // ============================================================
-            const isDot = (
-                event.key === '.' || 
-                event.code === 'NumpadDecimal' || 
-                event.key === 'Decimal' || 
-                event.key === 'Separator' || 
-                event.code === 'Period' ||
-                event.keyCode === 110 || 
-                event.keyCode === 190
-            );
-
-            if (isDot) {
-                event.preventDefault(); 
-                event.stopPropagation();
-
-                if (paymentModal && !paymentModal.classList.contains('hidden')) {
-                    closeModal('paymentModal');
-                    setTimeout(() => searchInput.focus(), 100);
-                } else {
-                    searchInput.value = ''; // เคลียร์ค่า
-                }
-                return;
-            }
-
-            // ============================================================
-            // 🔴 3. ปุ่ม 0 (Zero) : ห้ามพิมพ์ถ้าเป็นตัวแรก
-            // ============================================================
-            if (event.key === '0' || event.code === 'Numpad0') {
-                if (searchInput.value === '' || searchInput.selectionStart === 0) {
-                    event.preventDefault();
-                    return;
-                }
-            }
-
-            // ============================================================
-            // ✅ Logic เดิม (Enter / Backspace)
-            // ============================================================
-            const val = searchInput.value;
-            
-            if (val === '') {
-                if (event.key === 'Enter') { 
-                    event.preventDefault(); 
-                    if (cart.length > 0) { updateQty(0, 1); } 
-                    return; 
-                }
-                if (event.key === 'Backspace') { 
-                    if (cart.length > 0 && cart[0].qty > 1) { updateQty(0, -1); } 
-                    return; 
-                }
-            }
-
-            if (event.key === 'Enter') {
-                event.preventDefault(); 
-                const trimVal = val.trim();
-                if(trimVal) { 
-                    if (/^[0-9]{1,4}$/.test(trimVal)) { 
-                        addManualItem(parseInt(trimVal)); 
-                    } else { 
-                        scanBarcode(trimVal); 
-                    } 
-                }
-            }
+    // 1. ปุ่ม + (Add)
+    if (event.key === '+' || event.code === 'NumpadAdd' || event.key === 'Add' || event.keyCode === 107) {
+        event.preventDefault(); 
+        if (paymentModal && !paymentModal.classList.contains('hidden')) {
+            closeModal('paymentModal');
+            setTimeout(() => searchInput.focus(), 100); 
+        } else {
+            searchInput.blur(); 
+            handleCheckoutClick();
         }
+        return;
+    }
+
+    // 2. ปุ่ม . (Decimal)
+    if (event.key === '.' || event.code === 'NumpadDecimal' || event.keyCode === 110 || event.keyCode === 190) {
+        event.preventDefault(); 
+        if (paymentModal && !paymentModal.classList.contains('hidden')) {
+            closeModal('paymentModal');
+            setTimeout(() => searchInput.focus(), 100);
+        } else {
+            searchInput.value = ''; // เคลียร์ค่า
+        }
+        return;
+    }
+
+    // 3. จัดการ Enter (เรียกฟังก์ชันกลาง)
+    if (event.key === 'Enter') {
+        event.preventDefault(); 
+        // เรียกฟังก์ชันกลางที่เราสร้างไว้ (processSearchEnter)
+        processSearchEnter(); 
+    }
+    
+    // 4. Backspace (ลบสินค้า)
+    if (searchInput.value === '' && event.key === 'Backspace') { 
+        if (cart.length > 0 && cart[0].qty > 1) { updateQty(0, -1); } 
+        return; 
+    }
+}
         
         function checkPaymentEnter(e) { 
             // ------------------------------------------------------------------
@@ -1471,63 +1476,102 @@
         }
 
         function renderCart() {
-            const container = document.getElementById('cartItems'); 
-            const totalEl = document.getElementById('totalPrice'); 
-            const btn = document.getElementById('btnOrder'); // ประกาศ btn ที่นี่
-            const countEl = document.getElementById('cartCountDesktop'); 
-            const mobileBar = document.getElementById('mobileBottomBar'); 
-            const mobileCount = document.getElementById('mobileCartCount'); 
-            const mobileTotal = document.getElementById('mobileCartTotal');
-            
-            // กรณีตะกร้าว่าง
-            if(cart.length === 0) {
-                container.innerHTML = '<div class="h-full flex flex-col items-center justify-center text-gray-400 opacity-60"><i class="fas fa-cash-register text-6xl mb-4"></i><p>สแกนสินค้า หรือ กดปุ่มเพื่อเปิด QR รับเงิน</p></div>';
-                
-                btn.disabled = false; 
-                btn.innerHTML = '<span>QR รับเงิน</span> <i class="fas fa-qrcode"></i>';
-                btn.classList.replace('from-blue-600', 'from-green-600');
-                btn.classList.replace('to-blue-700', 'to-green-700');
-                
-                totalEl.innerText = "0 ฿"; 
-                countEl.innerText = "0 รายการ"; 
-                mobileBar.classList.add('translate-y-[150%]'); 
-                return;
-            }
-            
-            // กรณีมีสินค้า (ต้องเช็คโหมดเพื่อเปลี่ยนปุ่ม)
-            if (isCustomerMode) {
-                // --- โหมดลูกค้า: ปุ่ม "สั่งของ" ---
-                btn.innerHTML = '<span>สั่งของ</span> <i class="fas fa-paper-plane"></i>';
-                btn.classList.replace('from-gray-600', 'from-blue-600');
-                btn.classList.replace('from-green-600', 'from-blue-600');
-                btn.classList.replace('to-gray-700', 'to-blue-700');
-                btn.classList.replace('to-green-700', 'to-blue-700');
-            } else {
-                // --- โหมดร้านค้า: ปุ่ม "คิดเงิน" ---
-                btn.innerHTML = '<span>คิดเงิน</span> <i class="fas fa-arrow-right"></i>';
-                btn.classList.replace('from-gray-600', 'from-blue-600');
-                btn.classList.replace('from-green-600', 'from-blue-600');
-                btn.classList.replace('to-gray-700', 'to-blue-700');
-                btn.classList.replace('to-green-700', 'to-blue-700');
-            }
+    const container = document.getElementById('cartItems'); 
+    const totalEl = document.getElementById('totalPrice'); 
+    
+    // ประกาศตัวแปรปุ่มทั้ง 2 ตัว
+    const btnMobile = document.getElementById('btnOrderMobile');
+    const btnDesktop = document.getElementById('btnOrderDesktop'); 
+    
+    const countEl = document.getElementById('cartCountDesktop'); 
+    const mobileBar = document.getElementById('mobileBottomBar'); 
+    const mobileCount = document.getElementById('mobileCartCount'); 
+    const mobileTotal = document.getElementById('mobileCartTotal');
+    const miniTotal = document.getElementById('miniTotalDisplay'); // ยอดเงินในปุ่มย่อ
+    
+    // --- กรณีตะกร้าว่าง ---
+    if(cart.length === 0) {
+        container.innerHTML = '<div class="h-full flex flex-col items-center justify-center text-gray-400 opacity-60"><i class="fas fa-cash-register text-6xl mb-4"></i><p>สแกนสินค้า หรือ กดปุ่มเพื่อเปิด QR รับเงิน</p></div>';
+        
+        // รีเซ็ตค่าแสดงผล
+        totalEl.innerText = "0 ฿"; 
+        countEl.innerText = "0 รายการ"; 
+        mobileBar.classList.add('translate-y-[150%]'); 
+        if(miniTotal) miniTotal.innerText = "0 ฿";
 
-            // (ส่วนแสดงรายการสินค้าคงเดิม)
-            let total = 0; let count = 0;
-            container.innerHTML = cart.map((item, idx) => {
-                total += item.price * item.qty; count += item.qty;
-                return `<div class="flex justify-between items-start bg-white p-3 rounded-xl border border-gray-100 shadow-sm mb-2 animate-fade-in"><div class="flex-1"><h4 class="font-bold text-gray-800 leading-tight">${item.name}</h4><div class="text-xs text-gray-500 mt-1 flex gap-2"><span>${item.price}.-</span></div></div><div class="flex flex-col items-end gap-2"><div class="font-bold text-blue-600">${item.price * item.qty}</div><div class="flex items-center bg-gray-100 rounded-lg p-0.5 gap-1"><button onclick="removeFromCart(${idx})" class="w-7 h-7 flex items-center justify-center text-red-500 hover:bg-red-100 rounded-md transition"><i class="fas fa-trash-alt text-xs"></i></button><div class="w-px h-4 bg-gray-300 mx-1"></div><button onclick="updateQty(${idx}, -1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-white hover:shadow rounded-md transition">-</button><span class="w-6 text-center font-bold text-sm">${item.qty}</span><button onclick="updateQty(${idx}, 1)" class="w-7 h-7 flex items-center justify-center text-green-600 hover:bg-white hover:shadow rounded-md transition">+</button></div></div></div>`;
-            }).join('');
-            
-            const totalTxt = total.toLocaleString() + " ฿";
-            totalEl.innerText = totalTxt; 
-            countEl.innerText = count + " รายการ"; 
-            btn.disabled = false; 
-            mobileCount.innerText = count; 
-            mobileTotal.innerText = totalTxt;
-            
-            const isDrawerOpen = !document.getElementById('cartPanel').classList.contains('hidden');
-            if (!isDrawerOpen && window.innerWidth < 1024) { mobileBar.classList.remove('translate-y-[150%]'); }
+        // ปิดการใช้งานปุ่ม Desktop
+        if(btnDesktop) {
+             // 🔴 ลบ row-span-2 ออก และเปลี่ยน h-full เป็น h-12
+             btnDesktop.className = "h-12 bg-gradient-to-b from-gray-400 to-gray-500 text-white font-bold text-lg rounded-lg shadow-sm border-b-4 border-gray-600 transition-all flex flex-col items-center justify-center gap-1 cursor-not-allowed";
+             btnDesktop.disabled = true;
+             btnDesktop.innerHTML = '<span class="text-xs font-normal opacity-80">ว่าง</span>';
         }
+
+        // ปุ่มมือถือ (ให้กดเปิด QR เปล่าๆ ได้ หรือจะปิดก็ได้ แล้วแต่ดีไซน์)
+        if(btnMobile) {
+            btnMobile.innerHTML = '<span>QR รับเงิน</span> <i class="fas fa-qrcode"></i>';
+            btnMobile.className = "w-full bg-gradient-to-r from-green-600 to-green-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition flex justify-center items-center gap-2";
+        }
+        
+        return;
+    }
+    
+    // --- กรณีมีสินค้า ---
+    
+    // ตั้งค่าสีปุ่มตามโหมด (ลูกค้า หรือ ร้านค้า)
+    let btnClassDesktop = "";
+    let btnHtmlDesktop = "";
+    let btnHtmlMobile = "";
+    let btnClassMobile = "";
+
+    if (isCustomerMode) {
+        // ... (ส่วนของโหมดลูกค้า ปล่อยไว้เหมือนเดิม) ...
+    } else {
+        // โหมดร้านค้า
+        
+        // 🔴 จุดที่ต้องแก้คือบรรทัดนี้ครับ:
+        // ของเดิมอาจจะเป็น: "row-span-2 h-full ..."
+        // ต้องเปลี่ยนเป็น:  "h-12 ..." (เอา row-span-2 ออก)
+        
+        btnClassDesktop = "h-12 bg-gradient-to-b from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg rounded-lg shadow-md border-b-4 border-green-800 active:border-b-0 active:translate-y-1 transition-all flex flex-col items-center justify-center gap-1";
+        
+        btnHtmlDesktop = '<span class="text-xs font-normal opacity-80">คิดเงิน</span><i class="fas fa-check-circle text-2xl"></i>';
+
+        btnHtmlMobile = '<span>คิดเงิน</span> <i class="fas fa-arrow-right"></i>';
+        btnClassMobile = "w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3.5 rounded-xl shadow-lg transition transform active:scale-95 flex justify-center items-center gap-2";
+    }
+
+    // อัปเดตปุ่ม Desktop
+    if(btnDesktop) {
+        btnDesktop.disabled = false;
+        btnDesktop.className = btnClassDesktop;
+        btnDesktop.innerHTML = btnHtmlDesktop;
+    }
+
+    // อัปเดตปุ่ม Mobile
+    if(btnMobile) {
+        btnMobile.innerHTML = btnHtmlMobile;
+        btnMobile.className = btnClassMobile;
+    }
+
+    // คำนวณและแสดงรายการสินค้า
+    let total = 0; let count = 0;
+    container.innerHTML = cart.map((item, idx) => {
+        total += item.price * item.qty; count += item.qty;
+        return `<div class="flex justify-between items-start bg-white p-3 rounded-xl border border-gray-100 shadow-sm mb-2 animate-fade-in"><div class="flex-1"><h4 class="font-bold text-gray-800 leading-tight">${item.name}</h4><div class="text-xs text-gray-500 mt-1 flex gap-2"><span>${item.price}.-</span></div></div><div class="flex flex-col items-end gap-2"><div class="font-bold text-blue-600">${item.price * item.qty}</div><div class="flex items-center bg-gray-100 rounded-lg p-0.5 gap-1"><button onclick="removeFromCart(${idx})" class="w-7 h-7 flex items-center justify-center text-red-500 hover:bg-red-100 rounded-md transition"><i class="fas fa-trash-alt text-xs"></i></button><div class="w-px h-4 bg-gray-300 mx-1"></div><button onclick="updateQty(${idx}, -1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-white hover:shadow rounded-md transition">-</button><span class="w-6 text-center font-bold text-sm">${item.qty}</span><button onclick="updateQty(${idx}, 1)" class="w-7 h-7 flex items-center justify-center text-green-600 hover:bg-white hover:shadow rounded-md transition">+</button></div></div></div>`;
+    }).join('');
+    
+    const totalTxt = total.toLocaleString() + " ฿";
+    totalEl.innerText = totalTxt; 
+    countEl.innerText = count + " รายการ"; 
+    
+    mobileCount.innerText = count; 
+    mobileTotal.innerText = totalTxt;
+    if(miniTotal) miniTotal.innerText = totalTxt;
+    
+    const isDrawerOpen = !document.getElementById('cartPanel').classList.contains('hidden');
+    if (!isDrawerOpen && window.innerWidth < 1024) { mobileBar.classList.remove('translate-y-[150%]'); }
+}
 
         function updateQty(idx, change) { cart[idx].qty += change; if(cart[idx].qty > 0) { speak(cart[idx].qty.toString()); } if (cart[idx].qty <= 0) cart.splice(idx, 1); renderCart(); }
         function removeFromCart(idx) { cart.splice(idx, 1); renderCart(); }
@@ -3006,34 +3050,24 @@ function numpadAction(action) {
     const paymentModal = document.getElementById('paymentModal');
     const isPaymentOpen = !paymentModal.classList.contains('hidden');
     
+    // กำหนดเป้าหมาย (เผื่อใช้ในเคส del)
     let targetInput = isPaymentOpen ? document.getElementById('inputReceived') : document.getElementById('searchInput');
 
     if (action === 'del') {
         // ลบตัวหลังสุด
         targetInput.value = targetInput.value.slice(0, -1);
+        
+        // Trigger Event เพื่อให้ระบบรู้ว่าค่าเปลี่ยน (สำคัญสำหรับช่องรับเงิน)
         targetInput.dispatchEvent(new Event('input', { bubbles: true }));
         targetInput.focus();
     } 
     else if (action === 'enter') {
         if (isPaymentOpen) {
-            // หน้าจ่ายเงิน: กด Enter = ยืนยันรับเงิน
+            // ถ้าหน้าจ่ายเงินเปิดอยู่ -> ยืนยันรับเงิน
             confirmPayment();
         } else {
-            // 🔴 แก้ไขตรงนี้: เหลือแค่ dispatchEvent อย่างเดียวพอครับ
-            
-            // สร้าง Event จำลองการกด Enter
-            const event = new KeyboardEvent('keydown', {
-                key: 'Enter',
-                code: 'Enter',
-                which: 13,
-                keyCode: 13,
-                bubbles: true
-            });
-            
-            // ส่งสัญญาณไปที่ Input (ตัว Input มี onkeydown รอรับอยู่แล้ว)
-            targetInput.dispatchEvent(event);
-            
-            // ❌ ลบบรรทัดที่เรียก handleSearchKeydown(...) ทิ้งไปเลยครับ เพราะมันซ้ำซ้อน
+            // 🔴 แก้ไขตรงนี้: เรียกฟังก์ชันกลางโดยตรง (ไม่ต้องใช้ dispatchEvent แล้ว)
+            processSearchEnter();
         }
     }
 }
@@ -3061,6 +3095,48 @@ function toggleSystemKeyboard() {
     }
 }
 
+// สถานะการย่อ/ขยาย Numpad
+let isEmbeddedNumpadOpen = true;
+
+function toggleEmbeddedNumpad() {
+    const panel = document.getElementById('embeddedNumpadPanel');
+    const keys = document.getElementById('embeddedKeys');
+    const miniBar = document.getElementById('minimizedBar');
+    
+    isEmbeddedNumpadOpen = !isEmbeddedNumpadOpen;
+    
+    if (isEmbeddedNumpadOpen) {
+        // เปิด (ขยาย)
+        keys.classList.remove('hidden');
+        miniBar.classList.add('hidden');
+        // เอฟเฟคสไลด์ (ถ้าต้องการเนียนๆ อาจต้องใช้ max-height แต่แบบนี้ง่ายสุด)
+    } else {
+        // ปิด (ย่อ)
+        keys.classList.add('hidden');
+        miniBar.classList.remove('hidden');
+    }
+}
+
+// อัปเดตยอดเงินในปุ่มย่อด้วย (เพิ่มใน function renderCart)
+const originalRenderCart = renderCart;
+renderCart = function() {
+    originalRenderCart(); // เรียกฟังก์ชันเดิมทำงานก่อน
+    
+    // อัปเดตยอดเงินในปุ่มเล็ก (ถ้ามี)
+    const totalEl = document.getElementById('totalPrice');
+    const miniTotal = document.getElementById('miniTotalDisplay');
+    if(totalEl && miniTotal) {
+        miniTotal.innerText = totalEl.innerText;
+    }
+    
+    // อัปเดตปุ่ม Desktop ให้เปลี่ยนสี/ข้อความ ตามปุ่ม Mobile
+    const btnMobile = document.getElementById('btnOrderMobile'); // ปุ่มเดิม (Mobile)
+    const btnDesktop = document.getElementById('btnOrderDesktop'); // ปุ่มใหม่ (Desktop Enter)
+    
+    if(btnMobile && btnDesktop) {
+        
+    }
+};
 
 
 // เพิ่ม Event Listener: คลิกที่อื่นเพื่อปิดเมนู
