@@ -672,14 +672,14 @@
                 </div>
             </div>
 
-            <button onclick="confirmPayment()" id="btnConfirmPay" class="w-1/2 mx-auto block bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-xl text-base shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition transform active:scale-95" disabled>
-                รับเงิน (Enter)
+            <button onclick="confirmPayment()" id="btnConfirmPay" class="w-1/2 mx-auto block bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-xl text-base shadow-lg transition transform active:scale-95">
+                รับเงิน
             </button>
         </div>
     </div>
 </div>
     
-    <div id="editMenuModal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-pop"><div class="bg-yellow-500 p-4 flex justify-between items-center text-white"><h3 class="font-bold text-lg text-black">แก้ไขข้อมูลสินค้า</h3><button onclick="closeModal('editMenuModal')" class="bg-black/10 rounded-full w-8 h-8 text-black"><i class="fas fa-times"></i></button></div><form id="editMenuForm" class="p-6 space-y-4"><input type="hidden" id="eId"><div><label class="label">ชื่อสินค้า</label><input type="text" id="eName" required class="input-box"></div><div class="flex gap-4"><div class="flex-1"><label class="label">ราคา</label><input type="number" id="ePrice" required class="input-box"></div><div class="flex-1"><label class="label">หมวดหมู่</label><select id="eCategory" class="input-box"></select></div></div><div class="flex gap-3 pt-2"><button type="button" onclick="deleteMenu()" id="btnDeleteMenu" class="flex-1 bg-red-50 text-red-600 font-bold py-3 rounded-xl border border-red-200">ลบ</button><button type="submit" id="btnEditSave" class="flex-[2] bg-yellow-500 text-black font-bold py-3 rounded-xl shadow">บันทึก</button></div></form></div></div>
+    <div id="editMenuModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-pop"><div class="bg-yellow-500 p-4 flex justify-between items-center text-white"><h3 class="font-bold text-lg text-black">แก้ไขข้อมูลสินค้า</h3><button onclick="closeModal('editMenuModal')" class="bg-black/10 rounded-full w-8 h-8 text-black"><i class="fas fa-times"></i></button></div><form id="editMenuForm" class="p-6 space-y-4"><input type="hidden" id="eId"><div><label class="label">ชื่อสินค้า</label><input type="text" id="eName" required class="input-box"></div><div class="flex gap-4"><div class="flex-1"><label class="label">ราคา</label><input type="number" id="ePrice" required class="input-box"></div><div class="flex-1"><label class="label">หมวดหมู่</label><select id="eCategory" class="input-box"></select></div></div><div class="flex gap-3 pt-2"><button type="button" onclick="deleteMenu()" id="btnDeleteMenu" class="flex-1 bg-red-50 text-red-600 font-bold py-3 rounded-xl border border-red-200">ลบ</button><button type="submit" id="btnEditSave" class="flex-[2] bg-yellow-500 text-black font-bold py-3 rounded-xl shadow">บันทึก</button></div></form></div></div>
     
     <div id="addModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
          <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-pop">
@@ -1646,8 +1646,12 @@ function quickCheckout() {
     
     const btnConfirm = document.getElementById('btnConfirmPay');
     if (btnConfirm) {
-        btnConfirm.disabled = true;
-        btnConfirm.classList.add('opacity-50', 'cursor-not-allowed');
+        // 1. ต้องเป็น false (เพื่อให้กดได้)
+        btnConfirm.disabled = false; 
+        
+        // 2. 🔴 สำคัญมาก: ต้องใช้ .remove (เพื่อลบสีจางออก) 
+        // (ของเดิมของคุณน่าจะเป็น .add หรือยังไม่ได้สั่งลบ)
+        btnConfirm.classList.remove('opacity-50', 'cursor-not-allowed');
     }
 
     if (total > 0) { speak("ยอดรวม " + total + " บาท"); }
@@ -1944,26 +1948,57 @@ function quickCheckout() {
         }
         function markServed(orderId, btn) { const originalContent = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>'; fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "updateOrderStatus", orderId: orderId, status: "Served" }) }).then(() => { fetchOrders(); showToast('สถานะอัปเดตแล้ว', 'success'); }).catch(() => { btn.disabled = false; btn.innerHTML = originalContent; }); }
         
-        // ค้นหา function openPayment(orderId) แล้วแก้ตามนี้
         function openPayment(orderId) { 
-            isQuickPayMode = false;
-            document.getElementById('quickPayTableNoContainer').classList.add('hidden');
+            // 1. ค้นหาออเดอร์
+            currentPayOrder = currentOrders.find(o => String(o.orderId) === String(orderId)); 
             
-            currentPayOrder = currentOrders.find(o => o.orderId === orderId); 
-            if(!currentPayOrder) return; 
+            if(!currentPayOrder) {
+                console.error("Order not found:", orderId);
+                showCustomAlert('ผิดพลาด', 'ไม่พบข้อมูลออเดอร์นี้');
+                return; 
+            } 
+
+            // 2. ดึงสินค้าลงตะกร้า + ปิดหน้าครัว
+            cart = JSON.parse(JSON.stringify(currentPayOrder.items)); 
+            renderCart(); 
+            toggleCart(true);
+            closeModal('kitchenModal');
+
+            // 3. ตั้งค่าหน้าต่างรับเงิน
+            isQuickPayMode = false; 
+            document.getElementById('quickPayTableNoContainer').classList.add('hidden');
             
             initBankQR();
             document.getElementById('paymentModal').classList.remove('hidden'); 
             
-            // 🔴 [เพิ่ม] สั่งเบลอแผงด้านซ้าย
             const leftPanel = document.getElementById('leftPanel');
             if(leftPanel) leftPanel.classList.add('blur-sm', 'opacity-50', 'pointer-events-none');
-            // -------------------------------------------------------------
 
-            document.getElementById('payTotalDisplay').innerText = currentPayOrder.totalPrice.toLocaleString(); 
-            document.getElementById('inputReceived').value = ''; 
-            document.getElementById('changeDisplay').innerText = '0.00'; 
-            document.getElementById('btnConfirmPay').disabled = true; 
+            const totalEl = document.getElementById('modalTotalPay');
+            if(totalEl) {
+                totalEl.innerText = currentPayOrder.totalPrice.toLocaleString(); 
+            }
+
+            const inputRec = document.getElementById('inputReceived');
+            if(inputRec) {
+                inputRec.value = ''; 
+                setTimeout(() => { inputRec.focus(); }, 300); 
+            }
+            
+            const modalChangeBox = document.getElementById('modalChangeBox');
+            if(modalChangeBox) {
+                modalChangeBox.classList.add('opacity-0', 'translate-y-2');
+                const changeTxt = document.getElementById('modalChangePay');
+                if(changeTxt) changeTxt.innerText = "0";
+            }
+            
+            // ✅ [แก้ไข] เอาบรรทัด btnConfirmPay.disabled = true ออก
+            // และเคลียร์ Class ที่ทำให้ปุ่มดูจางๆ ออก
+            const btnConfirm = document.getElementById('btnConfirmPay');
+            if(btnConfirm) {
+                btnConfirm.disabled = false; // บังคับเปิด
+                btnConfirm.classList.remove('opacity-50', 'cursor-not-allowed'); // ลบสีเทาออก
+            }
             
             speak("ยอดรวม " + currentPayOrder.totalPrice + " บาท"); 
             setTimeout(() => { document.getElementById('inputReceived').focus(); }, 100);
@@ -1981,99 +2016,84 @@ function quickCheckout() {
             const received = Number(inputEl.value); 
             const change = received - total; 
             
-            const changeDisplay = document.getElementById('mainScreenChange'); 
-            const totalPriceEl = document.getElementById('totalPrice');
-            const changeWrapper = document.getElementById('changeWrapper');
             const btn = document.getElementById('btnConfirmPay'); 
-            
             const modalChangeBox = document.getElementById('modalChangeBox');
 
-            // --------------------------------------------------------
-            // 1. จัดการการแสดงผล
-            // --------------------------------------------------------
-            
-            if(received > 0) {
-                // ถ้ามีตัวเลข -> แสดงผลปกติ
-                changeWrapper.classList.remove('hidden', 'opacity-0', 'translate-y-4');
-                changeWrapper.classList.add('flex', 'opacity-100', 'translate-y-0');
-            } else {
-                // 🟢 ถ้าลบเลขออกหมด -> ซ่อนและรีเซ็ตค่า
-                changeWrapper.classList.add('hidden', 'opacity-0', 'translate-y-4');
-                changeWrapper.classList.remove('flex', 'opacity-100', 'translate-y-0');
-                
-                if(modalChangeBox) {
-                    modalChangeBox.classList.add('opacity-0', 'translate-y-2');
-                    // รีเซ็ตข้อความกลับเป็น "เงินทอน: 0" (เพื่อไม่ให้ค้างคำว่า "ขาด")
-                    modalChangeBox.innerHTML = `เงินทอน: <span id="modalChangePay" class="text-green-600 text-lg ml-1 drop-shadow-sm">0</span> ฿`;
-                }
-            }
-
+            // --- ส่วนแสดงผลยอดเงินขาด/เกิน ---
             if(received >= total && total > 0) {
-                totalPriceEl.classList.remove('text-7xl');
-                totalPriceEl.classList.add('text-4xl', 'translate-y-[-5px]');
-                
-                // Modal: แสดงเงินทอน (Animation)
+                // กรณีเงินครบ: แสดงเงินทอน
                 if(modalChangeBox) {
                     modalChangeBox.classList.remove('opacity-0', 'translate-y-2');
-                    // เขียนทับ HTML ใหม่เพื่อแสดงเงินทอน
-                    modalChangeBox.innerHTML = `เงินทอน: <span id="modalChangePay" class="text-green-600 text-5xl font-extrabold ml-2 drop-shadow-sm animate-heartbeat">${change.toLocaleString()}</span> <span class="ml-1 text-sm">฿</span>`;
+                    modalChangeBox.innerHTML = `เงินทอน: <span class="text-green-600 text-5xl font-extrabold ml-2 drop-shadow-sm animate-heartbeat">${change.toLocaleString()}</span> <span class="ml-1 text-sm">฿</span>`;
                 }
-            } else {
-                totalPriceEl.classList.add('text-7xl');
-                totalPriceEl.classList.remove('text-4xl', 'translate-y-[-5px]');
                 
-                // Modal: ถ้าเงินยังไม่ครบ และมีการพิมพ์ตัวเลข
+                // พูดเสียงเงินทอน
+                if(change >= 0) { 
+                    clearTimeout(ttsTimer);
+                    ttsTimer = setTimeout(() => { speak("รับเงิน " + received + " บาท เงินทอน " + change + " บาท"); }, 800);
+                }
+
+            } else { 
+                // กรณีเงินไม่ครบ หรือ เป็น 0
                 if(modalChangeBox && received > 0) {
+                     // ถ้ามีการพิมพ์ตัวเลข แต่ยังไม่ครบ -> ให้โชว์ว่าขาดเท่าไหร่
                      const missing = Math.abs(change);
                      modalChangeBox.classList.remove('opacity-0', 'translate-y-2');
-                     // เขียนทับ HTML เพื่อแสดงยอดขาด
                      modalChangeBox.innerHTML = `ขาด: <span class="text-red-500 text-4xl font-extrabold ml-2 animate-heartbeat">${missing.toLocaleString()}</span> <span class="ml-1 text-sm">฿</span>`;
+                } else if (modalChangeBox) {
+                     // ถ้าเป็น 0 หรือว่างเปล่า -> ซ่อนบรรทัดเงินทอน
+                     modalChangeBox.classList.add('opacity-0', 'translate-y-2');
                 }
+            } 
+            
+            if(btn) {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
-
-            // --------------------------------------------------------
-            // 2. คำนวณ (ส่วนเดิม)
-            // --------------------------------------------------------
-            if(received >= total) { 
-                changeDisplay.innerText = change.toLocaleString() + " ";
-                changeDisplay.className = "text-8xl lg:text-9xl font-extrabold text-green-600 drop-shadow-md transition-all duration-300 scale-100 lg:scale-110 origin-right";
-                
+            
+            // ปรับสี Textbox นิดหน่อยเพื่อให้รู้สถานะ
+            if(received >= total) {
                 inputEl.classList.replace('border-blue-500', 'border-green-500');
                 inputEl.classList.replace('text-blue-600', 'text-green-600');
-                btn.disabled = false; 
-                btn.classList.remove('opacity-50', 'cursor-not-allowed'); 
-                
-                if(change >= 0 && total > 0) { 
-                    clearTimeout(ttsTimer);
-                    ttsTimer = setTimeout(() => {
-                        speak("รับเงิน " + received + " บาท เงินทอน " + change + " บาท");
-                    }, 800);
-                }
-            } else { 
-                if (received === 0) {
-                     changeDisplay.innerText = "0 ฿";
-                     changeDisplay.className = "text-6xl font-extrabold text-gray-300 transition-all duration-300";
-                } else {
-                     changeDisplay.innerText = "- " + Math.abs(change).toLocaleString() + " ฿"; 
-                     changeDisplay.className = "text-3xl font-bold text-red-500 drop-shadow-sm transition-all duration-300 pt-2"; 
-                }
-                
+            } else {
                 inputEl.classList.replace('border-green-500', 'border-blue-500');
                 inputEl.classList.replace('text-green-600', 'text-blue-600');
-                btn.disabled = true; 
-                btn.classList.add('opacity-50', 'cursor-not-allowed');
-            } 
+            }
         }
         
         function confirmPayment() { 
             const inputRec = document.getElementById('inputReceived');
-            const received = Number(inputRec.value); 
+            // ใช้ let เพื่อให้เปลี่ยนค่าได้
+            let received = Number(inputRec.value); 
+            
+            if (!currentPayOrder) {
+                showCustomAlert('Error', 'ข้อมูลผิดพลาด กรุณาปิดหน้าต่างแล้วลองใหม่');
+                return;
+            }
+
             const total = currentPayOrder.totalPrice; 
+
+            // ✅✅✅ [เพิ่ม Logic ใหม่ตรงนี้]
+            // 1. ถ้าไม่ได้ใส่เงิน (เป็น 0) -> ให้ถือว่าจ่ายพอดี
+            if (received === 0) {
+                received = total;
+                inputRec.value = total; // อัปเดตให้ตาเห็นด้วยว่าระบบเติมเลขให้
+            }
+
+            // 2. ถ้าใส่เงินมาแล้ว แต่น้อยกว่ายอดรวม -> ห้ามบันทึก และแจ้งเตือน
+            if (received < total) {
+                showToast('ยอดเงินไม่ครบ', 'warning');
+                playNotificationSound();
+                // สั่นกล่องรับเงินเตือน
+                inputRec.classList.add('animate-pulse', 'bg-red-100');
+                setTimeout(() => inputRec.classList.remove('animate-pulse', 'bg-red-100'), 500);
+                return; // หยุดทำงานทันที
+            }
+            // ==========================================
+
             const orderId = currentPayOrder.orderId;
             
             closeModal('paymentModal'); 
-
-            // 🔴 [เพิ่ม] ยกเลิกการเบลอทันที (เพื่อความชัวร์)
             const leftPanel = document.getElementById('leftPanel');
             if(leftPanel) leftPanel.classList.remove('blur-sm', 'opacity-50', 'pointer-events-none'); 
             
@@ -2092,22 +2112,19 @@ function quickCheckout() {
                 changeWrapper.classList.remove('flex', 'opacity-100', 'translate-y-0');
             }
 
-            // 🟢 ส่วนที่แก้เพิ่ม: สั่งล้างข้อมูลใน Modal ทันทีหลังปิดบิล
-            if(inputRec) inputRec.value = ''; // ล้างช่องรับเงิน
+            if(inputRec) inputRec.value = ''; 
 
             const modalChangeBox = document.getElementById('modalChangeBox');
-            const modalChange = document.getElementById('modalChangePay');
             if(modalChangeBox) {
-                modalChangeBox.classList.add('opacity-0', 'translate-y-2'); // ซ่อนกล่องเงินทอน
-                if(modalChange) modalChange.innerText = "0"; // รีเซ็ตเลขเป็น 0
+                modalChangeBox.classList.add('opacity-0', 'translate-y-2');
+                const modalChange = document.getElementById('modalChangePay');
+                if(modalChange) modalChange.innerText = "0";
             }
-            // -----------------------------------------------------------
             
             let itemsToSave = [];
             
             if (isQuickPayMode) { 
                  itemsToSave = cart.map(i => ({ name: i.name, qty: i.qty, price: i.price })); 
-                 
                  const quickPayInput = document.getElementById('quickPayTableNo');
                  let customName = (quickPayInput ? quickPayInput.value : "").trim(); 
                  if(!customName) customName = "Walk-in"; 
@@ -2124,23 +2141,48 @@ function quickCheckout() {
                      change: received - total,
                      directItems: itemsToSave
                  };
-                 
-                 fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
-                 .then(res => res.json())
-                 .then(data => { 
-                     if(data.result === 'success') { 
-                         showToast('ชำระเงินเรียบร้อย', 'success'); 
-                     } else {
-                         throw new Error(data.error);
-                     }
-                 })
-                 .catch(err => showCustomAlert('Error', 'บันทึกบิลไม่สำเร็จ: ' + err));
+                 sendPaymentRequest(payload, true);
 
             } else {
-                fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "processPayment", orderId: orderId, finalPrice: total, received: received, change: received - total }) })
-                .then(res => res.json())
-                .then(data => { if(data.result === 'success') { showToast('ชำระเงินเรียบร้อย', 'success'); fetchOrders(); } });
+                // จ่ายบิลครัว
+                cart = [];          
+                renderCart();       
+                toggleCart(false);  
+                
+                const payload = { 
+                    action: "processPayment", 
+                    orderId: orderId,           
+                    tableNo: currentPayOrder.tableNo, 
+                    orderType: currentPayOrder.orderType,
+                    items: currentPayOrder.items, 
+                    finalPrice: total, 
+                    received: received, 
+                    change: received - total 
+                };
+                sendPaymentRequest(payload, false);
             }
+        }
+
+        // ฟังก์ชันแยกสำหรับการส่งข้อมูล (เพื่อให้โค้ดดูง่ายขึ้น)
+        function sendPaymentRequest(payload, isQuickPay) {
+            fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
+            .then(res => res.json())
+            .then(data => { 
+                if(data.result === 'success') { 
+                    showToast('ชำระเงินเรียบร้อย', 'success'); 
+                    
+                    if (!isQuickPay) {
+                        // ถ้าเป็นการจ่ายบิลค้าง ให้รีเฟรชหน้าครัว เพื่อให้ออเดอร์หายไป
+                        fetchOrders(); 
+                    }
+                } else {
+                    showCustomAlert('ผิดพลาด', 'บันทึกไม่สำเร็จ: ' + data.error);
+                }
+            })
+            .catch(err => {
+                showCustomAlert('Connection Error', 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้');
+                console.error(err);
+            });
         }
         
         function openEditMenu(index, e) { e.stopPropagation(); const item = menuData[index]; document.getElementById('editMenuModal').classList.remove('hidden'); document.getElementById('eId').value = item.id; document.getElementById('eName').value = item.name; document.getElementById('ePrice').value = item.price; document.getElementById('eCategory').value = item.category; }
