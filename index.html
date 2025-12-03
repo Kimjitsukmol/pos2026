@@ -1518,21 +1518,24 @@ function processSearchEnter() {
     
     // --- กรณีมีสินค้า ---
     
-    // ตั้งค่าสีปุ่มตามโหมด (ลูกค้า หรือ ร้านค้า)
+   // --- ตั้งค่าสีปุ่มตามโหมด (ลูกค้า หรือ ร้านค้า) ---
     let btnClassDesktop = "";
     let btnHtmlDesktop = "";
     let btnHtmlMobile = "";
     let btnClassMobile = "";
 
     if (isCustomerMode) {
-        // ... (ส่วนของโหมดลูกค้า ปล่อยไว้เหมือนเดิม) ...
+        // ✅ [แก้ไข] เพิ่มการตั้งค่าปุ่มสำหรับโหมดลูกค้า
+        
+        // ปุ่ม Desktop (ซ่อน หรือ แสดงตามต้องการ)
+        btnClassDesktop = "hidden"; // ปกติโหมดลูกค้าบนคอมฯ จะไม่ค่อยได้ใช้ปุ่มนี้ หรือจะใส่สไตล์เดียวกับ Mobile ก็ได้
+
+        // ปุ่ม Mobile (ที่คุณหาไม่เจอ)
+        btnHtmlMobile = '<span>ยืนยันรายการ</span> <i class="fas fa-check-circle"></i>';
+        btnClassMobile = "w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-3.5 rounded-xl shadow-lg transition transform active:scale-95 flex justify-center items-center gap-2";
+
     } else {
-        // โหมดร้านค้า
-        
-        // 🔴 จุดที่ต้องแก้คือบรรทัดนี้ครับ:
-        // ของเดิมอาจจะเป็น: "row-span-2 h-full ..."
-        // ต้องเปลี่ยนเป็น:  "h-12 ..." (เอา row-span-2 ออก)
-        
+        // โหมดร้านค้า (ของเดิม)
         btnClassDesktop = "h-12 bg-gradient-to-b from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg rounded-lg shadow-md border-b-4 border-green-800 active:border-b-0 active:translate-y-1 transition-all flex flex-col items-center justify-center gap-1";
         
         btnHtmlDesktop = '<span class="text-xs font-normal opacity-80"></span><i class="fas fa-check-circle text-2xl"></i>';
