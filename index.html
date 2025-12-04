@@ -344,12 +344,12 @@
                         <span class="block text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-blue-600 to-blue-900 tracking-tighter leading-none drop-shadow-sm filter transition-all duration-500 origin-right" 
                               id="totalPrice" 
                               style="text-shadow: 2px 2px 0px rgba(7, 2, 77, 0);">
-                            0 ฿
+                            
                         </span>
 
                         <div id="changeWrapper" class="hidden opacity-0 transform translate-y-4 transition-all duration-500 mt-1">
                             <span class="text-gray-500 text-xs font-bold mr-2">เงินทอน</span>
-                            <span id="mainScreenChange" class="text-5xl font-extrabold text-green-600 drop-shadow-sm">0 ฿</span>
+                            <span id="mainScreenChange" class="text-8xl font-extrabold text-green-600 drop-shadow-sm">0 ฿</span>
                         </div>
                      </div>
                 </div>
@@ -1550,7 +1550,7 @@ function processSearchEnter() {
                 
                 countEl.innerText = "0 รายการ"; 
                 mobileBar.classList.add('translate-y-[150%]'); 
-                if(miniTotal) miniTotal.innerText = "0 ฿";
+                if(miniTotal) miniTotal.innerText = "";
 
                 if(btnDesktop) {
                      btnDesktop.className = "h-12 bg-gradient-to-b from-gray-400 to-gray-500 text-white font-bold text-lg rounded-lg shadow-sm border-b-4 border-gray-600 transition-all flex flex-col items-center justify-center gap-1 cursor-not-allowed";
@@ -1614,7 +1614,7 @@ function processSearchEnter() {
                 return `<div class="flex justify-between items-start bg-white p-3 rounded-xl border border-gray-100 shadow-sm mb-2 animate-fade-in"><div class="flex-1"><h4 class="font-bold text-gray-800 leading-tight">${item.name}</h4><div class="text-xs text-gray-500 mt-1 flex gap-2"><span>${item.price}.-</span></div></div><div class="flex flex-col items-end gap-2"><div class="font-bold text-blue-600">${item.price * item.qty}</div><div class="flex items-center bg-gray-100 rounded-lg p-0.5 gap-1"><button onclick="removeFromCart(${idx})" class="w-7 h-7 flex items-center justify-center text-red-500 hover:bg-red-100 rounded-md transition"><i class="fas fa-trash-alt text-xs"></i></button><div class="w-px h-4 bg-gray-300 mx-1"></div><button onclick="updateQty(${idx}, -1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-white hover:shadow rounded-md transition">-</button><span class="w-6 text-center font-bold text-sm">${item.qty}</span><button onclick="updateQty(${idx}, 1)" class="w-7 h-7 flex items-center justify-center text-green-600 hover:bg-white hover:shadow rounded-md transition">+</button></div></div></div>`;
             }).join('');
             
-            const totalTxt = total.toLocaleString() + " ฿";
+            const totalTxt = total.toLocaleString() + "";
             totalEl.innerText = totalTxt; 
             countEl.innerText = count + " รายการ"; 
             
@@ -2090,7 +2090,7 @@ function quickCheckout() {
 
                     // 3. แสดงตัวเลขเงินทอน (หรือยอดขาด)
                     if (change >= 0) {
-                        mainChangeText.innerText = change.toLocaleString() + " ฿";
+                        mainChangeText.innerText = change.toLocaleString() + "";
                         mainChangeText.classList.remove('text-red-500');
                         mainChangeText.classList.add('text-green-600');
                     } else {
@@ -2281,7 +2281,7 @@ function quickCheckout() {
                         totalEl.classList.add('text-7xl');
                      }
                 }
-            }, 100); // 10000 ms = 10 วินาที (ปรับเปลี่ยนได้ตามชอบครับ)
+            }, 100); 
         }
 
         // ฟังก์ชันแยกสำหรับการส่งข้อมูล (เพื่อให้โค้ดดูง่ายขึ้น)
