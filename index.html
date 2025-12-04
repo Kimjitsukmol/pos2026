@@ -1530,105 +1530,101 @@ function processSearchEnter() {
         }
 
         function renderCart() {
-    const container = document.getElementById('cartItems'); 
-    const totalEl = document.getElementById('totalPrice'); 
-    
-    // ประกาศตัวแปรปุ่มทั้ง 2 ตัว
-    const btnMobile = document.getElementById('btnOrderMobile');
-    const btnDesktop = document.getElementById('btnOrderDesktop'); 
-    
-    const countEl = document.getElementById('cartCountDesktop'); 
-    const mobileBar = document.getElementById('mobileBottomBar'); 
-    const mobileCount = document.getElementById('mobileCartCount'); 
-    const mobileTotal = document.getElementById('mobileCartTotal');
-    const miniTotal = document.getElementById('miniTotalDisplay'); // ยอดเงินในปุ่มย่อ
-    
-    // --- กรณีตะกร้าว่าง ---
-    if(cart.length === 0) {
-        container.innerHTML = '<div class="h-full flex flex-col items-center justify-center text-gray-400 opacity-60"><i class="fas fa-cash-register text-6xl mb-4"></i><p>สแกนสินค้า หรือ กดปุ่มเพื่อเปิด QR รับเงิน</p></div>';
-        
-        // รีเซ็ตค่าแสดงผล
-        totalEl.innerText = "0 ฿"; 
-        countEl.innerText = "0 รายการ"; 
-        mobileBar.classList.add('translate-y-[150%]'); 
-        if(miniTotal) miniTotal.innerText = "0 ฿";
+            const container = document.getElementById('cartItems'); 
+            const totalEl = document.getElementById('totalPrice'); 
+            
+            const btnMobile = document.getElementById('btnOrderMobile');
+            const btnDesktop = document.getElementById('btnOrderDesktop'); 
+            
+            const countEl = document.getElementById('cartCountDesktop'); 
+            const mobileBar = document.getElementById('mobileBottomBar'); 
+            const mobileCount = document.getElementById('mobileCartCount'); 
+            const mobileTotal = document.getElementById('mobileCartTotal');
+            const miniTotal = document.getElementById('miniTotalDisplay');
+            
+            const changeWrapper = document.getElementById('changeWrapper');
+            
+            // --- กรณีตะกร้าว่าง ---
+            if(cart.length === 0) {
+                container.innerHTML = '<div class="h-full flex flex-col items-center justify-center text-gray-400 opacity-60"><i class="fas fa-cash-register text-6xl mb-4"></i><p>สแกนสินค้า หรือ กดปุ่มเพื่อเปิด QR รับเงิน</p></div>';
+                
+                countEl.innerText = "0 รายการ"; 
+                mobileBar.classList.add('translate-y-[150%]'); 
+                if(miniTotal) miniTotal.innerText = "0 ฿";
 
-        // ปิดการใช้งานปุ่ม Desktop
-        if(btnDesktop) {
-             // 🔴 ลบ row-span-2 ออก และเปลี่ยน h-full เป็น h-12
-             btnDesktop.className = "h-12 bg-gradient-to-b from-gray-400 to-gray-500 text-white font-bold text-lg rounded-lg shadow-sm border-b-4 border-gray-600 transition-all flex flex-col items-center justify-center gap-1 cursor-not-allowed";
-             btnDesktop.disabled = true;
-             btnDesktop.innerHTML = '<span class="text-xs font-normal opacity-80">ว่าง</span>';
+                if(btnDesktop) {
+                     btnDesktop.className = "h-12 bg-gradient-to-b from-gray-400 to-gray-500 text-white font-bold text-lg rounded-lg shadow-sm border-b-4 border-gray-600 transition-all flex flex-col items-center justify-center gap-1 cursor-not-allowed";
+                     btnDesktop.disabled = true;
+                     btnDesktop.innerHTML = '<span class="text-xs font-normal opacity-80">ว่าง</span>';
+                }
+
+                if(btnMobile) {
+                    btnMobile.innerHTML = '<span>QR รับเงิน</span> <i class="fas fa-qrcode"></i>';
+                    btnMobile.className = "w-full bg-gradient-to-r from-green-600 to-green-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition flex justify-center items-center gap-2";
+                }
+                
+                return; // จบการทำงาน (ไม่ไปยุ่งกับ totalPrice หรือ changeWrapper เพื่อให้ยอดเงินทอนค้างอยู่ได้)
+            }
+            
+            // --- 🟢 กรณีมีสินค้า (เริ่มบิลใหม่) ---
+            
+            // 1. ซ่อนกล่องเงินทอนทันที
+            if(changeWrapper) {
+                changeWrapper.classList.add('hidden', 'opacity-0', 'translate-y-4');
+                changeWrapper.classList.remove('flex', 'opacity-100', 'translate-y-0');
+            }
+
+            // 2. ขยายยอดรวมกลับมาใหญ่
+            if(totalEl) {
+                totalEl.classList.remove('text-4xl', 'translate-y-[-5px]'); 
+                totalEl.classList.add('text-7xl'); 
+            }
+            
+            // ... (โค้ดจัดการปุ่มด้านล่างเหมือนเดิม) ...
+            let btnClassDesktop = "";
+            let btnHtmlDesktop = "";
+            let btnHtmlMobile = "";
+            let btnClassMobile = "";
+
+            if (isCustomerMode) {
+                btnClassDesktop = "hidden";
+                btnHtmlMobile = '<span>ยืนยันรายการ</span> <i class="fas fa-check-circle"></i>';
+                btnClassMobile = "w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-3.5 rounded-xl shadow-lg transition transform active:scale-95 flex justify-center items-center gap-2";
+            } else {
+                btnClassDesktop = "h-12 bg-gradient-to-b from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg rounded-lg shadow-md border-b-4 border-green-800 active:border-b-0 active:translate-y-1 transition-all flex flex-col items-center justify-center gap-1";
+                btnHtmlDesktop = '<span class="text-xs font-normal opacity-80"></span><i class="fas fa-check-circle text-2xl"></i>';
+                btnHtmlMobile = '<span>คิดเงิน</span> <i class="fas fa-arrow-right"></i>';
+                btnClassMobile = "w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3.5 rounded-xl shadow-lg transition transform active:scale-95 flex justify-center items-center gap-2";
+            }
+
+            if(btnDesktop) {
+                btnDesktop.disabled = false;
+                btnDesktop.className = btnClassDesktop;
+                btnDesktop.innerHTML = btnHtmlDesktop;
+            }
+
+            if(btnMobile) {
+                btnMobile.innerHTML = btnHtmlMobile;
+                btnMobile.className = btnClassMobile;
+            }
+
+            let total = 0; let count = 0;
+            container.innerHTML = cart.map((item, idx) => {
+                total += item.price * item.qty; count += item.qty;
+                return `<div class="flex justify-between items-start bg-white p-3 rounded-xl border border-gray-100 shadow-sm mb-2 animate-fade-in"><div class="flex-1"><h4 class="font-bold text-gray-800 leading-tight">${item.name}</h4><div class="text-xs text-gray-500 mt-1 flex gap-2"><span>${item.price}.-</span></div></div><div class="flex flex-col items-end gap-2"><div class="font-bold text-blue-600">${item.price * item.qty}</div><div class="flex items-center bg-gray-100 rounded-lg p-0.5 gap-1"><button onclick="removeFromCart(${idx})" class="w-7 h-7 flex items-center justify-center text-red-500 hover:bg-red-100 rounded-md transition"><i class="fas fa-trash-alt text-xs"></i></button><div class="w-px h-4 bg-gray-300 mx-1"></div><button onclick="updateQty(${idx}, -1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-white hover:shadow rounded-md transition">-</button><span class="w-6 text-center font-bold text-sm">${item.qty}</span><button onclick="updateQty(${idx}, 1)" class="w-7 h-7 flex items-center justify-center text-green-600 hover:bg-white hover:shadow rounded-md transition">+</button></div></div></div>`;
+            }).join('');
+            
+            const totalTxt = total.toLocaleString() + " ฿";
+            totalEl.innerText = totalTxt; 
+            countEl.innerText = count + " รายการ"; 
+            
+            mobileCount.innerText = count; 
+            mobileTotal.innerText = totalTxt;
+            if(miniTotal) miniTotal.innerText = totalTxt;
+            
+            const isDrawerOpen = !document.getElementById('cartPanel').classList.contains('hidden');
+            if (!isDrawerOpen && window.innerWidth < 1024) { mobileBar.classList.remove('translate-y-[150%]'); }
         }
-
-        // ปุ่มมือถือ (ให้กดเปิด QR เปล่าๆ ได้ หรือจะปิดก็ได้ แล้วแต่ดีไซน์)
-        if(btnMobile) {
-            btnMobile.innerHTML = '<span>QR รับเงิน</span> <i class="fas fa-qrcode"></i>';
-            btnMobile.className = "w-full bg-gradient-to-r from-green-600 to-green-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition flex justify-center items-center gap-2";
-        }
-        
-        return;
-    }
-    
-    // --- กรณีมีสินค้า ---
-    
-   // --- ตั้งค่าสีปุ่มตามโหมด (ลูกค้า หรือ ร้านค้า) ---
-    let btnClassDesktop = "";
-    let btnHtmlDesktop = "";
-    let btnHtmlMobile = "";
-    let btnClassMobile = "";
-
-    if (isCustomerMode) {
-        // ✅ [แก้ไข] เพิ่มการตั้งค่าปุ่มสำหรับโหมดลูกค้า
-        
-        // ปุ่ม Desktop (ซ่อน หรือ แสดงตามต้องการ)
-        btnClassDesktop = "hidden"; // ปกติโหมดลูกค้าบนคอมฯ จะไม่ค่อยได้ใช้ปุ่มนี้ หรือจะใส่สไตล์เดียวกับ Mobile ก็ได้
-
-        // ปุ่ม Mobile (ที่คุณหาไม่เจอ)
-        btnHtmlMobile = '<span>ยืนยันรายการ</span> <i class="fas fa-check-circle"></i>';
-        btnClassMobile = "w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-3.5 rounded-xl shadow-lg transition transform active:scale-95 flex justify-center items-center gap-2";
-
-    } else {
-        // โหมดร้านค้า (ของเดิม)
-        btnClassDesktop = "h-12 bg-gradient-to-b from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg rounded-lg shadow-md border-b-4 border-green-800 active:border-b-0 active:translate-y-1 transition-all flex flex-col items-center justify-center gap-1";
-        
-        btnHtmlDesktop = '<span class="text-xs font-normal opacity-80"></span><i class="fas fa-check-circle text-2xl"></i>';
-
-        btnHtmlMobile = '<span>คิดเงิน</span> <i class="fas fa-arrow-right"></i>';
-        btnClassMobile = "w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3.5 rounded-xl shadow-lg transition transform active:scale-95 flex justify-center items-center gap-2";
-    }
-
-    // อัปเดตปุ่ม Desktop
-    if(btnDesktop) {
-        btnDesktop.disabled = false;
-        btnDesktop.className = btnClassDesktop;
-        btnDesktop.innerHTML = btnHtmlDesktop;
-    }
-
-    // อัปเดตปุ่ม Mobile
-    if(btnMobile) {
-        btnMobile.innerHTML = btnHtmlMobile;
-        btnMobile.className = btnClassMobile;
-    }
-
-    // คำนวณและแสดงรายการสินค้า
-    let total = 0; let count = 0;
-    container.innerHTML = cart.map((item, idx) => {
-        total += item.price * item.qty; count += item.qty;
-        return `<div class="flex justify-between items-start bg-white p-3 rounded-xl border border-gray-100 shadow-sm mb-2 animate-fade-in"><div class="flex-1"><h4 class="font-bold text-gray-800 leading-tight">${item.name}</h4><div class="text-xs text-gray-500 mt-1 flex gap-2"><span>${item.price}.-</span></div></div><div class="flex flex-col items-end gap-2"><div class="font-bold text-blue-600">${item.price * item.qty}</div><div class="flex items-center bg-gray-100 rounded-lg p-0.5 gap-1"><button onclick="removeFromCart(${idx})" class="w-7 h-7 flex items-center justify-center text-red-500 hover:bg-red-100 rounded-md transition"><i class="fas fa-trash-alt text-xs"></i></button><div class="w-px h-4 bg-gray-300 mx-1"></div><button onclick="updateQty(${idx}, -1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-white hover:shadow rounded-md transition">-</button><span class="w-6 text-center font-bold text-sm">${item.qty}</span><button onclick="updateQty(${idx}, 1)" class="w-7 h-7 flex items-center justify-center text-green-600 hover:bg-white hover:shadow rounded-md transition">+</button></div></div></div>`;
-    }).join('');
-    
-    const totalTxt = total.toLocaleString() + " ฿";
-    totalEl.innerText = totalTxt; 
-    countEl.innerText = count + " รายการ"; 
-    
-    mobileCount.innerText = count; 
-    mobileTotal.innerText = totalTxt;
-    if(miniTotal) miniTotal.innerText = totalTxt;
-    
-    const isDrawerOpen = !document.getElementById('cartPanel').classList.contains('hidden');
-    if (!isDrawerOpen && window.innerWidth < 1024) { mobileBar.classList.remove('translate-y-[150%]'); }
-}
 
         function updateQty(idx, change) { cart[idx].qty += change; if(cart[idx].qty > 0) { speak(cart[idx].qty.toString()); } if (cart[idx].qty <= 0) cart.splice(idx, 1); renderCart(); }
         function removeFromCart(idx) { cart.splice(idx, 1); renderCart(); }
@@ -2073,29 +2069,68 @@ function quickCheckout() {
             const btn = document.getElementById('btnConfirmPay'); 
             const modalChangeBox = document.getElementById('modalChangeBox');
 
-            // --- ส่วนแสดงผลยอดเงินขาด/เกิน ---
+            // -------------------------------------------------------------
+            // 🔴 ส่วนที่เพิ่ม: ควบคุมการแสดงผลบนหน้าจอหลัก (Main Screen)
+            // -------------------------------------------------------------
+            const mainChangeWrapper = document.getElementById('changeWrapper');
+            const mainChangeText = document.getElementById('mainScreenChange');
+            const mainTotalEl = document.getElementById('totalPrice'); // ยอดรวมตัวใหญ่
+
+            if(mainChangeWrapper && mainChangeText) {
+                if (received > 0) {
+                    // 1. ถ้ามีการพิมพ์ตัวเลข ให้แสดงกล่องเงินทอนทันที
+                    mainChangeWrapper.classList.remove('hidden', 'opacity-0', 'translate-y-4');
+                    mainChangeWrapper.classList.add('flex', 'opacity-100', 'translate-y-0');
+
+                    // 2. ปรับยอดรวมให้เล็กลง เพื่อให้เห็นเงินทอนชัดขึ้น
+                    if(mainTotalEl) {
+                        mainTotalEl.classList.remove('text-7xl');
+                        mainTotalEl.classList.add('text-4xl', 'translate-y-[-5px]');
+                    }
+
+                    // 3. แสดงตัวเลขเงินทอน (หรือยอดขาด)
+                    if (change >= 0) {
+                        mainChangeText.innerText = change.toLocaleString() + " ฿";
+                        mainChangeText.classList.remove('text-red-500');
+                        mainChangeText.classList.add('text-green-600');
+                    } else {
+                        // ถ้าเงินยังไม่ครบ ให้ขึ้นตัวแดงว่าขาดเท่าไหร่
+                        mainChangeText.innerText = "-" + Math.abs(change).toLocaleString();
+                        mainChangeText.classList.remove('text-green-600');
+                        mainChangeText.classList.add('text-red-500');
+                    }
+                } else {
+                    // 4. ถ้าลบตัวเลขจนหมด ให้ซ่อนกลับไปเหมือนเดิม
+                    mainChangeWrapper.classList.add('hidden', 'opacity-0', 'translate-y-4');
+                    mainChangeWrapper.classList.remove('flex', 'opacity-100', 'translate-y-0');
+                    
+                    // คืนขนาดยอดรวม
+                    if(mainTotalEl) {
+                        mainTotalEl.classList.remove('text-4xl', 'translate-y-[-5px]');
+                        mainTotalEl.classList.add('text-7xl');
+                    }
+                }
+            }
+            // -------------------------------------------------------------
+
+            // --- Logic เดิมของ Modal (ไม่ต้องแก้) ---
             if(received >= total && total > 0) {
-                // กรณีเงินครบ: แสดงเงินทอน
                 if(modalChangeBox) {
                     modalChangeBox.classList.remove('opacity-0', 'translate-y-2');
                     modalChangeBox.innerHTML = `เงินทอน: <span class="text-green-600 text-5xl font-extrabold ml-2 drop-shadow-sm animate-heartbeat">${change.toLocaleString()}</span> <span class="ml-1 text-sm">฿</span>`;
                 }
                 
-                // พูดเสียงเงินทอน
                 if(change >= 0) { 
                     clearTimeout(ttsTimer);
                     ttsTimer = setTimeout(() => { speak("รับเงิน " + received + " บาท เงินทอน " + change + " บาท"); }, 800);
                 }
 
             } else { 
-                // กรณีเงินไม่ครบ หรือ เป็น 0
                 if(modalChangeBox && received > 0) {
-                     // ถ้ามีการพิมพ์ตัวเลข แต่ยังไม่ครบ -> ให้โชว์ว่าขาดเท่าไหร่
                      const missing = Math.abs(change);
                      modalChangeBox.classList.remove('opacity-0', 'translate-y-2');
-                     modalChangeBox.innerHTML = `ขาด: <span class="text-red-500 text-4xl font-extrabold ml-2 animate-heartbeat">${missing.toLocaleString()}</span> <span class="ml-1 text-sm">฿</span>`;
+                     modalChangeBox.innerHTML = `-: <span class="text-red-500 text-4xl font-extrabold ml-2 animate-heartbeat">${missing.toLocaleString()}</span> <span class="ml-1 text-sm">฿</span>`;
                 } else if (modalChangeBox) {
-                     // ถ้าเป็น 0 หรือว่างเปล่า -> ซ่อนบรรทัดเงินทอน
                      modalChangeBox.classList.add('opacity-0', 'translate-y-2');
                 }
             } 
@@ -2105,7 +2140,6 @@ function quickCheckout() {
                 btn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
             
-            // ปรับสี Textbox นิดหน่อยเพื่อให้รู้สถานะ
             if(received >= total) {
                 inputEl.classList.replace('border-blue-500', 'border-green-500');
                 inputEl.classList.replace('text-blue-600', 'text-green-600');
@@ -2117,7 +2151,6 @@ function quickCheckout() {
         
         function confirmPayment() { 
             const inputRec = document.getElementById('inputReceived');
-            // ใช้ let เพื่อให้เปลี่ยนค่าได้
             let received = Number(inputRec.value); 
             
             if (!currentPayOrder) {
@@ -2127,25 +2160,23 @@ function quickCheckout() {
 
             const total = currentPayOrder.totalPrice; 
 
-            // ✅✅✅ [เพิ่ม Logic ใหม่ตรงนี้]
-            // 1. ถ้าไม่ได้ใส่เงิน (เป็น 0) -> ให้ถือว่าจ่ายพอดี
+            // กรณีจ่ายพอดี
             if (received === 0) {
                 received = total;
-                inputRec.value = total; // อัปเดตให้ตาเห็นด้วยว่าระบบเติมเลขให้
+                inputRec.value = total;
             }
 
-            // 2. ถ้าใส่เงินมาแล้ว แต่น้อยกว่ายอดรวม -> ห้ามบันทึก และแจ้งเตือน
+            // เช็คยอดเงินขาด
             if (received < total) {
                 showToast('ยอดเงินไม่ครบ', 'warning');
                 playNotificationSound();
-                // สั่นกล่องรับเงินเตือน
                 inputRec.classList.add('animate-pulse', 'bg-red-100');
                 setTimeout(() => inputRec.classList.remove('animate-pulse', 'bg-red-100'), 500);
-                return; // หยุดทำงานทันที
+                return;
             }
-            // ==========================================
 
             const orderId = currentPayOrder.orderId;
+            const finalChange = received - total; 
             
             closeModal('paymentModal'); 
             const leftPanel = document.getElementById('leftPanel');
@@ -2153,21 +2184,9 @@ function quickCheckout() {
             
             speak("ขอบคุณค่ะ");
 
-            // รีเซ็ตหน้าจอหลัก
-            const totalPriceEl = document.getElementById('totalPrice');
-            const changeWrapper = document.getElementById('changeWrapper');
-
-            if(totalPriceEl) {
-                totalPriceEl.classList.add('text-7xl');
-                totalPriceEl.classList.remove('text-4xl', 'translate-y-[-5px]');
-            }
-            if(changeWrapper) {
-                changeWrapper.classList.add('hidden', 'opacity-0', 'translate-y-4');
-                changeWrapper.classList.remove('flex', 'opacity-100', 'translate-y-0');
-            }
-
             if(inputRec) inputRec.value = ''; 
-
+            
+            // รีเซ็ต Modal เล็ก
             const modalChangeBox = document.getElementById('modalChangeBox');
             if(modalChangeBox) {
                 modalChangeBox.classList.add('opacity-0', 'translate-y-2');
@@ -2175,35 +2194,26 @@ function quickCheckout() {
                 if(modalChange) modalChange.innerText = "0";
             }
             
+            // Payload สำหรับบันทึก
+            let payload = {};
             let itemsToSave = [];
-            
+
             if (isQuickPayMode) { 
                  itemsToSave = cart.map(i => ({ name: i.name, qty: i.qty, price: i.price })); 
                  const quickPayInput = document.getElementById('quickPayTableNo');
                  let customName = (quickPayInput ? quickPayInput.value : "").trim(); 
                  if(!customName) customName = "Walk-in"; 
                  
-                 cart = []; 
-                 renderCart(); 
-                 toggleCart(false); 
-
-                 const payload = { 
+                 payload = { 
                      action: "processPayment", 
                      tableNo: customName, 
                      finalPrice: total, 
                      received: received, 
-                     change: received - total,
+                     change: finalChange,
                      directItems: itemsToSave
                  };
-                 sendPaymentRequest(payload, true);
-
             } else {
-                // จ่ายบิลครัว
-                cart = [];          
-                renderCart();       
-                toggleCart(false);  
-                
-                const payload = { 
+                payload = { 
                     action: "processPayment", 
                     orderId: orderId,           
                     tableNo: currentPayOrder.tableNo, 
@@ -2211,10 +2221,67 @@ function quickCheckout() {
                     items: currentPayOrder.items, 
                     finalPrice: total, 
                     received: received, 
-                    change: received - total 
+                    change: finalChange 
                 };
-                sendPaymentRequest(payload, false);
             }
+
+            // 1. เคลียร์ตะกร้า
+            cart = [];          
+            toggleCart(false); 
+            
+            // 2. รีเซ็ตหน้าจอ
+            renderCart();  
+
+            // 3. แสดงเงินทอนค้างไว้ (เพื่อให้หยิบตังค์ทอนทัน)
+            setTimeout(() => {
+                const totalEl = document.getElementById('totalPrice');
+                const changeWrapper = document.getElementById('changeWrapper');
+                const mainScreenChange = document.getElementById('mainScreenChange');
+
+                if(totalEl) {
+                    totalEl.innerText = total.toLocaleString() + " ฿";
+                    totalEl.classList.remove('text-7xl');
+                    totalEl.classList.add('text-4xl', 'translate-y-[-5px]');
+                }
+
+                if(changeWrapper && mainScreenChange) {
+                    mainScreenChange.innerText = finalChange.toLocaleString() + " ฿";
+                    mainChangeText = mainScreenChange; // เผื่อตัวแปรซ้ำ
+                    
+                    // รีเซ็ตสีตัวอักษรให้เป็นสีเขียว (กรณีที่ตอนพิมพ์มันเป็นสีแดงเพราะเงินขาด)
+                    mainScreenChange.classList.remove('text-red-500');
+                    mainScreenChange.classList.add('text-green-600');
+
+                    changeWrapper.classList.remove('hidden', 'opacity-0', 'translate-y-4');
+                    changeWrapper.classList.add('flex', 'opacity-100', 'translate-y-0');
+                }
+            }, 50);
+
+            // 4. ส่งข้อมูลไปบันทึก
+            sendPaymentRequest(payload, isQuickPayMode);
+
+            // -----------------------------------------------------------------------
+            // 🟢 5. (ใหม่) ตั้งเวลาล้างหน้าจออัตโนมัติเมื่อผ่านไป 10 วินาที
+            // -----------------------------------------------------------------------
+            setTimeout(() => {
+                // เช็คว่าตะกร้ายังว่างอยู่ไหม (ถ้ามีคนยิงสินค้าใหม่แล้ว ก็ไม่ต้องไปล้างหน้าจอเขา)
+                if(cart.length === 0) {
+                     const totalEl = document.getElementById('totalPrice');
+                     const changeWrapper = document.getElementById('changeWrapper');
+                     
+                     // ซ่อนเงินทอน
+                     if(changeWrapper) {
+                        changeWrapper.classList.add('hidden', 'opacity-0', 'translate-y-4');
+                        changeWrapper.classList.remove('flex', 'opacity-100', 'translate-y-0');
+                     }
+                     // รีเซ็ตยอดรวมเป็น 0 และขยายตัวใหญ่
+                     if(totalEl) {
+                        totalEl.innerText = "0 ฿";
+                        totalEl.classList.remove('text-4xl', 'translate-y-[-5px]');
+                        totalEl.classList.add('text-7xl');
+                     }
+                }
+            }, 100); // 10000 ms = 10 วินาที (ปรับเปลี่ยนได้ตามชอบครับ)
         }
 
         // ฟังก์ชันแยกสำหรับการส่งข้อมูล (เพื่อให้โค้ดดูง่ายขึ้น)
