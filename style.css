@@ -7,7 +7,8 @@
     animation: heartbeat 1.2s infinite ease-in-out; 
     display: inline-block; 
 }
-/* เพิ่ม Animation Blob */
+
+/* เอฟเฟคพื้นหลังเคลื่อนไหว */
 @keyframes blob { 
     0% { transform: translate(0px, 0px) scale(1); } 
     33% { transform: translate(30px, -50px) scale(1.1); } 
@@ -18,31 +19,41 @@
 .animation-delay-2000 { animation-delay: 2s; }
 .animation-delay-4000 { animation-delay: 4s; }
 body { font-family: 'Kanit', sans-serif; touch-action: manipulation; }
+
+/* เปลี่ยนสี Scrollbar เป็นสีส้มอ่อน */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: #fdba74; border-radius: 4px; } 
+
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 .smooth-scroll { -webkit-overflow-scrolling: touch; }
+
+/* แอนิเมชันต่างๆ */
 .animate-fade-in { animation: fadeIn 0.2s ease-out; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .animate-slide-up { animation: slideUp 0.3s ease-out; }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 .animate-pop { animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 @keyframes pop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-.badge-pulse { animation: pulse-blue 2s infinite; }
-@keyframes pulse-blue { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); } 70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(37, 99, 235, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); } }
 
-/* คลาสสำหรับเอฟเฟคปุ่มเด้ง */
-.btn-pop {
-    transform: scale(1.25) !important; /* ขยายใหญ่ขึ้น 25% */
-    background-color: #bfdbfe !important; /* เปลี่ยนเป็นสีฟ้าอ่อน (bg-blue-200) */
-    color: #1d4ed8 !important; /* ตัวหนังสือสีน้ำเงินเข้ม */
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2) !important;
-    z-index: 50; /* ให้ลอยอยู่เหนือปุ่มข้างๆ */
-    transition: all 0.1s ease-out; /* ความลื่นไหล */
+/* เปลี่ยนเอฟเฟคไฟกะพริบแจ้งเตือนเป็นสีส้ม */
+.badge-pulse { animation: pulse-orange 2s infinite; }
+@keyframes pulse-orange { 
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7); } 
+    70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(249, 115, 22, 0); } 
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); } 
 }
 
-/* CSS ส่วนเพิ่มเติมจากด้านล่าง */
+/* เปลี่ยนเอฟเฟคเวลากดปุ่มเครื่องคิดเลขเป็นสีส้ม */
+.btn-pop {
+    transform: scale(1.25) !important; 
+    background-color: #ffedd5 !important; /* พื้นหลังสีส้มอ่อน */
+    color: #ea580c !important; /* ตัวอักษรสีส้มเข้ม */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2) !important;
+    z-index: 50; 
+    transition: all 0.1s ease-out; 
+}
+
 .label {
     display: block;
     font-size: .75rem;
@@ -59,6 +70,8 @@ body { font-family: 'Kanit', sans-serif; touch-action: manipulation; }
     outline: none;
     transition: border-color .2s;
 }
+
+/* เปลี่ยนสีกรอบเวลากดพิมพ์ข้อความให้เป็นสีส้ม */
 .input-box:focus {
-    border-color: #3b82f6;
+    border-color: #f97316; /* สีส้ม */
 }

@@ -7,53 +7,50 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="bg-gray-100 h-[100dvh] flex flex-col overflow-hidden text-gray-800">
 
-    <div id="loginScreen" class="fixed inset-0 z-[9999] bg-gradient-to-br from-blue-900 via-blue-800 to-gray-900 flex items-center justify-center p-4 transition-all duration-500">
+    <div id="loginScreen" class="fixed inset-0 z-[9999] bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-500 flex items-center justify-center p-4 transition-all duration-500">
         <div class="absolute inset-0 overflow-hidden opacity-20 pointer-events-none">
-            <div class="absolute top-0 left-0 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
-            <div class="absolute top-0 right-0 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
-            <div class="absolute -bottom-8 left-20 w-64 h-64 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
+            <div class="absolute top-0 left-0 w-64 h-64 bg-yellow-400 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+            <div class="absolute top-0 right-0 w-64 h-64 bg-red-400 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+            <div class="absolute -bottom-8 left-20 w-64 h-64 bg-orange-300 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
         </div>
 
         <div class="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-3xl shadow-2xl w-full max-w-sm relative overflow-hidden animate-slide-up">
             <div class="text-center mb-6">
-                <div class="w-20 h-20 bg-gradient-to-tr from-blue-500 to-cyan-400 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4 transform rotate-3 hover:rotate-6 transition">
+                <div class="w-20 h-20 bg-gradient-to-tr from-yellow-400 to-orange-500 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4 transform rotate-3 hover:rotate-6 transition">
                     <i class="fas fa-store text-4xl text-white"></i>
                 </div>
                 <h2 class="text-3xl font-extrabold text-white tracking-wide">ร้านเจ้พิน</h2>
-                <p class="text-blue-200 text-sm mt-1">ระบบจัดการร้านค้า (POS)</p>
+                <p class="text-orange-100 text-sm mt-1">ระบบจัดการร้านค้า (POS)</p>
             </div>
 
             <div id="loginErrorBox" class="hidden bg-red-500/20 border border-red-500/50 rounded-xl p-3 mb-4 flex items-center gap-3 animate-pulse">
-                <div class="bg-red-500 rounded-full w-6 h-6 flex items-center justify-center shrink-0">
-                    <i class="fas fa-exclamation text-white text-xs"></i>
-                </div>
+                <div class="bg-red-500 rounded-full w-6 h-6 flex items-center justify-center shrink-0"><i class="fas fa-exclamation text-white text-xs"></i></div>
                 <p id="loginErrorMsg" class="text-red-100 text-sm font-bold">รหัสผ่านไม่ถูกต้อง</p>
             </div>
 
             <form id="loginForm" class="space-y-5">
                 <div class="space-y-1">
-                    <label class="text-blue-200 text-xs font-bold uppercase ml-1">เบอร์โทรศัพท์</label>
+                    <label class="text-orange-100 text-xs font-bold uppercase ml-1">เบอร์โทรศัพท์</label>
                     <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="fas fa-phone text-blue-300"></i></div>
-                        <input type="tel" id="loginPhone" class="w-full bg-black/20 border border-white/10 rounded-xl py-3.5 pl-11 pr-4 text-white placeholder-blue-300/50 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-black/30 transition text-lg font-bold tracking-wide" placeholder="08X-XXX-XXXX" required>
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="fas fa-phone text-orange-200"></i></div>
+                        <input type="tel" id="loginPhone" class="w-full bg-black/20 border border-white/10 rounded-xl py-3.5 pl-11 pr-4 text-white placeholder-orange-200/50 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:bg-black/30 transition text-lg font-bold tracking-wide" placeholder="08X-XXX-XXXX" required>
                     </div>
                 </div>
                 
                 <div class="space-y-1">
-                    <label class="text-blue-200 text-xs font-bold uppercase ml-1">รหัสผ่าน</label>
+                    <label class="text-orange-100 text-xs font-bold uppercase ml-1">รหัสผ่าน</label>
                     <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="fas fa-lock text-blue-300"></i></div>
-                        <input type="password" id="loginPass" class="w-full bg-black/20 border border-white/10 rounded-xl py-3.5 pl-11 pr-4 text-white placeholder-blue-300/50 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-black/30 transition text-lg tracking-widest" placeholder="••••••" required>
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="fas fa-lock text-orange-200"></i></div>
+                        <input type="password" id="loginPass" class="w-full bg-black/20 border border-white/10 rounded-xl py-3.5 pl-11 pr-4 text-white placeholder-orange-200/50 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:bg-black/30 transition text-lg tracking-widest" placeholder="••••••" required>
                     </div>
                 </div>
 
-                <button type="submit" id="btnLogin" class="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold py-4 rounded-xl shadow-lg transform transition active:scale-95 text-lg mt-4 flex justify-center items-center gap-2">
+                <button type="submit" id="btnLogin" class="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-bold py-4 rounded-xl shadow-lg transform transition active:scale-95 text-lg mt-4 flex justify-center items-center gap-2">
                     <span>เข้าสู่ระบบ</span> <i class="fas fa-arrow-right"></i>
                 </button>
             </form>
@@ -61,154 +58,46 @@
         </div>
     </div>
 
-    <div id="logoutModal" class="fixed inset-0 z-[10000] bg-black/80 hidden flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop relative">
-            <div class="bg-red-500 h-24 flex items-center justify-center relative overflow-hidden">
-                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
-                <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg relative z-10">
-                    <i class="fas fa-power-off text-3xl text-white"></i>
-                </div>
-            </div>
-            
-            <div class="p-8 text-center">
-                <h3 class="text-2xl font-extrabold text-gray-800 mb-2">ออกจากระบบ?</h3>
-                <p class="text-gray-500 mb-8 text-sm">คุณต้องการจบการทำงานและกลับสู่หน้า<br>เข้าสู่ระบบใช่หรือไม่?</p>
-                
-                <div class="flex gap-3">
-                    <button onclick="closeModal('logoutModal')" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-3.5 rounded-xl transition">
-                        ยกเลิก
-                    </button>
-                    <button onclick="confirmLogout()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-red-200 transition transform active:scale-95">
-                        ใช่, ออกจากระบบ
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="logoutModal" class="fixed inset-0 z-[10000] bg-black/80 hidden flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in"><div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop relative"><div class="bg-red-500 h-24 flex items-center justify-center relative overflow-hidden"><div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div><div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg relative z-10"><i class="fas fa-power-off text-3xl text-white"></i></div></div><div class="p-8 text-center"><h3 class="text-2xl font-extrabold text-gray-800 mb-2">ออกจากระบบ?</h3><p class="text-gray-500 mb-8 text-sm">คุณต้องการจบการทำงานและกลับสู่หน้า<br>เข้าสู่ระบบใช่หรือไม่?</p><div class="flex gap-3"><button onclick="closeModal('logoutModal')" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-3.5 rounded-xl transition">ยกเลิก</button><button onclick="confirmLogout()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-red-200 transition transform active:scale-95">ใช่, ออกจากระบบ</button></div></div></div></div>
+    <div id="changePassModal" class="fixed inset-0 bg-black/80 hidden z-[150] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop"><div class="bg-gray-800 p-5 text-white flex justify-between items-center"><h3 class="font-bold text-lg"><i class="fas fa-key mr-2 text-yellow-400"></i>เปลี่ยนรหัสผ่าน</h3><button onclick="closeModal('changePassModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8"><i class="fas fa-times"></i></button></div><div class="p-6 space-y-4"><div class="bg-yellow-50 p-3 rounded-lg border border-yellow-200 text-sm text-yellow-800 flex items-start gap-2"><i class="fas fa-info-circle mt-0.5"></i><span>ระบุเบอร์โทรศัพท์และรหัสผ่านใหม่ที่ต้องการใช้งาน</span></div><div><label class="block text-gray-600 text-sm font-bold mb-1">เบอร์โทรศัพท์</label><input type="tel" id="changePassPhone" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-orange-500 outline-none text-lg font-bold tracking-wide" placeholder="08X-XXX-XXXX"></div><div><label class="block text-gray-600 text-sm font-bold mb-1">รหัสผ่านใหม่</label><input type="password" id="newPasswordInput" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-orange-500 outline-none text-lg font-bold text-center tracking-widest" placeholder="ตั้งรหัสผ่านใหม่"></div><button onclick="submitChangePassword()" id="btnSubmitChangePass" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 rounded-xl shadow-lg transition">บันทึกรหัสผ่านใหม่</button></div></div></div>
+    <div id="customerIdentityModal" class="fixed inset-0 z-[200] bg-gray-900 flex items-center justify-center p-4 hidden animate-fade-in bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"><div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop relative"><div class="bg-gradient-to-r from-orange-500 to-yellow-500 h-32 flex items-center justify-center relative overflow-hidden"><div class="absolute inset-0 bg-white/10 opacity-50"></div><div class="w-20 h-20 bg-white text-orange-500 rounded-full flex items-center justify-center shadow-lg text-3xl animate-bounce"><i class="fas fa-user-edit"></i></div></div><div class="p-8"><h2 class="text-2xl font-extrabold text-center text-gray-800 mb-2">ยินดีต้อนรับครับ</h2><p class="text-center text-gray-500 mb-6 text-sm">กรุณาระบุตัวตนเพื่อให้ทางร้าน<br>ติดต่อกลับกรณีสินค้าหมดหรือจัดส่งนะคะ</p><form id="customerIdentityForm" class="space-y-4"><div><label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">ชื่อเล่น / ชื่อของคุณ</label><input type="text" id="custIdName" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-orange-500 outline-none font-bold text-lg bg-gray-50" placeholder="เช่น พี่หนุ่ม, น้องพลอย" required></div><div><label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">เบอร์โทรศัพท์ (สำหรับติดต่อ)</label><input type="tel" id="custIdPhone" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-orange-500 outline-none font-bold text-lg bg-gray-50 tracking-wider" placeholder="08X-XXX-XXXX" required minlength="9" maxlength="10"></div><div class="flex gap-4"><div class="flex-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">บ้านเลขที่ *</label><input type="text" id="custIdHouseNo" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-orange-500 outline-none font-bold text-lg bg-gray-50" placeholder="เช่น 99/9" required></div><div class="flex-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">ซอย/ถนน *</label><input type="text" id="custIdSoi" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-orange-500 outline-none font-bold text-lg bg-gray-50" placeholder="ซ. 15, ถ.หลัก" required></div></div><button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-95 text-lg mt-4">เริ่มสั่งอาหาร <i class="fas fa-arrow-right ml-2"></i></button></form></div></div></div>
 
-    <div id="changePassModal" class="fixed inset-0 bg-black/80 hidden z-[150] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop">
-            <div class="bg-gray-800 p-5 text-white flex justify-between items-center">
-                <h3 class="font-bold text-lg"><i class="fas fa-key mr-2 text-yellow-400"></i>เปลี่ยนรหัสผ่าน</h3>
-                <button onclick="closeModal('changePassModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="p-6 space-y-4">
-                <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-200 text-sm text-yellow-800 flex items-start gap-2">
-                    <i class="fas fa-info-circle mt-0.5"></i>
-                    <span>ระบุเบอร์โทรศัพท์และรหัสผ่านใหม่ที่ต้องการใช้งาน</span>
-                </div>
-                
-                <div>
-                    <label class="block text-gray-600 text-sm font-bold mb-1">เบอร์โทรศัพท์</label>
-                    <input type="tel" id="changePassPhone" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-blue-500 outline-none text-lg font-bold tracking-wide" placeholder="08X-XXX-XXXX">
-                </div>
-
-                <div>
-                    <label class="block text-gray-600 text-sm font-bold mb-1">รหัสผ่านใหม่</label>
-                    <input type="password" id="newPasswordInput" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-blue-500 outline-none text-lg font-bold text-center tracking-widest" placeholder="ตั้งรหัสผ่านใหม่">
-                </div>
-                
-                <button onclick="submitChangePassword()" id="btnSubmitChangePass" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 rounded-xl shadow-lg transition">
-                    บันทึกรหัสผ่านใหม่
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="customerIdentityModal" class="fixed inset-0 z-[200] bg-gray-900 flex items-center justify-center p-4 hidden animate-fade-in bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop relative">
-            <div class="bg-blue-600 h-32 flex items-center justify-center relative overflow-hidden">
-                <div class="absolute inset-0 bg-white/10 opacity-50"></div>
-                <div class="w-20 h-20 bg-white text-blue-600 rounded-full flex items-center justify-center shadow-lg text-3xl animate-bounce">
-                    <i class="fas fa-user-edit"></i>
-                </div>
-            </div>
-            
-            <div class="p-8">
-                <h2 class="text-2xl font-extrabold text-center text-gray-800 mb-2">ยินดีต้อนรับครับ</h2>
-                <p class="text-center text-gray-500 mb-6 text-sm">กรุณาระบุตัวตนเพื่อให้ทางร้าน<br>ติดต่อกลับกรณีสินค้าหมดหรือจัดส่งนะคะ</p>
-                
-                <form id="customerIdentityForm" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">ชื่อเล่น / ชื่อของคุณ</label>
-                    <input type="text" id="custIdName" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-blue-500 outline-none font-bold text-lg bg-gray-50" placeholder="เช่น พี่หนุ่ม, น้องพลอย" required>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">เบอร์โทรศัพท์ (สำหรับติดต่อ)</label>
-                    <input type="tel" id="custIdPhone" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-blue-500 outline-none font-bold text-lg bg-gray-50 tracking-wider" placeholder="08X-XXX-XXXX" required minlength="9" maxlength="10">
-                </div>
-                
-                <div class="flex gap-4">
-                    <div class="flex-1">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">บ้านเลขที่ *</label>
-                        <input type="text" id="custIdHouseNo" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-blue-500 outline-none font-bold text-lg bg-gray-50" placeholder="เช่น 99/9" required>
-                    </div>
-                    <div class="flex-1">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">ซอย/ถนน *</label>
-                        <input type="text" id="custIdSoi" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-blue-500 outline-none font-bold text-lg bg-gray-50" placeholder="ซ. 15, ถ.หลัก" required>
-                    </div>
-                </div>
-
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition transform active:scale-95 text-lg mt-4">
-                    เริ่มสั่งอาหาร <i class="fas fa-arrow-right ml-2"></i>
-                </button>
-            </form>
-            </div>
-        </div>
-    </div>
-
-    <nav class="bg-gradient-to-r from-blue-700 to-blue-900 text-white p-2 shadow-lg flex justify-between items-center z-30 shrink-0 gap-2">
+    <nav class="bg-gradient-to-r from-orange-500 to-yellow-500 text-white p-2 shadow-lg flex justify-between items-center z-30 shrink-0 gap-2">
         <div class="flex items-center gap-2 overflow-hidden shrink-0">
-            <div class="bg-white text-blue-700 p-1.5 rounded-full w-9 h-9 flex items-center justify-center font-bold shadow shrink-0">🏪</div>
+            <div class="bg-white text-orange-500 p-1.5 rounded-full w-9 h-9 flex items-center justify-center font-bold shadow shrink-0">🏪</div>
             <div class="flex flex-col">
                 <h1 class="text-lg font-bold tracking-wide whitespace-nowrap truncate hidden sm:block">ร้านเจ้พิน</h1>
                 <h1 class="text-lg font-bold tracking-wide whitespace-nowrap truncate sm:hidden">ร้านเจ้พิน</h1>
-                <span id="dateTimeDisplay" class="text-xs sm:text-lg text-blue-200 font-mono leading-none">...</span>
+                <span id="dateTimeDisplay" class="text-xs sm:text-lg text-orange-100 font-mono leading-none">...</span>
             </div>
         </div>
         
         <div id="adminToolbar" class="flex gap-2 overflow-x-auto hide-scrollbar smooth-scroll items-center min-w-0 ml-auto">
-            <button onclick="toggleFloatingNumpad()" class="bg-gray-800 hover:bg-gray-700 text-white px-3 py-1.5 rounded-lg text-sm transition border border-gray-600 shrink-0 font-bold mr-1 shadow-md">
-                <i class="fas fa-th"></i>
-            </button>
-
-            <button onclick="logout()" class="bg-red-500/20 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-sm transition border border-red-500/30 shrink-0 font-bold mr-1 group">
-                <i class="fas fa-power-off group-hover:scale-110 transition-transform"></i>
-            </button>
+            <button onclick="toggleFloatingNumpad()" class="bg-gray-800 hover:bg-gray-700 text-white px-3 py-1.5 rounded-lg text-sm transition border border-gray-600 shrink-0 font-bold mr-1 shadow-md"><i class="fas fa-th"></i></button>
+            <button onclick="logout()" class="bg-red-500/20 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-sm transition border border-red-500/30 shrink-0 font-bold mr-1 group"><i class="fas fa-power-off group-hover:scale-110 transition-transform"></i></button>
+            <button onclick="openChangePassModal()" class="bg-white/20 hover:bg-white/40 text-white px-3 py-1.5 rounded-lg text-sm transition border border-white/30 shrink-0 font-bold mr-2 group"><i class="fas fa-key transition-colors"></i></button>
             
-            <button onclick="openChangePassModal()" class="bg-yellow-500/20 hover:bg-yellow-500 text-white px-3 py-1.5 rounded-lg text-sm transition border border-yellow-500/30 shrink-0 font-bold mr-2 group">
-                <i class="fas fa-key text-yellow-400 group-hover:text-white transition-colors"></i>
-            </button>
-             <div onclick="toggleStoreStatus()" class="cursor-pointer bg-white/10 hover:bg-white/20 rounded-full px-2 py-1 flex items-center gap-2 transition mr-2 border border-white/20 group">
+            <div onclick="toggleStoreStatus()" class="cursor-pointer bg-white/20 hover:bg-white/30 rounded-full px-2 py-1 flex items-center gap-2 transition mr-2 border border-white/30 group">
                 <div id="storeToggleBg" class="w-10 h-5 rounded-full relative transition-colors duration-300 shadow-inner flex items-center">
                     <div id="storeToggleDot" class="w-4 h-4 bg-white rounded-full absolute shadow-md transform transition-transform duration-300 left-0.5"></div>
                 </div>
-                <span id="storeStatusText" class="text-xs font-bold text-white group-hover:text-blue-100 min-w-[35px]">เปิด</span>
+                <span id="storeStatusText" class="text-xs font-bold text-white min-w-[35px]">เปิด</span>
             </div>
 
-            <button onclick="openQRModal()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-sm transition border border-white/20 shrink-0 font-bold"><i class="fas fa-qrcode"></i> <span class="hidden sm:inline"></span></button>
-            <button onclick="openKitchenModal()" class="relative bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg flex items-center gap-2 text-sm transition border border-white/20 whitespace-nowrap shrink-0">
-                <i class="fas fa-box-open"></i> <span class="hidden sm:inline"></span>
+            <button onclick="openQRModal()" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-sm transition border border-white/30 shrink-0 font-bold"><i class="fas fa-qrcode"></i> <span class="hidden sm:inline">QR ลูกค้า</span></button>
+            <button onclick="openKitchenModal()" class="relative bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg flex items-center gap-2 text-sm transition border border-white/30 whitespace-nowrap shrink-0">
+                <i class="fas fa-box-open"></i> <span class="hidden sm:inline">จัดของ</span>
                 <span id="kitchenBadge" class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white hidden badge-pulse shadow-md z-50">0</span>
             </button>
-            <button onclick="openSalesModal()" class="bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white px-3 py-1.5 rounded-lg text-sm transition border border-orange-600 shrink-0 font-bold shadow-md flex items-center gap-1">
-                <i class="fas fa-chart-line"></i> <span class="hidden sm:inline">ยอดขาย</span>
-            </button>
-            <button onclick="openHistoryModal()" class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-3 py-1.5 rounded-lg text-sm transition border border-indigo-700 shrink-0 font-bold shadow-md flex items-center gap-1">
-                <i class="fas fa-history"></i> <span class="hidden sm:inline">บิล</span>
-            </button>
-            <button onclick="openExportModal()" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-sm shadow-lg font-bold whitespace-nowrap shrink-0 border border-red-700 mr-2">
-                <i class="fas fa-file-pdf"></i> <span class="hidden sm:inline"></span>
-            </button>
-            <button onclick="openAddMenuModal()" class="bg-green-500 hover:bg-green-400 text-white px-3 py-1.5 rounded-lg text-sm shadow-lg font-bold whitespace-nowrap shrink-0 border border-green-600"><i class="fas fa-plus"></i> <span class="hidden sm:inline">เพิ่ม</span></button>
+            <button onclick="openSalesModal()" class="bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white px-3 py-1.5 rounded-lg text-sm transition border border-orange-600 shrink-0 font-bold shadow-md flex items-center gap-1"><i class="fas fa-chart-line"></i> <span class="hidden sm:inline">ยอดขาย</span></button>
+            <button onclick="openHistoryModal()" class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-3 py-1.5 rounded-lg text-sm transition border border-indigo-700 shrink-0 font-bold shadow-md flex items-center gap-1"><i class="fas fa-history"></i> <span class="hidden sm:inline">ประวัติ</span></button>
+            <button onclick="openExportModal()" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-sm shadow-lg font-bold whitespace-nowrap shrink-0 border border-red-700 mr-2"><i class="fas fa-file-pdf"></i> <span class="hidden sm:inline">รายงาน</span></button>
+            <button onclick="openAddMenuModal()" class="bg-green-500 hover:bg-green-400 text-white px-3 py-1.5 rounded-lg text-sm shadow-lg font-bold whitespace-nowrap shrink-0 border border-green-600"><i class="fas fa-plus"></i> <span class="hidden sm:inline">สินค้า</span></button>
         </div>
 
         <div id="customerToolbar" class="hidden flex items-center justify-end gap-2 flex-1">
-             <button onclick="openMyRecentOrder()" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1 border border-white/30 active:scale-95 transition">
-                <i class="fas fa-receipt"></i>
-            </button>
-            
-            <div class="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1 animate-pulse"><i class="fas fa-clock"></i><span id="queueCountDisplay">0</span> คิว</div>
+             <button onclick="openMyRecentOrder()" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1 border border-white/30 active:scale-95 transition"><i class="fas fa-receipt"></i></button>
+            <div class="bg-yellow-100 text-orange-600 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1 animate-pulse"><i class="fas fa-clock"></i><span id="queueCountDisplay">0</span> คิว</div>
             <span class="bg-white/20 px-3 py-1 rounded-full text-sm font-bold text-white"><i class="fas fa-user mr-1"></i> <span id="customerTableDisplay">...</span></span>
         </div>
     </nav>
@@ -227,7 +116,7 @@
                                oninput="this.value = this.value.replace(/[.+]/g, '')" 
                                onkeyup="searchMenu()" 
                                onkeydown="handleSearchKeydown(event)" 
-                               class="block w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-xl leading-5 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 sm:text-sm transition shadow-inner" 
+                               class="block w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-xl leading-5 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm transition shadow-inner" 
                                placeholder="ยิงบาร์โค้ด...">
                                
                         <div class="absolute inset-y-0 right-0 pr-2 flex items-center">
@@ -235,7 +124,7 @@
                         </div>
                     </div>
 
-                    <button onclick="toggleSystemKeyboard()" id="btnToggleKey" class="bg-white border border-gray-200 text-gray-400 hover:text-blue-600 hover:border-blue-300 w-12 rounded-xl flex items-center justify-center shadow-sm transition">
+                    <button onclick="toggleSystemKeyboard()" id="btnToggleKey" class="bg-white border border-gray-200 text-gray-400 hover:text-orange-500 hover:border-orange-300 w-12 rounded-xl flex items-center justify-center shadow-sm transition">
                         <i class="fas fa-keyboard"></i>
                     </button>
                 </div>
@@ -244,56 +133,45 @@
             <div class="p-2 bg-white shadow-sm border-b border-gray-200 flex gap-2 overflow-x-auto whitespace-nowrap z-10 shrink-0 smooth-scroll hide-scrollbar" id="categoryBar"></div>
 
             <div class="flex-1 overflow-y-auto p-4 pb-24 lg:pb-4 relative custom-scrollbar bg-gray-100" id="menuContainer">
-                <div id="loadingMenu" class="absolute inset-0 flex flex-col items-center justify-center bg-white/80 z-20 backdrop-blur-sm hidden"><i class="fas fa-circle-notch fa-spin text-4xl text-blue-500 mb-3"></i><p class="text-gray-500 font-medium animate-pulse">กำลังโหลดข้อมูลสินค้า...</p></div>
+                <div id="loadingMenu" class="absolute inset-0 flex flex-col items-center justify-center bg-white/80 z-20 backdrop-blur-sm hidden"><i class="fas fa-circle-notch fa-spin text-4xl text-orange-500 mb-3"></i><p class="text-gray-500 font-medium animate-pulse">กำลังโหลดข้อมูลสินค้า...</p></div>
                 <div id="menuGrid" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4 content-start"></div>
                 
                 <div id="noResults" class="hidden flex flex-col items-center justify-center py-10 text-gray-400 text-center">
                     <i class="fas fa-box-open text-6xl mb-4 text-gray-300"></i>
                     <p class="mb-2">ไม่พบสินค้า</p>
-                    <button onclick="fetchMenu()" class="bg-blue-100 text-blue-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-200 transition">
+                    <button onclick="fetchMenu()" class="bg-orange-100 text-orange-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-orange-200 transition">
                         <i class="fas fa-sync-alt mr-1"></i> โหลดข้อมูลใหม่
                     </button>
                 </div>
             </div>
 
             <div id="floatingSearchContainer" class="absolute bottom-6 left-4 z-30 w-48 sm:w-64 animate-slide-up transition-all hover:scale-105">
-                <div class="bg-white/90 backdrop-blur-md border border-blue-200 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex items-center px-4 py-2.5 ring-1 ring-black/5 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
-                    <i class="fas fa-search text-blue-400 text-sm mr-2"></i>
-                    <input type="text" 
-                        id="floatingSearchInput" 
-                        onkeyup="syncSearch(this.value)" 
-                        placeholder="ค้นหาสินค้า..." 
-                        class="bg-transparent border-none outline-none text-sm w-full font-bold text-gray-700 placeholder-gray-400 h-5"
-                        autocomplete="off">
-                    <button onclick="clearFloatingSearch()" id="btnClearFloat" class="text-gray-300 hover:text-red-500 ml-1 hidden transition">
-                        <i class="fas fa-times-circle"></i>
-                    </button>
+                <div class="bg-white/90 backdrop-blur-md border border-orange-200 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex items-center px-4 py-2.5 ring-1 ring-black/5 focus-within:ring-2 focus-within:ring-orange-500 focus-within:border-orange-500 transition-all">
+                    <i class="fas fa-search text-orange-400 text-sm mr-2"></i>
+                    <input type="text" id="floatingSearchInput" onkeyup="syncSearch(this.value)" placeholder="ค้นหาสินค้า..." class="bg-transparent border-none outline-none text-sm w-full font-bold text-gray-700 placeholder-gray-400 h-5" autocomplete="off">
+                    <button onclick="clearFloatingSearch()" id="btnClearFloat" class="text-gray-300 hover:text-red-500 ml-1 hidden transition"><i class="fas fa-times-circle"></i></button>
                 </div>
             </div>
         </div>
 
         <div id="cartPanel" class="hidden md:flex flex-col w-full md:w-[340px] lg:w-[400px] bg-white shadow-2xl border-l border-gray-200 z-40 md:z-[101] fixed inset-0 md:relative md:h-auto animate-slide-up md:animate-none">
             
-            <div class="lg:hidden bg-blue-700 text-white p-4 flex justify-between items-center shadow-md shrink-0">
+            <div class="lg:hidden bg-gradient-to-r from-orange-500 to-yellow-500 text-white p-4 flex justify-between items-center shadow-md shrink-0">
                 <h2 class="text-xl font-bold"><i class="fas fa-shopping-cart mr-2"></i>ตะกร้าสินค้า</h2>
                 <button onclick="toggleCart(false)" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8 flex items-center justify-center"><i class="fas fa-chevron-down"></i></button>
             </div>
             
-            <div class="hidden md:flex flex-col bg-blue-50 border-b border-blue-100 shrink-0 relative overflow-hidden transition-all duration-500" id="cartHeaderArea">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+            <div class="hidden md:flex flex-col bg-orange-50 border-b border-orange-100 shrink-0 relative overflow-hidden transition-all duration-500" id="cartHeaderArea">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
                 
                 <div class="p-4 pb-2 flex items-center justify-between relative z-10">
                      <div class="flex flex-col justify-center">
-                        <h2 class="text-lg font-bold text-blue-800 flex items-center gap-2"><i class="fas fa-shopping-cart"></i> รายการขาย</h2>
-                        <span id="cartCountDesktop" class="bg-blue-200 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full w-fit mt-1">0 รายการ</span>
+                        <h2 class="text-lg font-bold text-orange-800 flex items-center gap-2"><i class="fas fa-shopping-cart"></i> รายการขาย</h2>
+                        <span id="cartCountDesktop" class="bg-orange-200 text-orange-800 text-[10px] font-bold px-2 py-0.5 rounded-full w-fit mt-1">0 รายการ</span>
                      </div>
                      
                      <div class="text-right flex flex-col items-end transition-all duration-500" id="priceDisplayBox">
-                        <span class="block text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-blue-600 to-blue-900 tracking-tighter leading-none drop-shadow-sm filter transition-all duration-500 origin-right" 
-                              id="totalPrice" 
-                              style="text-shadow: 2px 2px 0px rgba(7, 2, 77, 0);">
-                        </span>
-
+                        <span class="block text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-orange-500 to-red-500 tracking-tighter leading-none drop-shadow-sm filter transition-all duration-500 origin-right" id="totalPrice" style="text-shadow: 2px 2px 0px rgba(255, 237, 213, 0.5);"></span>
                         <div id="changeWrapper" class="hidden opacity-0 transform translate-y-4 transition-all duration-500 mt-1">
                             <span class="text-gray-500 text-xs font-bold mr-2">เงินทอน</span>
                             <span id="mainScreenChange" class="text-8xl font-extrabold text-green-600 drop-shadow-sm">0 ฿</span>
@@ -302,8 +180,8 @@
                 </div>
                 
                 <div id="holdBillContainer" class="flex gap-2 px-4 pb-3 relative z-10">
-                    <button onclick="holdBill()" class="flex-1 bg-white text-orange-600 border border-orange-200 hover:bg-orange-50 text-xs font-bold py-1.5 rounded-lg transition shadow-sm transform active:scale-95"><i class="fas fa-pause mr-1"></i> พักบิล</button>
-                    <button onclick="openRecallModal()" class="flex-1 bg-white text-blue-600 border border-blue-200 hover:bg-blue-50 text-xs font-bold py-1.5 rounded-lg transition shadow-sm transform active:scale-95"><i class="fas fa-history mr-1"></i> เรียกบิล</button>
+                    <button onclick="holdBill()" class="flex-1 bg-white text-orange-600 border border-orange-200 hover:bg-orange-100 text-xs font-bold py-1.5 rounded-lg transition shadow-sm transform active:scale-95"><i class="fas fa-pause mr-1"></i> พักบิล</button>
+                    <button onclick="openRecallModal()" class="flex-1 bg-white text-orange-600 border border-orange-200 hover:bg-orange-100 text-xs font-bold py-1.5 rounded-lg transition shadow-sm transform active:scale-95"><i class="fas fa-history mr-1"></i> เรียกบิล</button>
                 </div>
             </div>
 
@@ -315,511 +193,94 @@
             </div>
 
             <div class="p-4 bg-white border-t border-gray-200 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] shrink-0 pb-safe md:hidden">
-                <button onclick="handleCheckoutClick()" id="btnOrderMobile" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-200 text-lg transition transform active:scale-95 flex justify-center items-center gap-2">
+                <button onclick="handleCheckoutClick()" id="btnOrderMobile" class="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-orange-200 text-lg transition transform active:scale-95 flex justify-center items-center gap-2">
                     <span>คิดเงิน</span> <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
 
             <div id="embeddedNumpadPanel" class="hidden md:flex flex-col bg-gray-50 border-t border-gray-300 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] shrink-0 transition-all duration-300 ease-in-out relative z-[200]">
-                <div onclick="toggleEmbeddedNumpad()" class="h-6 flex items-center justify-center cursor-pointer hover:bg-blue-50 transition-colors group border-b border-gray-200 bg-white rounded-t-xl mx-2 -mt-3 shadow-sm relative z-10">
+                <div onclick="toggleEmbeddedNumpad()" class="h-6 flex items-center justify-center cursor-pointer hover:bg-orange-50 transition-colors group border-b border-gray-200 bg-white rounded-t-xl mx-2 -mt-3 shadow-sm relative z-10">
                     <div class="flex gap-1 group-hover:gap-1.5 transition-all duration-300">
-                        <div class="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-blue-400"></div>
-                        <div class="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-blue-400"></div>
-                        <div class="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-blue-400"></div>
+                        <div class="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-orange-400"></div>
+                        <div class="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-orange-400"></div>
+                        <div class="w-1.5 h-1.5 bg-gray-300 rounded-full group-hover:bg-orange-400"></div>
                     </div>
                 </div>
 
                 <div id="embeddedKeys" class="grid grid-cols-4 gap-2 p-3 pb-4">
-                    <button onclick="numpadPress('7', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">7</button>
-                    <button onclick="numpadPress('8', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">8</button>
-                    <button onclick="numpadPress('9', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">9</button>
+                    <button onclick="numpadPress('7', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 transition active:scale-95">7</button>
+                    <button onclick="numpadPress('8', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 transition active:scale-95">8</button>
+                    <button onclick="numpadPress('9', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 transition active:scale-95">9</button>
                     <button onclick="numpadAction('del')" class="h-12 bg-red-50 border border-red-100 shadow-sm rounded-lg text-red-500 hover:bg-red-100 transition active:scale-95"><i class="fas fa-backspace"></i></button>
 
-                    <button onclick="numpadPress('4', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">4</button>
-                    <button onclick="numpadPress('5', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">5</button>
-                    <button onclick="numpadPress('6', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">6</button>
+                    <button onclick="numpadPress('4', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 transition active:scale-95">4</button>
+                    <button onclick="numpadPress('5', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 transition active:scale-95">5</button>
+                    <button onclick="numpadPress('6', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 transition active:scale-95">6</button>
                     
                     <button id="btnOrderDesktop" onclick="handleCheckoutClick()" class="h-12 bg-gradient-to-b from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg rounded-lg shadow-md border-b-4 border-green-800 active:border-b-0 active:translate-y-1 transition-all flex flex-col items-center justify-center gap-1">
                         <span class="text-xs font-normal opacity-80">คิดเงิน</span>
                     </button>
 
-                    <button onclick="numpadPress('1', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">1</button>
-                    <button onclick="numpadPress('2', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">2</button>
-                    <button onclick="numpadPress('3', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">3</button>
+                    <button onclick="numpadPress('1', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 transition active:scale-95">1</button>
+                    <button onclick="numpadPress('2', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 transition active:scale-95">2</button>
+                    <button onclick="numpadPress('3', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 transition active:scale-95">3</button>
                     
-                    <button onclick="numpadAction('enter')" class="row-span-2 h-full bg-blue-600 border border-blue-700 shadow-md rounded-lg text-white font-bold text-xl hover:bg-blue-700 transition active:scale-95 flex flex-col items-center justify-center">
+                    <button onclick="numpadAction('enter')" class="row-span-2 h-full bg-orange-500 border border-orange-600 shadow-md rounded-lg text-white font-bold text-xl hover:bg-orange-600 transition active:scale-95 flex flex-col items-center justify-center">
                         <i class="fas fa-arrow-left mb-1"></i> Enter
                     </button>
 
-                    <button onclick="numpadPress('0', this)" class="col-span-3 h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition active:scale-95">0</button>
+                    <button onclick="numpadPress('0', this)" class="col-span-3 h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 transition active:scale-95">0</button>
                 </div>
                 
                 <div id="minimizedBar" class="hidden px-4 pb-4 pt-1">
-                     <button onclick="handleCheckoutClick()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow transition flex justify-center items-center gap-2">
-                        <span>คิดเงินรวม</span> <span id="miniTotalDisplay" class="bg-blue-800 px-2 py-0.5 rounded text-sm">0 ฿</span>
+                     <button onclick="handleCheckoutClick()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl shadow transition flex justify-center items-center gap-2">
+                        <span>คิดเงินรวม</span> <span id="miniTotalDisplay" class="bg-orange-700 px-2 py-0.5 rounded text-sm">0 ฿</span>
                     </button>
                 </div>
             </div>
         </div>
 
         <div id="mobileBottomBar" onclick="toggleCart(true)" class="md:hidden fixed bottom-4 left-4 right-4 bg-gray-900 text-white p-4 rounded-2xl shadow-2xl flex justify-between items-center z-20 cursor-pointer transform transition-all duration-300 translate-y-[150%] active:scale-95 border border-gray-700/50 backdrop-blur-md bg-opacity-95">
-            <div class="flex items-center gap-3"><div class="bg-blue-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold shadow-lg ring-2 ring-blue-900" id="mobileCartCount">0</div><div class="flex flex-col"><span class="text-xs text-gray-400">ยอดรวม</span><span class="font-bold text-lg leading-none" id="mobileCartTotal">0 ฿</span></div></div>
-            <div class="flex items-center gap-2 text-blue-400 font-bold text-sm">ดูตะกร้า <i class="fas fa-chevron-up"></i></div>
+            <div class="flex items-center gap-3"><div class="bg-gradient-to-r from-orange-500 to-yellow-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold shadow-lg ring-2 ring-orange-900" id="mobileCartCount">0</div><div class="flex flex-col"><span class="text-xs text-gray-400">ยอดรวม</span><span class="font-bold text-lg leading-none text-orange-400" id="mobileCartTotal">0 ฿</span></div></div>
+            <div class="flex items-center gap-2 text-orange-400 font-bold text-sm">ดูตะกร้า <i class="fas fa-chevron-up"></i></div>
         </div>
     </div>
 
-    <div id="qrModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop"><div class="bg-gray-800 p-4 text-white flex justify-between items-center"><h3 class="font-bold text-lg"><i class="fas fa-qrcode mr-2"></i>QR ลูกค้าสแกนสั่ง</h3><button onclick="closeModal('qrModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8"><i class="fas fa-times"></i></button></div><div class="p-6 text-center space-y-4"><div id="qrResult" class="flex flex-col items-center pt-2"><img id="qrImage" class="w-56 h-56 border-4 border-white shadow-lg mb-3" src=""><p class="text-sm text-gray-500 mb-2">ให้ลูกค้าสแกนเพื่อเริ่มสั่งสินค้า</p><a id="qrLink" href="#" target="_blank" class="text-blue-600 text-xs underline break-all">เปิดลิงก์</a></div></div></div></div>
-    
-    <div id="recallModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop flex flex-col max-h-[80vh]"><div class="bg-blue-600 p-4 text-white flex justify-between items-center shrink-0"><h3 class="font-bold text-lg"><i class="fas fa-history mr-2"></i>รายการที่พักบิลไว้</h3><button onclick="closeModal('recallModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8"><i class="fas fa-times"></i></button></div><div id="heldBillsList" class="p-4 overflow-y-auto space-y-2 bg-gray-50 flex-1"></div></div></div>
+    <div id="qrModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop"><div class="bg-gray-800 p-4 text-white flex justify-between items-center"><h3 class="font-bold text-lg"><i class="fas fa-qrcode mr-2"></i>QR ลูกค้าสแกนสั่ง</h3><button onclick="closeModal('qrModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8"><i class="fas fa-times"></i></button></div><div class="p-6 text-center space-y-4"><div id="qrResult" class="flex flex-col items-center pt-2"><img id="qrImage" class="w-56 h-56 border-4 border-white shadow-lg mb-3" src=""><p class="text-sm text-gray-500 mb-2">ให้ลูกค้าสแกนเพื่อเริ่มสั่งสินค้า</p><a id="qrLink" href="#" target="_blank" class="text-orange-600 text-xs underline break-all">เปิดลิงก์</a></div></div></div></div>
+    <div id="recallModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop flex flex-col max-h-[80vh]"><div class="bg-orange-500 p-4 text-white flex justify-between items-center shrink-0"><h3 class="font-bold text-lg"><i class="fas fa-history mr-2"></i>รายการที่พักบิลไว้</h3><button onclick="closeModal('recallModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8"><i class="fas fa-times"></i></button></div><div id="heldBillsList" class="p-4 overflow-y-auto space-y-2 bg-gray-50 flex-1"></div></div></div>
 
     <div id="toast" class="fixed top-5 right-5 z-[100] transform transition-all duration-300 translate-x-[150%] bg-white border-l-4 border-green-500 shadow-2xl rounded-lg p-4 flex items-center gap-3 min-w-[300px]"><div class="bg-green-100 text-green-600 rounded-full w-8 h-8 flex items-center justify-center shrink-0"><i class="fas fa-check"></i></div><div><h4 class="font-bold text-gray-800 text-sm">สำเร็จ!</h4><p class="text-xs text-gray-500" id="toastMsg">บันทึกข้อมูลเรียบร้อย</p></div></div>
     <div id="customAlert" class="fixed inset-0 z-[100] bg-black/70 hidden flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in"><div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center animate-pop"><div id="alertIcon" class="text-5xl mb-4"></div><h3 id="alertTitle" class="text-xl font-bold text-gray-800 mb-2"></h3><p id="alertMsg" class="text-gray-500 mb-6 text-sm"></p><button onclick="closeCustomAlert()" class="w-full bg-gray-800 hover:bg-gray-900 text-white py-3 rounded-xl font-bold">ตกลง</button></div></div>
     <div id="confirmActionModal" class="fixed inset-0 z-[300] bg-black/70 hidden flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in"><div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center animate-pop"><div id="confirmActionIcon" class="text-5xl mb-4 text-red-500"></div><h3 id="confirmActionTitle" class="text-xl font-bold text-gray-800 mb-2"></h3><p id="confirmActionMsg" class="text-gray-500 mb-6 text-sm"></p><div class="flex gap-4"><button onclick="closeModal('confirmActionModal')" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-xl font-bold transition">ยกเลิก</button><button id="btnConfirmAction" onclick="" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-bold transition">ยืนยัน</button></div></div></div>
     
-    <div id="promptPayModal" class="fixed inset-0 bg-black/60 hidden z-[150] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop">
-            <div class="bg-blue-600 p-5 text-white flex justify-between items-center">
-                <h3 class="font-bold text-lg"><i class="fas fa-cog mr-2"></i>ตั้งค่าพร้อมเพย์</h3>
-                <button onclick="closeModal('promptPayModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="p-6 space-y-4">
-                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 flex items-center gap-3">
-                    <img src="https://promptpay.io/logo.png" class="w-12 h-auto opacity-80" onerror="this.style.display='none'">
-                    <div>
-                        <p class="text-sm font-bold text-blue-900">สร้าง QR Code รับเงินอัตโนมัติ</p>
-                        <p class="text-[10px] text-blue-600">รองรับเบอร์โทรศัพท์ และ เลขบัตรประชาชน/Tax ID</p>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-gray-600 text-sm font-bold mb-2">หมายเลขพร้อมเพย์</label>
-                    <input type="tel" id="ppInput" class="w-full text-xl font-bold text-center border-2 border-gray-300 rounded-xl p-3 focus:border-blue-500 outline-none tracking-wider text-blue-700 placeholder-gray-300" placeholder="08X-XXX-XXXX">
-                </div>
-                <div class="flex gap-3 pt-2">
-                    <button onclick="clearPromptPayID()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-500 font-bold py-3 rounded-xl transition">ลบ / รีเซ็ต</button>
-                    <button onclick="savePromptPayID()" class="flex-[2] bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition">บันทึก</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="promptPayModal" class="fixed inset-0 bg-black/60 hidden z-[150] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop"><div class="bg-orange-500 p-5 text-white flex justify-between items-center"><h3 class="font-bold text-lg"><i class="fas fa-cog mr-2"></i>ตั้งค่าพร้อมเพย์</h3><button onclick="closeModal('promptPayModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8"><i class="fas fa-times"></i></button></div><div class="p-6 space-y-4"><div class="bg-orange-50 p-4 rounded-xl border border-orange-100 flex items-center gap-3"><img src="https://promptpay.io/logo.png" class="w-12 h-auto opacity-80" onerror="this.style.display='none'"><div><p class="text-sm font-bold text-orange-900">สร้าง QR Code รับเงินอัตโนมัติ</p><p class="text-[10px] text-orange-600">รองรับเบอร์โทรศัพท์ และ เลขบัตรประชาชน/Tax ID</p></div></div><div><label class="block text-gray-600 text-sm font-bold mb-2">หมายเลขพร้อมเพย์</label><input type="tel" id="ppInput" class="w-full text-xl font-bold text-center border-2 border-gray-300 rounded-xl p-3 focus:border-orange-500 outline-none tracking-wider text-orange-600 placeholder-gray-300" placeholder="08X-XXX-XXXX"></div><div class="flex gap-3 pt-2"><button onclick="clearPromptPayID()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-500 font-bold py-3 rounded-xl transition">ลบ / รีเซ็ต</button><button onclick="savePromptPayID()" class="flex-[2] bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl shadow-lg transition">บันทึก</button></div></div></div></div>
+    <div id="manageQRModal" class="fixed inset-0 bg-black/60 hidden z-[150] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop"><div class="bg-gray-800 p-5 text-white flex justify-between items-center"><h3 class="font-bold text-lg"><i class="fas fa-image mr-2"></i>จัดการรูป QR Code</h3><button onclick="closeModal('manageQRModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8"><i class="fas fa-times"></i></button></div><div class="p-6 text-center space-y-4"><div class="bg-gray-100 p-6 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center"><div id="mqrStatusIcon" class="text-4xl text-gray-300 mb-2"><i class="fas fa-image"></i></div><p id="mqrStatusText" class="text-gray-500 font-medium">ไม่พบรูปภาพในระบบ</p></div><div class="flex flex-col gap-3 pt-2"><button onclick="document.getElementById('bankQRInput').click()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl shadow-lg transition flex justify-center items-center gap-2"><i class="fas fa-upload"></i> อัปโหลดรูปภาพใหม่</button><button id="btnDeleteQR" onclick="deleteServerQR()" class="w-full bg-red-100 hover:bg-red-200 text-red-600 font-bold py-3 rounded-xl transition hidden"><i class="fas fa-trash-alt mr-1"></i> ลบรูปภาพเดิม</button></div></div></div></div>
 
-    <div id="manageQRModal" class="fixed inset-0 bg-black/60 hidden z-[150] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop">
-            <div class="bg-gray-800 p-5 text-white flex justify-between items-center">
-                <h3 class="font-bold text-lg"><i class="fas fa-image mr-2"></i>จัดการรูป QR Code</h3>
-                <button onclick="closeModal('manageQRModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="p-6 text-center space-y-4">
-                <div class="bg-gray-100 p-6 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center">
-                    <div id="mqrStatusIcon" class="text-4xl text-gray-300 mb-2"><i class="fas fa-image"></i></div>
-                    <p id="mqrStatusText" class="text-gray-500 font-medium">ไม่พบรูปภาพในระบบ</p>
-                </div>
-                
-                <div class="flex flex-col gap-3 pt-2">
-                    <button onclick="document.getElementById('bankQRInput').click()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition flex justify-center items-center gap-2">
-                        <i class="fas fa-upload"></i> อัปโหลดรูปภาพใหม่
-                    </button>
-                    <button id="btnDeleteQR" onclick="deleteServerQR()" class="w-full bg-red-100 hover:bg-red-200 text-red-600 font-bold py-3 rounded-xl transition hidden">
-                        <i class="fas fa-trash-alt mr-1"></i> ลบรูปภาพเดิม
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="deliveryNotificationModal" class="fixed inset-0 bg-black/80 hidden z-[120] flex items-center justify-center p-4 backdrop-blur-md animate-fade-in">
-        <div class="bg-white rounded-3xl shadow-[0_0_50px_rgba(37,99,235,0.25)] w-full max-w-sm overflow-hidden animate-pop relative">
-            <div class="bg-gradient-to-br from-green-400 to-green-600 h-32 flex items-center justify-center relative overflow-hidden">
-                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-                <div class="bg-white/20 p-6 rounded-full shadow-lg backdrop-blur-sm animate-bounce">
-                    <i class="fas fa-shipping-fast text-5xl text-white"></i>
-                </div>
-            </div>
-            
-            <div class="p-8 text-center">
-                <h3 class="text-2xl font-extrabold text-gray-800 mb-2">สินค้ากำลังไปส่ง!</h3>
-                <div class="w-16 h-1 bg-green-500 mx-auto rounded-full mb-4"></div>
-                <p class="text-gray-500 mb-8 leading-relaxed">ทางร้านจัดเตรียมสินค้าเสร็จเรียบร้อยแล้ว<br>กรุณารอรับโทรศัพท์หรือรอรับสินค้าที่หน้าบ้านได้เลยค่ะ</p>
-                
-                <button onclick="closeModal('deliveryNotificationModal')" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-4 rounded-2xl shadow-lg transition transform active:scale-95 text-lg">
-                    รับทราบครับ/ค่ะ 👍
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="storeClosedModal" class="fixed inset-0 bg-gray-900 z-[200] hidden flex items-center justify-center p-6 animate-fade-in bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]">
-        <div class="bg-gray-800/90 backdrop-blur-xl border border-gray-700 rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.3)] w-full max-w-sm overflow-hidden text-center relative animate-pop">
-            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-red-500 shadow-[0_0_20px_rgba(239,68,68,1)]"></div>
-            
-            <div class="p-10">
-                <div class="w-24 h-24 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner relative">
-                    <i class="fas fa-store-slash text-5xl text-gray-400"></i>
-                    <div class="absolute -bottom-2 -right-2 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg border-2 border-gray-800">CLOSED</div>
-                </div>
-                
-                <h2 class="text-3xl font-extrabold text-white mb-2 tracking-wide">ขออภัย ร้านปิดแล้ว</h2>
-                <p class="text-gray-400 mb-8 font-light">ขณะนี้อยู่นอกเวลาทำการ<br>โปรดกลับมาใหม่ในเวลาเปิดร้านนะคะ</p>
-                
-                <div class="flex justify-center gap-2">
-                    <div class="w-2 h-2 bg-red-500 rounded-full animate-bounce"></div>
-                    <div class="w-2 h-2 bg-red-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                    <div class="w-2 h-2 bg-red-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                </div>
-            </div>
-            
-            <div class="bg-gray-900/50 p-4 border-t border-gray-700">
-                <p class="text-xs text-gray-500">ร้านเจ้พิน ขายของชำ</p>
-            </div>
-        </div>
-    </div>
+    <div id="deliveryNotificationModal" class="fixed inset-0 bg-black/80 hidden z-[120] flex items-center justify-center p-4 backdrop-blur-md animate-fade-in"><div class="bg-white rounded-3xl shadow-[0_0_50px_rgba(249,115,22,0.25)] w-full max-w-sm overflow-hidden animate-pop relative"><div class="bg-gradient-to-br from-green-400 to-green-600 h-32 flex items-center justify-center relative overflow-hidden"><div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div><div class="bg-white/20 p-6 rounded-full shadow-lg backdrop-blur-sm animate-bounce"><i class="fas fa-shipping-fast text-5xl text-white"></i></div></div><div class="p-8 text-center"><h3 class="text-2xl font-extrabold text-gray-800 mb-2">สินค้ากำลังไปส่ง!</h3><div class="w-16 h-1 bg-green-500 mx-auto rounded-full mb-4"></div><p class="text-gray-500 mb-8 leading-relaxed">ทางร้านจัดเตรียมสินค้าเสร็จเรียบร้อยแล้ว<br>กรุณารอรับโทรศัพท์หรือรอรับสินค้าที่หน้าบ้านได้เลยค่ะ</p><button onclick="closeModal('deliveryNotificationModal')" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-4 rounded-2xl shadow-lg transition transform active:scale-95 text-lg">รับทราบครับ/ค่ะ 👍</button></div></div></div>
+    <div id="storeClosedModal" class="fixed inset-0 bg-gray-900 z-[200] hidden flex items-center justify-center p-6 animate-fade-in"><div class="bg-gray-800/90 backdrop-blur-xl border border-gray-700 rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.3)] w-full max-w-sm overflow-hidden text-center relative animate-pop"><div class="p-10"><div class="w-24 h-24 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner relative"><i class="fas fa-store-slash text-5xl text-gray-400"></i></div><h2 class="text-3xl font-extrabold text-white mb-2">ขออภัย ร้านปิดแล้ว</h2><p class="text-gray-400 mb-8">ขณะนี้อยู่นอกเวลาทำการ<br>โปรดกลับมาใหม่ในเวลาเปิดร้านนะคะ</p></div></div></div>
     
-    <div id="myOrderModal" class="fixed inset-0 bg-black/60 hidden z-[130] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-pop flex flex-col max-h-[80vh]">
-            <div class="bg-blue-600 p-4 text-white flex justify-between items-center shrink-0">
-                <h3 class="font-bold"><i class="fas fa-clipboard-list mr-2"></i>รายการที่สั่งไปล่าสุด</h3>
-                <button onclick="closeModal('myOrderModal')" class="bg-white/20 rounded-full w-8 h-8"><i class="fas fa-times"></i></button>
-            </div>
-            <div id="myOrderContent" class="p-4 overflow-y-auto flex-1 bg-gray-50">
-                <p class="text-center text-gray-400 mt-10">ยังไม่มีรายการที่สั่งล่าสุด</p>
-            </div>
-        </div>
-    </div>
+    <div id="myOrderModal" class="fixed inset-0 bg-black/60 hidden z-[130] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-pop flex flex-col max-h-[80vh]"><div class="bg-orange-500 p-4 text-white flex justify-between items-center shrink-0"><h3 class="font-bold"><i class="fas fa-clipboard-list mr-2"></i>รายการที่สั่งไปล่าสุด</h3><button onclick="closeModal('myOrderModal')" class="bg-white/20 rounded-full w-8 h-8"><i class="fas fa-times"></i></button></div><div id="myOrderContent" class="p-4 overflow-y-auto flex-1 bg-gray-50"><p class="text-center text-gray-400 mt-10">ยังไม่มีรายการที่สั่งล่าสุด</p></div></div></div>
+    <div id="minOrderModal" class="fixed inset-0 bg-black/80 hidden z-[130] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in"><div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop text-center relative border border-gray-100"><div class="pt-10 pb-8 px-8"><h3 class="text-2xl font-extrabold text-gray-800 mb-2">ยอดขั้นต่ำ 100 บาท</h3><p class="text-gray-500 mb-6 text-sm">ขออภัยค่ะ ทางร้านมีนโยบายจัดส่ง<br>เมื่อมียอดสั่งซื้อ 100 บาทขึ้นไปนะคะ</p><button onclick="closeModal('minOrderModal')" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3.5 rounded-xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2"><i class="fas fa-cart-plus"></i> เลือกสินค้าเพิ่ม</button></div></div></div>
+    <div id="deleteBillModal" class="fixed inset-0 bg-black/80 hidden z-[500] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop text-center relative"><div class="p-6"><h3 class="text-2xl font-extrabold text-gray-800 mb-2">ลบบิลนี้ใช่ไหม?</h3><p class="text-gray-500 text-sm mb-6">การกระทำนี้จะลบข้อมูลออกจากระบบถาวร</p><input type="hidden" id="deleteBillIdTarget"><div class="flex gap-3"><button onclick="closeModal('deleteBillModal')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-xl transition">ยกเลิก</button><button onclick="executeDeleteBill()" id="btnConfirmDeleteBill" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-lg transition transform active:scale-95">ยืนยันลบ</button></div></div></div></div>
 
-    <div id="minOrderModal" class="fixed inset-0 bg-black/80 hidden z-[130] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop text-center relative border border-gray-100">
-            <div class="bg-gradient-to-br from-orange-400 to-red-500 h-28 flex items-center justify-center relative overflow-hidden">
-                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
-                <div class="bg-white p-4 rounded-full shadow-lg mt-8 relative z-10">
-                    <i class="fas fa-shopping-basket text-4xl text-orange-500"></i>
-                    <div class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold w-6 h-6 flex items-center justify-center rounded-full border-2 border-white">!</div>
-                </div>
-            </div>
-            
-            <div class="pt-10 pb-8 px-8">
-                <h3 class="text-2xl font-extrabold text-gray-800 mb-2">ยอดขั้นต่ำ 100 บาท</h3>
-                <p class="text-gray-500 mb-6 text-sm leading-relaxed">ขออภัยค่ะ ทางร้านมีนโยบายจัดส่ง<br>เมื่อมียอดสั่งซื้อ 100 บาทขึ้นไปนะคะ</p>
-                
-                <div class="bg-orange-50 rounded-xl p-4 border border-orange-100 mb-6">
-                    <p class="text-gray-600 text-xs font-bold uppercase mb-1">ต้องสั่งเพิ่มอีก</p>
-                    <p class="text-orange-600 font-extrabold text-3xl"><span id="diffAmount">0</span> <span class="text-sm text-gray-400">บาท</span></p>
-                </div>
-
-                <button onclick="closeModal('minOrderModal')" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3.5 rounded-xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2">
-                    <i class="fas fa-cart-plus"></i> เลือกสินค้าเพิ่ม
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="deleteBillModal" class="fixed inset-0 bg-black/80 hidden z-[500] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop text-center relative">
-            <div class="bg-red-100 p-6 flex justify-center items-center">
-                <div class="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center shadow-lg animate-bounce">
-                    <i class="fas fa-trash-alt text-4xl text-white"></i>
-                </div>
-            </div>
-            <div class="p-6">
-                <h3 class="text-2xl font-extrabold text-gray-800 mb-2">ลบบิลนี้ใช่ไหม?</h3>
-                <p class="text-gray-500 text-sm mb-6">การกระทำนี้จะลบข้อมูลออกจากระบบถาวร<br>และยอดขายของวันนี้จะลดลงทันที</p>
-                <input type="hidden" id="deleteBillIdTarget">
-                
-                <div class="flex gap-3">
-                    <button onclick="closeModal('deleteBillModal')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-xl transition">
-                        ยกเลิก
-                    </button>
-                    <button onclick="executeDeleteBill()" id="btnConfirmDeleteBill" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-lg transition transform active:scale-95">
-                        ยืนยันลบ
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="confirmOrderModal" class="fixed inset-0 bg-black/60 hidden z-[300] flex items-end lg:items-center justify-center p-0 lg:p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-t-2xl lg:rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-slide-up h-[90vh] lg:h-auto flex flex-col">
-            <div class="bg-blue-700 p-4 text-white flex justify-between items-center shrink-0"><h3 class="font-bold text-lg"><i class="fas fa-clipboard-check mr-2"></i>สรุปรายการขาย</h3><button onclick="closeModal('confirmOrderModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8"><i class="fas fa-times"></i></button></div>
-            <div class="p-6 overflow-y-auto flex-1">
-                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-4 max-h-40 overflow-y-auto" id="summaryList"></div>
-                <div class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">ชื่อลูกค้า / คิวที่</label><input type="text" id="tableNo" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-blue-500 outline-none text-center text-xl font-bold bg-gray-50" placeholder="เช่น 1 หรือ A"></div>
-                        <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">ประเภท</label><select id="orderType" onchange="toggleAddressFields()" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-blue-500 outline-none bg-white font-bold text-gray-700 h-full"><option value="ซื้อหน้าร้าน">🛒 ซื้อหน้าร้าน</option><option value="ส่งเดลิเวอรี่">🛵 ส่งเดลิเวอรี่</option><option value="จองไว้ก่อน">📦 จองไว้ก่อน</option></select></div>
-                    </div>
-                    <div id="addressSection" class="hidden bg-blue-50 p-3 rounded-xl border border-blue-200 animate-fade-in">
-                        <label class="block text-xs font-bold text-blue-800 uppercase mb-2"><i class="fas fa-map-marker-alt text-blue-500"></i> ที่อยู่จัดส่ง</label>
-                        <div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] text-gray-500 font-bold">บ้านเลขที่</label><input type="text" id="addrHouseNo" class="w-full border border-blue-200 rounded-lg p-2 focus:border-blue-500 outline-none text-sm bg-white" placeholder="123/45"></div><div><label class="text-[10px] text-gray-500 font-bold">ซอย / ถนน</label><input type="text" id="addrSoi" class="w-full border border-blue-200 rounded-lg p-2 focus:border-blue-500 outline-none text-sm bg-white" placeholder="ซอย 5"></div></div>
-                    </div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">หมายเหตุ</label><textarea id="orderNote" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-blue-500 outline-none text-sm" rows="2" placeholder="เช่น ใส่ถุงแยก, รอจ่ายเงิน..."></textarea></div>
-                </div>
-            </div>
-            <div class="p-4 border-t bg-gray-50 shrink-0"><button onclick="submitOrder()" id="btnSubmitOrder" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg text-lg flex justify-center items-center gap-2 transition-all active:scale-95"><span class="btn-text">ยืนยันรายการ</span> <i class="fas fa-check-circle"></i></button></div>
-        </div>
-    </div>
+    <div id="confirmOrderModal" class="fixed inset-0 bg-black/60 hidden z-[300] flex items-end lg:items-center justify-center p-0 lg:p-4 backdrop-blur-sm"><div class="bg-white rounded-t-2xl lg:rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-slide-up h-[90vh] lg:h-auto flex flex-col"><div class="bg-gradient-to-r from-orange-500 to-yellow-500 p-4 text-white flex justify-between items-center shrink-0"><h3 class="font-bold text-lg"><i class="fas fa-clipboard-check mr-2"></i>สรุปรายการขาย</h3><button onclick="closeModal('confirmOrderModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8"><i class="fas fa-times"></i></button></div><div class="p-6 overflow-y-auto flex-1"><div class="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-4 max-h-40 overflow-y-auto" id="summaryList"></div><div class="space-y-4"><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">ชื่อลูกค้า / คิวที่</label><input type="text" id="tableNo" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-orange-500 outline-none text-center text-xl font-bold bg-gray-50" placeholder="เช่น 1 หรือ A"></div><div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">ประเภท</label><select id="orderType" onchange="toggleAddressFields()" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-orange-500 outline-none bg-white font-bold text-gray-700 h-full"><option value="ซื้อหน้าร้าน">🛒 ซื้อหน้าร้าน</option><option value="ส่งเดลิเวอรี่">🛵 ส่งเดลิเวอรี่</option><option value="จองไว้ก่อน">📦 จองไว้ก่อน</option></select></div></div><div id="addressSection" class="hidden bg-orange-50 p-3 rounded-xl border border-orange-200 animate-fade-in"><label class="block text-xs font-bold text-orange-800 uppercase mb-2"><i class="fas fa-map-marker-alt text-red-500"></i> ที่อยู่จัดส่ง</label><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] text-gray-500 font-bold">บ้านเลขที่</label><input type="text" id="addrHouseNo" class="w-full border border-orange-200 rounded-lg p-2 focus:border-orange-500 outline-none text-sm bg-white" placeholder="123/45"></div><div><label class="text-[10px] text-gray-500 font-bold">ซอย / ถนน</label><input type="text" id="addrSoi" class="w-full border border-orange-200 rounded-lg p-2 focus:border-orange-500 outline-none text-sm bg-white" placeholder="ซอย 5"></div></div></div><div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">หมายเหตุ</label><textarea id="orderNote" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-orange-500 outline-none text-sm" rows="2" placeholder="เช่น ใส่ถุงแยก, รอจ่ายเงิน..."></textarea></div></div></div><div class="p-4 border-t bg-gray-50 shrink-0"><button onclick="submitOrder()" id="btnSubmitOrder" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg text-lg flex justify-center items-center gap-2 transition-all active:scale-95"><span class="btn-text">ยืนยันรายการ</span> <i class="fas fa-check-circle"></i></button></div></div></div>
     
-    <div id="kitchenModal" class="fixed inset-0 bg-gray-100 hidden z-[200] flex flex-col animate-slide-up"><div class="bg-orange-600 p-4 text-white flex justify-between items-center shadow-md shrink-0"><h3 class="font-bold text-lg"><i class="fas fa-box mr-2"></i>รายการต้องจัดเตรียม</h3><div class="flex gap-2"><button onclick="fetchOrders()" class="bg-white/20 rounded px-3 py-1"><i class="fas fa-sync-alt"></i></button><button onclick="closeModal('kitchenModal')" class="bg-white/20 rounded px-3 py-1"><i class="fas fa-times"></i></button></div></div><div class="flex-1 overflow-y-auto p-4 bg-gray-100 custom-scrollbar"><div id="kitchenGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-10"></div></div></div>
+    <div id="kitchenModal" class="fixed inset-0 bg-gray-100 hidden z-[200] flex flex-col animate-slide-up"><div class="bg-gray-800 p-4 text-white flex justify-between items-center shadow-md shrink-0"><h3 class="font-bold text-lg"><i class="fas fa-box mr-2 text-orange-400"></i>รายการต้องจัดเตรียม</h3><div class="flex gap-2"><button onclick="fetchOrders()" class="bg-white/20 rounded px-3 py-1"><i class="fas fa-sync-alt"></i></button><button onclick="closeModal('kitchenModal')" class="bg-white/20 rounded px-3 py-1"><i class="fas fa-times"></i></button></div></div><div class="flex-1 overflow-y-auto p-4 bg-gray-100 custom-scrollbar"><div id="kitchenGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-10"></div></div></div>
     
-    <div id="paymentModal" class="fixed inset-0 z-[100] hidden flex items-start justify-start">
-    <div class="absolute inset-0" onclick="closeModal('paymentModal')"></div>
-
-    <div id="draggableModal" class="bg-white rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.2)] w-full max-w-xs overflow-hidden animate-pop absolute border border-gray-200 z-[200]" style="left: 20%; top: 15%;">
-        
-        <div id="modalHeader" class="bg-blue-900 p-3 text-white flex justify-between items-center shrink-0 cursor-move">
-            <h3 class="font-bold text-base"><i class="fas fa-hand-holding-usd mr-2"></i>รับเงิน</h3>
-            <button onclick="closeModal('paymentModal')" 
-                    onmousedown="event.stopPropagation()" 
-                    ontouchstart="event.stopPropagation()" 
-                    class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8 flex items-center justify-center transition shadow-sm">
-                <i class="fas fa-times text-sm"></i>
-            </button>
-        </div>
-        
-        <div class="p-4">
-            <div id="quickPayTableNoContainer" class="hidden"><input type="text" id="quickPayTableNo"></div>
-            
-            <div class="bg-gray-50 p-2 rounded-xl border border-gray-100 text-center mb-2 relative group-qr">
+    <div id="paymentModal" class="fixed inset-0 z-[100] hidden flex items-start justify-start"><div class="absolute inset-0" onclick="closeModal('paymentModal')"></div><div id="draggableModal" class="bg-white rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.2)] w-full max-w-xs overflow-hidden animate-pop absolute border border-gray-200 z-[200]" style="left: 20%; top: 15%;"><div id="modalHeader" class="bg-gray-800 p-3 text-white flex justify-between items-center shrink-0 cursor-move"><h3 class="font-bold text-base"><i class="fas fa-hand-holding-usd mr-2 text-green-400"></i>รับเงิน</h3><button onclick="closeModal('paymentModal')" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8 flex items-center justify-center transition shadow-sm"><i class="fas fa-times text-sm"></i></button></div><div class="p-4"><div id="quickPayTableNoContainer" class="hidden"><input type="text" id="quickPayTableNo"></div><div class="bg-gray-50 p-2 rounded-xl border border-gray-100 text-center mb-2 relative group-qr"><button onclick="togglePaymentMenu()" class="absolute top-3 right-3 z-20 w-8 h-8 bg-white/90 hover:bg-white rounded-full text-gray-500 hover:text-orange-500 shadow-md flex items-center justify-center transition backdrop-blur-sm border border-gray-200"><i class="fas fa-ellipsis-v"></i></button><div id="paymentSettingsMenu" class="hidden absolute top-12 right-3 z-30 bg-white shadow-xl rounded-xl border border-gray-100 p-1.5 w-44 flex flex-col gap-1 animate-pop origin-top-right"><button onclick="openPromptPayModal(); togglePaymentMenu()" class="text-left text-xs font-bold text-orange-600 hover:bg-orange-50 p-2 rounded-lg transition flex items-center"><i class="fas fa-cog w-6 text-center mr-1"></i> ตั้งค่าพร้อมเพย์</button><button onclick="checkAndUseOriginalQR(); togglePaymentMenu()" class="text-left text-xs font-bold text-gray-600 hover:bg-gray-100 p-2 rounded-lg transition flex items-center"><i class="fas fa-image w-6 text-center mr-1"></i> ใช้รูปเดิม</button><div class="h-px bg-gray-100 my-0.5"></div><button onclick="document.getElementById('bankQRInput').click(); togglePaymentMenu()" class="text-left text-xs font-bold text-gray-500 hover:bg-gray-100 p-2 rounded-lg transition flex items-center"><i class="fas fa-upload w-6 text-center mr-1"></i> อัปโหลดรูปใหม่</button></div><div class="relative overflow-hidden rounded-lg bg-white h-64 flex items-center justify-center cursor-pointer group shadow-inner" onclick="handleQRClick()"><img id="bankQRImage" src="" class="h-full w-auto object-contain p-2" alt="QR"><div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><span class="text-white text-xs font-bold"><i class="fas fa-expand"></i> ดูรูปเต็ม</span></div></div><input type="file" id="bankQRInput" class="hidden" accept="image/*" onchange="uploadBankQRFile(this)"></div><div class="flex justify-between items-end px-4 mb-2 h-8"><div class="text-xs font-bold text-gray-500 flex items-baseline">ยอดรวม: <span id="modalTotalPay" class="text-orange-600 text-4xl font-extrabold ml-2 animate-heartbeat">0</span> <span class="ml-1 text-sm">฿</span></div><div id="modalChangeBox" class="text-xs font-bold text-gray-500 opacity-0 transform translate-y-2 transition-all duration-300">เงินทอน: <span id="modalChangePay" class="text-green-600 text-lg ml-1 drop-shadow-sm">0</span> ฿</div></div><div class="mb-3 relative text-center"><label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-wide">ยอดเงินที่รับ</label><div class="relative"><input type="text" id="inputReceived" inputmode="none" oninput="this.value = this.value.replace(/[^0-9]/g, ''); calcChange()" onkeydown="checkPaymentEnter(event)" class="w-1/3 mx-auto block text-1xl font-extrabold text-center border border-orange-500 rounded-lg p-0.5 text-orange-600 placeholder-gray-200 focus:ring-4 focus:ring-orange-100 outline-none transition-all shadow-inner bg-orange-50/50" placeholder="0"></div></div><button onclick="confirmPayment()" id="btnConfirmPay" class="w-1/2 mx-auto block bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-xl text-base shadow-lg transition transform active:scale-95">รับเงิน</button></div></div></div>
     
-    <button onclick="togglePaymentMenu()" class="absolute top-3 right-3 z-20 w-8 h-8 bg-white/90 hover:bg-white rounded-full text-gray-500 hover:text-blue-600 shadow-md flex items-center justify-center transition backdrop-blur-sm border border-gray-200">
-        <i class="fas fa-ellipsis-v"></i>
-    </button>
-
-    <div id="paymentSettingsMenu" class="hidden absolute top-12 right-3 z-30 bg-white shadow-xl rounded-xl border border-gray-100 p-1.5 w-44 flex flex-col gap-1 animate-pop origin-top-right">
-        <button onclick="openPromptPayModal(); togglePaymentMenu()" class="text-left text-xs font-bold text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition flex items-center">
-            <i class="fas fa-cog w-6 text-center mr-1"></i> ตั้งค่าพร้อมเพย์
-        </button>
-        <button onclick="checkAndUseOriginalQR(); togglePaymentMenu()" class="text-left text-xs font-bold text-gray-600 hover:bg-gray-100 p-2 rounded-lg transition flex items-center">
-            <i class="fas fa-image w-6 text-center mr-1"></i> ใช้รูปเดิม
-        </button>
-        <div class="h-px bg-gray-100 my-0.5"></div>
-         <button onclick="document.getElementById('bankQRInput').click(); togglePaymentMenu()" class="text-left text-xs font-bold text-gray-500 hover:bg-gray-100 p-2 rounded-lg transition flex items-center">
-            <i class="fas fa-upload w-6 text-center mr-1"></i> อัปโหลดรูปใหม่
-        </button>
-    </div>
-
-    <div class="relative overflow-hidden rounded-lg bg-white h-64 flex items-center justify-center cursor-pointer group shadow-inner" onclick="handleQRClick()">
-        <img id="bankQRImage" src="" class="h-full w-auto object-contain p-2" alt="QR">
-        <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-            <span class="text-white text-xs font-bold"><i class="fas fa-expand"></i> ดูรูปเต็ม</span>
-        </div>
-    </div>
+    <div id="editMenuModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-pop"><div class="bg-gray-800 p-4 flex justify-between items-center text-white"><h3 class="font-bold text-lg text-white">แก้ไขข้อมูลสินค้า</h3><button onclick="closeModal('editMenuModal')" class="bg-white/10 rounded-full w-8 h-8 text-white"><i class="fas fa-times"></i></button></div><form id="editMenuForm" class="p-6 space-y-4"><input type="hidden" id="eId"><div><label class="label">ชื่อสินค้า</label><input type="text" id="eName" required class="input-box"></div><div class="flex gap-4"><div class="flex-1"><label class="label">ราคา</label><input type="number" id="ePrice" required class="input-box"></div><div class="flex-1"><label class="label">หมวดหมู่</label><select id="eCategory" class="input-box"></select></div></div><div class="flex gap-3 pt-2"><button type="button" onclick="deleteMenu()" id="btnDeleteMenu" class="flex-1 bg-red-50 text-red-600 font-bold py-3 rounded-xl border border-red-200">ลบ</button><button type="submit" id="btnEditSave" class="flex-[2] bg-orange-500 text-white font-bold py-3 rounded-xl shadow">บันทึก</button></div></form></div></div>
     
-    <input type="file" id="bankQRInput" class="hidden" accept="image/*" onchange="uploadBankQRFile(this)">
-</div>
-
-            <div class="flex justify-between items-end px-4 mb-2 h-8">
-                <div class="text-xs font-bold text-gray-500 flex items-baseline">
-                    ยอดรวม: <span id="modalTotalPay" class="text-blue-600 text-4xl font-extrabold ml-2 animate-heartbeat">0</span> <span class="ml-1 text-sm">฿</span>
-                </div>
-                <div id="modalChangeBox" class="text-xs font-bold text-gray-500 opacity-0 transform translate-y-2 transition-all duration-300">
-                    เงินทอน: <span id="modalChangePay" class="text-green-600 text-lg ml-1 drop-shadow-sm">0</span> ฿
-                </div>
-            </div>
-            
-            <div class="mb-3 relative text-center">
-                <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-wide">ยอดเงินที่รับ</label>
-                <div class="relative">
-                    <input type="text" id="inputReceived" inputmode="none"
-                        oninput="this.value = this.value.replace(/[^0-9]/g, ''); calcChange()" 
-                        onkeydown="checkPaymentEnter(event)" 
-                        class="w-1/3 mx-auto block text-1xl font-extrabold text-center border border-blue-500 rounded-lg p-0.5 text-blue-600 placeholder-gray-200 focus:ring-4 focus:ring-blue-100 outline-none transition-all shadow-inner bg-blue-50/50" 
-                        placeholder="0">
-                </div>
-            </div>
-
-            <button onclick="confirmPayment()" id="btnConfirmPay" class="w-1/2 mx-auto block bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-xl text-base shadow-lg transition transform active:scale-95">
-                รับเงิน
-            </button>
-        </div>
-    </div>
-</div>
+    <div id="addModal" class="fixed inset-0 bg-black/60 hidden z-[1000] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-pop"><div class="bg-green-600 p-4 flex justify-between items-center text-white"><h3 class="font-bold text-lg">เพิ่มสินค้าใหม่</h3><button onclick="closeModal('addModal')" class="bg-white/20 rounded-full w-8 h-8"><i class="fas fa-times"></i></button></div><form id="addMenuForm" class="p-6 space-y-4"><div class="mb-4 bg-gray-50 p-3 rounded-xl border border-dashed border-gray-300"><label class="label text-gray-600 font-bold flex items-center gap-2 mb-2"><i class="fas fa-barcode text-gray-400"></i> รหัสสินค้า / Barcode <span class="text-[10px] font-normal text-gray-400 bg-white px-2 py-0.5 rounded-full border border-gray-200">ไม่บังคับ</span></label><div class="relative"><input type="text" id="mCode" class="input-box pl-10 font-mono text-orange-600 font-bold tracking-wider placeholder-gray-300 focus:bg-white transition-colors" placeholder="สแกน หรือ พิมพ์รหัส"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-tag text-gray-300"></i></div></div><p class="text-[10px] text-gray-400 mt-1.5 ml-1"><i class="fas fa-info-circle"></i> หากระบุ ระบบจะใช้รหัสนี้เป็น ID สินค้า</p></div><div><label class="label">ชื่อสินค้า</label><input type="text" id="mName" required class="input-box"></div><div class="flex gap-4"><div class="flex-1"><label class="label">ราคา</label><input type="number" id="mPrice" required class="input-box"></div><div class="flex-1"><label class="label">หมวดหมู่</label><select id="mCategory" class="input-box"></select></div></div><div><label class="label">รูปสินค้า</label><input type="file" id="mFile" accept="image/*" class="w-full text-sm"></div><button type="submit" id="btnSaveMenu" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow mt-2 flex justify-center items-center gap-2"><span class="btn-text">บันทึก</span> <i class="fas fa-save"></i></button></form></div></div>
     
-    <div id="editMenuModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-pop"><div class="bg-yellow-500 p-4 flex justify-between items-center text-white"><h3 class="font-bold text-lg text-black">แก้ไขข้อมูลสินค้า</h3><button onclick="closeModal('editMenuModal')" class="bg-black/10 rounded-full w-8 h-8 text-black"><i class="fas fa-times"></i></button></div><form id="editMenuForm" class="p-6 space-y-4"><input type="hidden" id="eId"><div><label class="label">ชื่อสินค้า</label><input type="text" id="eName" required class="input-box"></div><div class="flex gap-4"><div class="flex-1"><label class="label">ราคา</label><input type="number" id="ePrice" required class="input-box"></div><div class="flex-1"><label class="label">หมวดหมู่</label><select id="eCategory" class="input-box"></select></div></div><div class="flex gap-3 pt-2"><button type="button" onclick="deleteMenu()" id="btnDeleteMenu" class="flex-1 bg-red-50 text-red-600 font-bold py-3 rounded-xl border border-red-200">ลบ</button><button type="submit" id="btnEditSave" class="flex-[2] bg-yellow-500 text-black font-bold py-3 rounded-xl shadow">บันทึก</button></div></form></div></div>
+    <div id="salesModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in"><div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-pop"><div class="bg-gradient-to-r from-orange-500 to-orange-600 p-5 text-white flex justify-between items-center shadow-md relative overflow-hidden"><div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div><h3 class="font-bold text-lg flex items-center gap-2 relative z-10"><i class="fas fa-chart-pie"></i> สรุปยอดขาย</h3><button onclick="closeModal('salesModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8 transition flex items-center justify-center relative z-10"><i class="fas fa-times"></i></button></div><div class="p-6 space-y-4 bg-gray-50"><div class="bg-gradient-to-br from-orange-100 to-orange-200 p-6 rounded-2xl text-center border border-orange-300 shadow-sm relative overflow-hidden transform hover:scale-[1.02] transition-transform"><div class="absolute top-0 right-0 p-4 opacity-10"><i class="fas fa-coins text-7xl text-orange-600"></i></div><div class="relative z-10"><p class="text-orange-700 text-sm uppercase font-extrabold tracking-wider mb-1"><i class="fas fa-calendar-day mr-1"></i>ยอดขายวันนี้</p><div class="flex justify-center items-baseline gap-2 mt-1"><h2 class="text-5xl font-extrabold text-orange-600 drop-shadow-sm" id="saleToday">...</h2><span class="text-xl text-orange-500 font-bold">฿</span></div></div></div><div class="grid grid-cols-2 gap-4"><div class="bg-white p-4 rounded-2xl text-center border border-gray-200 shadow-sm"><p class="text-xs text-gray-500 font-bold mb-1 uppercase tracking-wide">เมื่อวาน</p><div class="flex justify-center items-baseline gap-1"><h3 class="font-extrabold text-gray-700 text-2xl" id="saleYest">...</h3><span class="text-xs text-gray-400 font-bold">฿</span></div></div><div class="bg-white p-4 rounded-2xl text-center border border-gray-200 shadow-sm"><p class="text-xs text-gray-500 font-bold mb-1 uppercase tracking-wide">เดือนนี้</p><div class="flex justify-center items-baseline gap-1"><h3 class="font-extrabold text-gray-700 text-2xl" id="saleMonth">...</h3><span class="text-xs text-gray-400 font-bold">฿</span></div></div></div></div></div></div>
     
-    <div id="addModal" class="fixed inset-0 bg-black/60 hidden z-[1000] flex items-center justify-center p-4 backdrop-blur-sm">
-         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-pop">
-            <div class="bg-green-600 p-4 flex justify-between items-center text-white"><h3 class="font-bold text-lg">เพิ่มสินค้าใหม่</h3><button onclick="closeModal('addModal')" class="bg-white/20 rounded-full w-8 h-8"><i class="fas fa-times"></i></button></div>
-            <form id="addMenuForm" class="p-6 space-y-4">
-                <div class="mb-4 bg-gray-50 p-3 rounded-xl border border-dashed border-gray-300">
-                    <label class="label text-gray-600 font-bold flex items-center gap-2 mb-2"><i class="fas fa-barcode text-gray-400"></i> รหัสสินค้า / Barcode <span class="text-[10px] font-normal text-gray-400 bg-white px-2 py-0.5 rounded-full border border-gray-200">ไม่บังคับ</span></label>
-                    <div class="relative"><input type="text" id="mCode" class="input-box pl-10 font-mono text-blue-600 font-bold tracking-wider placeholder-gray-300 focus:bg-white transition-colors" placeholder="สแกน หรือ พิมพ์รหัส"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-tag text-gray-300"></i></div></div>
-                    <p class="text-[10px] text-gray-400 mt-1.5 ml-1"><i class="fas fa-info-circle"></i> หากระบุ ระบบจะใช้รหัสนี้เป็น ID สินค้า</p>
-                </div>
-                <div><label class="label">ชื่อสินค้า</label><input type="text" id="mName" required class="input-box"></div>
-                <div class="flex gap-4"><div class="flex-1"><label class="label">ราคา</label><input type="number" id="mPrice" required class="input-box"></div><div class="flex-1"><label class="label">หมวดหมู่</label><select id="mCategory" class="input-box"></select></div></div>
-                <div><label class="label">รูปสินค้า</label><input type="file" id="mFile" accept="image/*" class="w-full text-sm"></div>
-                <button type="submit" id="btnSaveMenu" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow mt-2 flex justify-center items-center gap-2"><span class="btn-text">บันทึก</span> <i class="fas fa-save"></i></button>
-            </form>
-        </div>
-    </div>
+    <div id="historyModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in"><div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl h-[80vh] flex flex-col animate-pop overflow-hidden"><div class="bg-gradient-to-r from-indigo-600 to-purple-700 p-5 text-white flex justify-between items-center shadow-md relative"><div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div><h3 class="font-bold text-lg flex items-center gap-2 relative z-10"><div class="bg-white/20 w-8 h-8 rounded-lg flex items-center justify-center shadow-inner"><i class="fas fa-history"></i></div> ประวัติการขาย <span class="text-xs font-normal text-indigo-100 bg-black/20 border border-white/10 px-2 py-1 rounded-full ml-1">ล่าสุด 400 บิล</span></h3><button onclick="closeModal('historyModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8 transition flex items-center justify-center relative z-10 shadow-sm"><i class="fas fa-times"></i></button></div><div class="flex-1 overflow-y-auto p-4 bg-gray-50 relative custom-scrollbar"><div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden"><table class="w-full text-left border-collapse"><thead class="bg-gray-100 text-gray-500 text-xs uppercase sticky top-0 z-10 shadow-sm border-b border-gray-200"><tr><th class="p-3 pl-4 w-20">เวลา</th><th class="p-3">รายการสินค้า</th><th class="p-3 pr-4 text-right w-24">ยอดรวม</th></tr></thead><tbody id="historyList" class="text-sm divide-y divide-gray-100"></tbody></table></div></div></div></div>
     
-    <div id="salesModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-pop">
-            
-            <div class="bg-gradient-to-r from-orange-500 to-orange-600 p-5 text-white flex justify-between items-center shadow-md relative overflow-hidden">
-                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
-                <h3 class="font-bold text-lg flex items-center gap-2 relative z-10"><i class="fas fa-chart-pie"></i> สรุปยอดขาย</h3>
-                <button onclick="closeModal('salesModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8 transition flex items-center justify-center relative z-10"><i class="fas fa-times"></i></button>
-            </div>
-            
-            <div class="p-6 space-y-4 bg-gray-50">
-                <div class="bg-gradient-to-br from-orange-100 to-orange-200 p-6 rounded-2xl text-center border border-orange-300 shadow-sm relative overflow-hidden transform hover:scale-[1.02] transition-transform">
-                    <div class="absolute top-0 right-0 p-4 opacity-10">
-                        <i class="fas fa-coins text-7xl text-orange-600"></i>
-                    </div>
-                    <div class="relative z-10">
-                        <p class="text-orange-700 text-sm uppercase font-extrabold tracking-wider mb-1"><i class="fas fa-calendar-day mr-1"></i>ยอดขายวันนี้</p>
-                        <div class="flex justify-center items-baseline gap-2 mt-1">
-                            <h2 class="text-5xl font-extrabold text-orange-600 drop-shadow-sm" id="saleToday">...</h2>
-                            <span class="text-xl text-orange-500 font-bold">฿</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white p-4 rounded-2xl text-center border border-gray-200 shadow-sm">
-                        <p class="text-xs text-gray-500 font-bold mb-1 uppercase tracking-wide">เมื่อวาน</p>
-                        <div class="flex justify-center items-baseline gap-1">
-                            <h3 class="font-extrabold text-gray-700 text-2xl" id="saleYest">...</h3>
-                            <span class="text-xs text-gray-400 font-bold">฿</span>
-                        </div>
-                    </div>
-                    <div class="bg-white p-4 rounded-2xl text-center border border-gray-200 shadow-sm">
-                        <p class="text-xs text-gray-500 font-bold mb-1 uppercase tracking-wide">เดือนนี้</p>
-                        <div class="flex justify-center items-baseline gap-1">
-                            <h3 class="font-extrabold text-gray-700 text-2xl" id="saleMonth">...</h3>
-                            <span class="text-xs text-gray-400 font-bold">฿</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="historyModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl h-[80vh] flex flex-col animate-pop overflow-hidden">
-            
-            <div class="bg-gradient-to-r from-indigo-600 to-purple-700 p-5 text-white flex justify-between items-center shadow-md relative">
-                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-                <h3 class="font-bold text-lg flex items-center gap-2 relative z-10">
-                    <div class="bg-white/20 w-8 h-8 rounded-lg flex items-center justify-center shadow-inner">
-                        <i class="fas fa-history"></i>
-                    </div> 
-                    ประวัติการขาย 
-                    <span class="text-xs font-normal text-indigo-100 bg-black/20 border border-white/10 px-2 py-1 rounded-full ml-1">ล่าสุด 400 บิล</span>
-                </h3>
-                <button onclick="closeModal('historyModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8 transition flex items-center justify-center relative z-10 shadow-sm">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="flex-1 overflow-y-auto p-4 bg-gray-50 relative custom-scrollbar">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-gray-100 text-gray-500 text-xs uppercase sticky top-0 z-10 shadow-sm border-b border-gray-200">
-                            <tr>
-                                <th class="p-3 pl-4 w-20">เวลา</th>
-                                <th class="p-3">รายการสินค้า</th>
-                                <th class="p-3 pr-4 text-right w-24">ยอดรวม</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historyList" class="text-sm divide-y divide-gray-100">
-                            </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-                <thead class="bg-gray-100 text-gray-500 text-xs uppercase sticky top-0 z-10 shadow-sm">
-                    <tr>
-                        <th class="p-3 w-20">เวลา</th>
-                        <th class="p-3">รายการสินค้า</th>
-                        <th class="p-3 text-right w-24">ยอดรวม</th>
-                    </tr>
-                </thead>
-                <tbody id="historyList" class="text-sm divide-y divide-gray-100">
-                    </tbody>
-            </table></div></div></div>
-    <div id="billDetailModal" class="fixed inset-0 bg-black/80 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg lg:max-w-xl overflow-hidden animate-pop relative max-h-[90vh] h-full flex flex-col"> 
-            <div id="billDetailContent" class="flex flex-col flex-1 h-full"> 
-                </div>
-        </div>
-    </div>
+    <div id="billDetailModal" class="fixed inset-0 bg-black/80 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg lg:max-w-xl overflow-hidden animate-pop relative max-h-[90vh] h-full flex flex-col"><div id="billDetailContent" class="flex flex-col flex-1 h-full"></div></div></div>
+    <div id="exportModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop"><div class="bg-red-600 p-4 text-white flex justify-between items-center"><h3 class="font-bold text-lg"><i class="fas fa-file-pdf mr-2"></i>ออกรายงาน PDF</h3><button onclick="closeModal('exportModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8"><i class="fas fa-times"></i></button></div><div class="p-6 space-y-4"><div><label class="block text-gray-700 text-sm font-bold mb-2">เลือกประเภทรายงาน</label><select id="exportType" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-red-500 outline-none font-bold text-gray-700"><option value="DailySales">สรุปยอดขายรายวัน (DailySales)</option><option value="Bill">รายการบิลละเอียด (Bill)</option><option value="MonthlySales">สรุปยอดขายรายเดือน (Monthly Report)</option></select></div><div class="grid grid-cols-2 gap-3"><div><label class="block text-gray-600 text-xs font-bold mb-1">ตั้งแต่วันที่</label><input type="date" id="exportStartDate" class="w-full border-2 border-gray-200 rounded-xl p-2 outline-none focus:border-red-500 text-sm"></div><div><label class="block text-gray-600 text-xs font-bold mb-1">ถึงวันที่</label><input type="date" id="exportEndDate" class="w-full border-2 border-gray-200 rounded-xl p-2 outline-none focus:border-red-500 text-sm"></div></div><button onclick="executeExportPDF()" id="btnDoExport" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-lg mt-2 flex justify-center items-center gap-2 transition transform active:scale-95"><span class="btn-text">ดาวน์โหลด PDF</span> <i class="fas fa-download"></i></button></div></div></div>
 
-    <div id="floatingNumpad" class="hidden fixed top-[40%] right-10 z-[300] bg-white/80 backdrop-blur-md border border-white/40 shadow-2xl rounded-2xl overflow-hidden flex flex-col w-64 transition-opacity duration-300 resize hover:resize" style="min-width: 220px; max-width: 400px;">
-    
-    <div id="numpadHeader" class="bg-gradient-to-r from-gray-800 to-gray-900 text-white p-2 cursor-move flex justify-between items-center shrink-0 select-none">
-        <div class="flex items-center gap-2">
-            <i class="fas fa-calculator text-xs text-blue-400"></i>
-            <span class="text-xs font-bold tracking-wide">แป้นตัวเลข</span>
-        </div>
-        <button onclick="toggleFloatingNumpad()" 
-                onmousedown="event.stopPropagation()" 
-                ontouchstart="event.stopPropagation()" 
-                class="text-gray-400 hover:text-white transition p-2"> <i class="fas fa-times"></i>
-        </button>
-    </div>
-
-    <div class="p-2 grid grid-cols-3 gap-2 flex-1 overflow-auto bg-white/50">
-        <button onclick="numpadPress('7', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">7</button>
-        <button onclick="numpadPress('8', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">8</button>
-        <button onclick="numpadPress('9', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">9</button>
-        
-        <button onclick="numpadPress('4', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">4</button>
-        <button onclick="numpadPress('5', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">5</button>
-        <button onclick="numpadPress('6', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">6</button>
-        
-        <button onclick="numpadPress('1', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">1</button>
-        <button onclick="numpadPress('2', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">2</button>
-        <button onclick="numpadPress('3', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">3</button>
-        
-        <button onclick="numpadAction('del')" class="h-12 bg-red-100 shadow-sm rounded-xl font-bold text-lg text-red-600 hover:bg-red-200 hover:shadow-md transition active:scale-95"><i class="fas fa-backspace"></i></button>
-        
-        <button onclick="numpadPress('0', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition active:scale-95">0</button>
-        
-        <button onclick="numpadAction('enter')" class="h-12 bg-green-500 shadow-lg shadow-green-200 rounded-xl font-bold text-lg text-white hover:bg-green-600 transition active:scale-95">Enter</button>
-    </div>
-
-    <div class="p-2 pt-0">
-        <button onclick="handleCheckoutClick()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
-            <i class="fas fa-cash-register"></i> คิดเงิน
-        </button>
-    </div>
-    
-    <div class="absolute bottom-0 right-0 w-3 h-3 cursor-nwse-resize bg-gray-300 rounded-tl opacity-50"></div>
-</div>
-
-<div id="exportModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop">
-            <div class="bg-red-600 p-4 text-white flex justify-between items-center">
-                <h3 class="font-bold text-lg"><i class="fas fa-file-pdf mr-2"></i>ออกรายงาน PDF</h3>
-                <button onclick="closeModal('exportModal')" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="p-6 space-y-4">
-                <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-2">เลือกประเภทรายงาน</label>
-                    <select id="exportType" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-red-500 outline-none font-bold text-gray-700">
-                        <option value="DailySales">สรุปยอดขายรายวัน (DailySales)</option>
-                        <option value="Bill">รายการบิลละเอียด (Bill)</option>
-                        <option value="MonthlySales">สรุปยอดขายรายเดือน (Monthly Report)</option>
-                    </select>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-gray-600 text-xs font-bold mb-1">ตั้งแต่วันที่</label>
-                        <input type="date" id="exportStartDate" class="w-full border-2 border-gray-200 rounded-xl p-2 outline-none focus:border-red-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-gray-600 text-xs font-bold mb-1">ถึงวันที่</label>
-                        <input type="date" id="exportEndDate" class="w-full border-2 border-gray-200 rounded-xl p-2 outline-none focus:border-red-500 text-sm">
-                    </div>
-                </div>
-
-                <button onclick="executeExportPDF()" id="btnDoExport" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-lg mt-2 flex justify-center items-center gap-2 transition transform active:scale-95">
-                    <span class="btn-text">ดาวน์โหลด PDF</span> <i class="fas fa-download"></i>
-                </button>
-            </div>
-        </div>
-    </div>
+    <div id="floatingNumpad" class="hidden fixed top-[40%] right-10 z-[300] bg-white/80 backdrop-blur-md border border-white/40 shadow-2xl rounded-2xl overflow-hidden flex flex-col w-64 transition-opacity duration-300 resize hover:resize" style="min-width: 220px; max-width: 400px;"><div id="numpadHeader" class="bg-gray-800 text-white p-2 cursor-move flex justify-between items-center shrink-0 select-none"><div class="flex items-center gap-2"><i class="fas fa-calculator text-xs text-orange-400"></i><span class="text-xs font-bold tracking-wide">แป้นตัวเลข</span></div><button onclick="toggleFloatingNumpad()" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" class="text-gray-400 hover:text-white transition p-2"><i class="fas fa-times"></i></button></div><div class="p-2 grid grid-cols-3 gap-2 flex-1 overflow-auto bg-white/50"><button onclick="numpadPress('7', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:shadow-md transition active:scale-95">7</button><button onclick="numpadPress('8', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:shadow-md transition active:scale-95">8</button><button onclick="numpadPress('9', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:shadow-md transition active:scale-95">9</button><button onclick="numpadPress('4', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:shadow-md transition active:scale-95">4</button><button onclick="numpadPress('5', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:shadow-md transition active:scale-95">5</button><button onclick="numpadPress('6', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:shadow-md transition active:scale-95">6</button><button onclick="numpadPress('1', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:shadow-md transition active:scale-95">1</button><button onclick="numpadPress('2', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:shadow-md transition active:scale-95">2</button><button onclick="numpadPress('3', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:shadow-md transition active:scale-95">3</button><button onclick="numpadAction('del')" class="h-12 bg-red-100 shadow-sm rounded-xl font-bold text-lg text-red-600 hover:bg-red-200 hover:shadow-md transition active:scale-95"><i class="fas fa-backspace"></i></button><button onclick="numpadPress('0', this)" class="h-12 bg-white shadow-sm rounded-xl font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:shadow-md transition active:scale-95">0</button><button onclick="numpadAction('enter')" class="h-12 bg-green-500 shadow-lg shadow-green-200 rounded-xl font-bold text-lg text-white hover:bg-green-600 transition active:scale-95">Enter</button></div><div class="p-2 pt-0"><button onclick="handleCheckoutClick()" class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-3 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2"><i class="fas fa-cash-register"></i> คิดเงิน</button></div><div class="absolute bottom-0 right-0 w-3 h-3 cursor-nwse-resize bg-gray-300 rounded-tl opacity-50"></div></div>
 
     <script src="script.js"></script>
 </body>
