@@ -207,7 +207,7 @@
                     </div>
                 </div>
 
-                <div id="embeddedKeys" class="grid grid-cols-4 gap-2 p-3 pb-4">
+                <div id="embeddedKeys" class="grid grid-cols-4 gap-2 p-3 pb-4 hidden">
                     <button onclick="numpadPress('7', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 transition active:scale-95">7</button>
                     <button onclick="numpadPress('8', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 transition active:scale-95">8</button>
                     <button onclick="numpadPress('9', this)" class="h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 transition active:scale-95">9</button>
@@ -232,7 +232,7 @@
                     <button onclick="numpadPress('0', this)" class="col-span-3 h-12 bg-white border border-gray-200 shadow-sm rounded-lg font-bold text-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-300 transition active:scale-95">0</button>
                 </div>
                 
-                <div id="minimizedBar" class="hidden px-4 pb-4 pt-1">
+                <div id="minimizedBar" class="px-4 pb-4 pt-1">
                      <button onclick="handleCheckoutClick()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl shadow transition flex justify-center items-center gap-2">
                         <span>คิดเงินรวม</span> <span id="miniTotalDisplay" class="bg-orange-700 px-2 py-0.5 rounded text-sm">0 ฿</span>
                     </button>

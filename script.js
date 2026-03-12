@@ -1328,11 +1328,35 @@ function togglePaymentMenu() { const menu = document.getElementById('paymentSett
 function toggleFloatingNumpad() { const pad = document.getElementById('floatingNumpad'); if (pad.classList.contains('hidden')) { pad.classList.remove('hidden'); const header = document.getElementById('numpadHeader'); makeDraggable(pad, header); } else { pad.classList.add('hidden'); } }
 
 function numpadPress(num, btnElement) {
-    playNotificationSound(); 
-    if (btnElement) { btnElement.classList.remove('active:scale-95'); btnElement.classList.add('btn-pop'); setTimeout(() => { btnElement.classList.remove('btn-pop'); btnElement.classList.add('active:scale-95'); }, 150); }
-    const paymentModal = document.getElementById('paymentModal'); const isPaymentOpen = !paymentModal.classList.contains('hidden');
-    let targetInput; if (isPaymentOpen) { targetInput = document.getElementById('inputReceived'); } else { targetInput = document.getElementById('searchInput'); targetInput.focus(); }
-    if (targetInput) { targetInput.value += num; targetInput.dispatchEvent(new Event('input', { bubbles: true })); }
+    // ลบคำสั่ง playNotificationSound(); ออกไปแล้ว จะไม่มีเสียงติ๊ดๆ กวนใจ
+
+    // --- ส่วนเพิ่มเอฟเฟคขยายปุ่ม (Animation) ---
+    if (btnElement) {
+        btnElement.classList.remove('active:scale-95'); 
+        btnElement.classList.add('btn-pop');
+        
+        setTimeout(() => {
+            btnElement.classList.remove('btn-pop');
+            btnElement.classList.add('active:scale-95');
+        }, 150);
+    }
+    
+    const paymentModal = document.getElementById('paymentModal');
+    const isPaymentOpen = !paymentModal.classList.contains('hidden');
+
+    let targetInput;
+
+    if (isPaymentOpen) {
+        targetInput = document.getElementById('inputReceived');
+    } else {
+        targetInput = document.getElementById('searchInput');
+        targetInput.focus(); 
+    }
+
+    if (targetInput) {
+        targetInput.value += num;
+        targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
 }
 
 function numpadAction(action) {
@@ -1351,11 +1375,21 @@ function toggleSystemKeyboard() {
     }
 }
 
-let isEmbeddedNumpadOpen = true;
+let isEmbeddedNumpadOpen = false;
 function toggleEmbeddedNumpad() {
-    const panel = document.getElementById('embeddedNumpadPanel'); const keys = document.getElementById('embeddedKeys'); const miniBar = document.getElementById('minimizedBar');
+    const panel = document.getElementById('embeddedNumpadPanel'); 
+    const keys = document.getElementById('embeddedKeys'); 
+    const miniBar = document.getElementById('minimizedBar');
+    
     isEmbeddedNumpadOpen = !isEmbeddedNumpadOpen;
-    if (isEmbeddedNumpadOpen) { keys.classList.remove('hidden'); miniBar.classList.add('hidden'); } else { keys.classList.add('hidden'); miniBar.classList.remove('hidden'); }
+    
+    if (isEmbeddedNumpadOpen) { 
+        keys.classList.remove('hidden'); 
+        miniBar.classList.add('hidden'); 
+    } else { 
+        keys.classList.add('hidden'); 
+        miniBar.classList.remove('hidden'); 
+    }
 }
 
 function openExportModal() {
