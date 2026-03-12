@@ -30,7 +30,7 @@ function holdBill() {
     localStorage.setItem('heldBills', JSON.stringify(heldBills));
     cart = []; renderCart();
     showToast('พักบิลเรียบร้อย (' + heldBills.length + ' รายการ)', 'success');
-    speak("พักบิลแล้วค่ะ");
+    
 }
 
 function openRecallModal() {
@@ -49,7 +49,8 @@ function recallBill(index) {
     if (cart.length > 0) { if(!confirm("มีรายการค้างอยู่ในตะกร้า ต้องการเคลียร์และเรียกบิลเก่าไหม?")) return; }
     cart = heldBills[index].items;
     heldBills.splice(index, 1); localStorage.setItem('heldBills', JSON.stringify(heldBills));
-    closeModal('recallModal'); renderCart(); showToast('เรียกบิลกลับมาแล้ว', 'success'); speak("เรียกบิลแล้วค่ะ");
+    closeModal('recallModal'); renderCart(); showToast('เรียกบิลกลับมาแล้ว', 'success'); 
+    
 }
 
 function deleteHeldBill(index) {
