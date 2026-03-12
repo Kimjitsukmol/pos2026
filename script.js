@@ -282,7 +282,7 @@ function initQuickAddShortcuts() {
              const priceVal = mPrice.value; 
              const codeVal = mCode.value;
              if(priceVal && codeVal) {
-                 setLoading('btnSaveMenu', true, 'กำลังบันทึก...'); 
+                 // 🔴 เอา setLoading ออก เพราะเราจะไม่รอแล้ว
                  const payload = { action: "addMenu", id: codeVal, name: mName.value, price: priceVal, category: document.getElementById('mCategory').value, spicy: "-", image: "", mimeType: "", fileName: "" };
                  sendAddMenu(payload);
              } else { 
@@ -1112,7 +1112,7 @@ document.getElementById('addMenuForm').addEventListener('submit', function(e) {
             if (mCode) { payload.id = mCode; } sendAddMenu(payload);
         } ).catch(err => { console.error(err); setLoading('btnSaveMenu', false, 'บันทึก'); showCustomAlert('Error', 'ไม่สามารถประมวลผลรูปภาพได้'); });
     } else {
-         setLoading('btnSaveMenu', true, 'กำลังบันทึก...'); 
+         // 🔴 เอา setLoading ออก 
          const payload = { action: "addMenu", name: document.getElementById('mName').value, price: document.getElementById('mPrice').value, category: document.getElementById('mCategory').value, spicy: "-", image: "", mimeType: "", fileName: "" };
          if (mCode) { payload.id = mCode; } sendAddMenu(payload);
     }
@@ -1135,27 +1135,56 @@ function uploadBankQRFile(input) {
 }
 
 function sendAddMenu(payload) {
+     // =========================================
+     // 🚀 1. อัปเดตหน้าจอทันที (Optimistic Update)
+     // =========================================
+     
+     // รีเซ็ตปุ่มเผื่อมีสถานะค้าง
+     setLoading('btnSaveMenu', false, 'บันทึก'); 
+
+     const tempId = payload.id || ("P" + Date.now()); 
+     const newItem = { 
+         id: tempId, 
+         name: payload.name, 
+         price: parseFloat(payload.price), 
+         category: payload.category || 'ทั่วไป', 
+         image: '', 
+         spicy: '-' 
+     };
+     
+     // 1.1 โยนเข้าตะกร้าขายทันที!
+     addItemToCart(newItem, "-"); 
+     
+     // 1.2 เคลียร์ช่องค้นหา และ ปิดหน้าต่างทันที!
+     document.getElementById('searchInput').value = '';
+     closeModal('addModal'); 
+     
+     // 1.3 ยัดเข้าฐานข้อมูลในเครื่องเพื่อให้ยิงบาร์โค้ดชิ้นเดิมซ้ำได้ทันที
+     menuData.push(newItem);
+     masterData.push(newItem);
+     
+     // 1.4 อัปเดตตารางสินค้า
+     const activeCategoryBtn = document.querySelector('.cat-btn.bg-gradient-to-r');
+     const currentCat = activeCategoryBtn ? activeCategoryBtn.innerText : 'All';
+     filterMenu(currentCat === 'ทั้งหมด' ? 'All' : currentCat);
+     
+     // 1.5 ล้างฟอร์มรอไว้เผื่อกดเพิ่มสินค้าใหม่
+     document.getElementById('addMenuForm').reset(); 
+
+     // =========================================
+     // 📡 2. ส่งข้อมูลไปเซิร์ฟเวอร์ (ทำงานอยู่เบื้องหลัง ไม่กระทบการขาย)
+     // =========================================
      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
      .then(r => r.json())
      .then(d => { 
-         if(d.result === 'success') { 
-             const newItem = { id: d.id || payload.id, name: payload.name, price: parseFloat(payload.price), category: payload.category || 'ทั่วไป', image: '', spicy: '-' };
-             addItemToCart(newItem, "-"); 
-             document.getElementById('searchInput').value = '';
-             closeModal('addModal'); 
-             
-             menuData.push(newItem);
-             masterData.push(newItem);
-             
-             const activeCategoryBtn = document.querySelector('.cat-btn.bg-gradient-to-r');
-             const currentCat = activeCategoryBtn ? activeCategoryBtn.innerText : 'All';
-             filterMenu(currentCat === 'ทั้งหมด' ? 'All' : currentCat);
-             
-             document.getElementById('addMenuForm').reset(); 
-         } else { showCustomAlert('ผิดพลาด', 'เพิ่มสินค้าไม่สำเร็จ: ' + d.error, '<i class="fas fa-exclamation-circle text-red-500"></i>'); } 
+         if(d.result !== 'success') { 
+             // ถ้ายิงข้อมูลไม่เข้า ค่อยเด้งเตือนทีหลัง
+             showCustomAlert('ผิดพลาด', 'บันทึกสินค้าลงฐานข้อมูลไม่สำเร็จ: ' + d.error, '<i class="fas fa-exclamation-circle text-red-500"></i>'); 
+         } 
      })
-     .catch(err => { showCustomAlert('Connection Error', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้'); })
-     .finally(() => setLoading('btnSaveMenu', false, 'บันทึก')); 
+     .catch(err => { 
+         console.error('Connection Error:', err); 
+     }); 
 }
 
 function confirmDeleteMenu() { setLoading('btnDeleteMenu', true, 'ลบ...'); fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "deleteMenu", id: document.getElementById('eId').value }) }).then(r=>r.json()).then(d=>{ if(d.result === 'success') { showToast('ลบสินค้าแล้ว', 'success'); closeModal('editMenuModal'); fetchMenu(); } else { showCustomAlert('ผิดพลาด', 'ลบสินค้าไม่สำเร็จ: ' + d.error, '<i class="fas fa-exclamation-circle text-red-500"></i>'); } }).catch(err => showCustomAlert('Connection Error', 'ตรวจสอบอินเทอร์เน็ตของคุณ')).finally(()=>setLoading('btnDeleteMenu', false, 'ลบ')); }
