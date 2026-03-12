@@ -301,13 +301,21 @@ function initQuickAddShortcuts() {
              event.preventDefault();
              const mName = document.getElementById('mName');
              const mCode = document.getElementById('mCode');
-             if(mName.value.trim() === "") { mName.value = "สินค้า " + (mCode.value || "ใหม่"); }
-             const priceVal = mPrice.value; const codeVal = mCode.value;
+             
+             // 👇 แก้ไขให้เป็น "สินค้าทั่วไป" โดยไม่ต้องมีรหัสต่อท้าย
+             if(mName.value.trim() === "") { 
+                 mName.value = "สินค้าทั่วไป"; 
+             }
+             
+             const priceVal = mPrice.value; 
+             const codeVal = mCode.value;
              if(priceVal && codeVal) {
                  setLoading('btnSaveMenu', true, 'กำลังบันทึก...'); 
                  const payload = { action: "addMenu", id: codeVal, name: mName.value, price: priceVal, category: document.getElementById('mCategory').value, spicy: "-", image: "", mimeType: "", fileName: "" };
                  sendAddMenu(payload);
-             } else { document.getElementById('btnSaveMenu').click(); }
+             } else { 
+                 document.getElementById('btnSaveMenu').click(); 
+             }
          }
      });
 }
@@ -353,26 +361,26 @@ function checkMode() {
             searchIcon.className = 'fas fa-search text-blue-500'; 
         }
 
-        // ซ่อนปุ่มคีย์บอร์ดที่ไม่ได้ใช้
         const btnToggleKey = document.getElementById('btnToggleKey');
         if (btnToggleKey) btnToggleKey.classList.add('hidden');
 
-        // ซ่อนกล่องค้นหาแบบลอยด้านซ้ายล่าง เพื่อไม่ให้ซ้ำกับด้านบน
         const floatingSearch = document.getElementById('floatingSearchContainer');
         if (floatingSearch) floatingSearch.classList.add('hidden');
+
+        // 👇 ซ่อนปุ่ม พักบิล/เรียกบิล ในโหมดลูกค้า
+        const holdBillContainer = document.getElementById('holdBillContainer');
+        if (holdBillContainer) holdBillContainer.classList.add('hidden');
 
     } else {
         // --- 🔵 โหมดหน้าร้าน (Admin) ---
         isCustomerMode = false;
         
-        // แสดง Toolbar ของแอดมิน และซ่อนของลูกค้า
         const adminToolbar = document.getElementById('adminToolbar');
         if(adminToolbar) adminToolbar.classList.remove('hidden');
         
         const customerToolbar = document.getElementById('customerToolbar');
         if(customerToolbar) customerToolbar.classList.add('hidden');
 
-        // บังคับให้ช่องด้านบนเป็นยิงบาร์โค้ดเหมือนเดิมเสมอ
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
             searchInput.placeholder = "ยิงบาร์โค้ด...";
@@ -384,13 +392,15 @@ function checkMode() {
             searchIcon.className = 'fas fa-barcode text-gray-400';
         }
 
-        // แสดงปุ่มคีย์บอร์ดกลับคืนมา
         const btnToggleKey = document.getElementById('btnToggleKey');
         if (btnToggleKey) btnToggleKey.classList.remove('hidden');
 
-        // แสดงกล่องค้นหาลอยด้านซ้ายล่างกลับคืนมา
         const floatingSearch = document.getElementById('floatingSearchContainer');
         if (floatingSearch) floatingSearch.classList.remove('hidden');
+
+        // 👇 แสดงปุ่ม พักบิล/เรียกบิล ในโหมดหน้าร้านปกติ
+        const holdBillContainer = document.getElementById('holdBillContainer');
+        if (holdBillContainer) holdBillContainer.classList.remove('hidden');
     }
 }
 
@@ -552,7 +562,8 @@ function checkPaymentEnter(e) {
 
 function addManualItem(price) {
     const manualItem = { id: "MANUAL-" + Date.now(), name: "สินค้าทั่วไป", price: price, category: "เบ็ดเตล็ด", image: "", isHidden: true };
-    addItemToCart(manualItem, "-"); document.getElementById('searchInput').value = ''; showToast(`เพิ่มสินค้า ${price} บาท แล้ว`, 'success');
+    addItemToCart(manualItem, "-"); 
+    document.getElementById('searchInput').value = ''; 
 }
 
 function scanBarcode(code) {
@@ -787,7 +798,11 @@ function renderCart() {
         
         countEl.innerText = "0 รายการ"; 
         mobileBar.classList.add('translate-y-[150%]'); 
-        if(miniTotal) miniTotal.innerText = "";
+        
+        // 👇 สิ่งที่เพิ่มเข้ามา: บังคับให้ยอดเงินทุกจุดกลับเป็น 0 เมื่อตะกร้าว่าง
+        if(totalEl) totalEl.innerText = "0";
+        if(mobileTotal) mobileTotal.innerText = "0 ฿";
+        if(miniTotal) miniTotal.innerText = "0 ฿";
 
         if(btnDesktop) {
              btnDesktop.className = "h-12 bg-gradient-to-b from-gray-400 to-gray-500 text-white font-bold text-lg rounded-lg shadow-sm border-b-4 border-gray-600 transition-all flex flex-col items-center justify-center gap-1 cursor-not-allowed";
@@ -855,8 +870,8 @@ function renderCart() {
     countEl.innerText = count + " รายการ"; 
     
     mobileCount.innerText = count; 
-    mobileTotal.innerText = totalTxt;
-    if(miniTotal) miniTotal.innerText = totalTxt;
+    mobileTotal.innerText = totalTxt + " ฿";
+    if(miniTotal) miniTotal.innerText = totalTxt + " ฿";
     
     const isDrawerOpen = !document.getElementById('cartPanel').classList.contains('hidden');
     if (!isDrawerOpen && window.innerWidth < 1024) { mobileBar.classList.remove('translate-y-[150%]'); }
@@ -1811,13 +1826,22 @@ function sendAddMenu(payload) {
                  spicy: '-'
              };
              
+             // เพิ่มลงตะกร้าทันที
              addItemToCart(newItem, "-"); 
 
              document.getElementById('searchInput').value = '';
-             
              showToast('เพิ่มและลงตะกร้าแล้ว', 'success'); 
              closeModal('addModal'); 
-             fetchMenu(); 
+             
+             // 👇 เพิ่มสินค้าเข้า Array ในเครื่องทันที (ไม่ต้องเรียก fetchMenu ให้จอกระตุก)
+             menuData.push(newItem);
+             masterData.push(newItem);
+             
+             // อัปเดตหน้าจอแบบเนียนๆ
+             const activeCategoryBtn = document.querySelector('.cat-btn.bg-blue-600');
+             const currentCat = activeCategoryBtn ? activeCategoryBtn.innerText : 'All';
+             filterMenu(currentCat === 'ทั้งหมด' ? 'All' : currentCat);
+             
              document.getElementById('addMenuForm').reset(); 
 
          } else { 
