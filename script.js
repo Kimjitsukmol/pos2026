@@ -90,16 +90,24 @@ function initBankQR() {
     const labelEl = document.getElementById('ppLabel'); 
     if (!imgEl) return; 
 
-    // 1. ตรวจสอบ PromptPay ID ก่อน (ถ้ามีให้สร้าง QR อัตโนมัติ)
+    // 1. ถ้ามีการตั้งค่า PromptPay ไว้ ให้สร้าง QR ทันที
     if (promptPayID) {
         const payload = generatePayload(promptPayID, amount);
         imgEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${payload}`;
         if (labelEl) labelEl.innerText = `พร้อมเพย์: ${promptPayID}`; 
         return; // จบการทำงาน
     } 
+
+    // 2. 🟢 เช็คว่ามี ID รูปภาพอยู่ในเครื่องหรือยัง (ไม่ต้องโหลดใหม่)
+    const savedQR = localStorage.getItem('bankQRID');
+    if (savedQR) {
+        const url = getDriveUrl(savedQR);
+        imgEl.src = url; // เอา &t= เวลาต่อท้ายออก บราวเซอร์จะได้ใช้รูปจากแคช โหลดไวทันที
+        if (labelEl) labelEl.innerText = "สแกนจ่ายเงิน (ภาพที่อัปโหลด)";
+        return; // จบการทำงาน (ไม่ไปเรียก API ให้เสียเวลา)
+    }
     
-    // 2. ถ้าไม่มี PromptPay ให้ไปดึง ID รูปภาพจาก Google Apps Script (ดึงจากชีต QR BANK)
-    // ระหว่างรอโหลด ให้แสดงข้อความรอ
+    // 3. 🔴 ถ้าไม่มีทั้งคู่ในเครื่อง (เช่น เปิดใช้เว็บครั้งแรก) ถึงจะไปดึงจาก Server
     imgEl.src = "https://placehold.co/400x400?text=Loading+QR...";
     if (labelEl) labelEl.innerText = "กำลังโหลด QR Code...";
 
@@ -107,15 +115,15 @@ function initBankQR() {
     .then(res => res.json())
     .then(data => {
         if (data.result === 'success' && data.found) {
-            // ถ้าระบบเจอ ID รูปในชีต
+            // เจอ ID รูปภาพในชีต
             const url = getDriveUrl(data.fileId);
-            imgEl.src = url + "&t=" + new Date().getTime(); // เติมเวลาต่อท้ายกัน Cache
+            imgEl.src = url; 
             if (labelEl) labelEl.innerText = "สแกนจ่ายเงิน (ภาพที่อัปโหลด)";
             
-            // เก็บลง LocalStorage เผื่อไว้ใช้ตอนกดเช็ค
+            // บันทึก ID ลงเครื่องไว้ใช้ครั้งต่อไป จะได้ไม่ต้องโหลดอีก
             localStorage.setItem('bankQRID', data.fileId); 
         } else {
-            // ถ้าในชีตไม่มีข้อมูล
+            // ไม่มีข้อมูลในชีตเลย
             imgEl.src = "https://placehold.co/400x400?text=Set+PromptPay";
             if (labelEl) labelEl.innerText = "ยังไม่ได้ตั้งค่าพร้อมเพย์";
             localStorage.removeItem('bankQRID');
