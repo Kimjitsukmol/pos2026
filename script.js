@@ -235,28 +235,40 @@ function generatePayload(mobileNumber, amount) {
 }
 
 function initGlobalShortcuts() {
+    // ใช้ capture: true เพื่อดักจับ event ก่อนที่ input จะรับรู้
     document.addEventListener('keydown', function(event) {
-        if (event.target.id === 'searchInput' || event.target.id === 'inputReceived') {
-            return; 
-        }
         const key = event.key;
         const code = event.code;
+
+        // 1. ตรวจสอบคีย์ลัด [+] ก่อนเลย ไม่ว่าจะ focus ที่ไหนก็ตาม
         if (key === '+' || code === 'NumpadAdd' || key === 'Add' ||  event.keyCode === 107) {
-            event.preventDefault();
-            event.stopPropagation();
+            event.preventDefault();  // 🔴 ป้องกันไม่ให้ตัวอักษร '+' ถูกพิมพ์ลงในช่อง input
+            event.stopPropagation(); // 🔴 ดักจับไว้ไม่ให้ส่ง event ทะลุไปฟังก์ชันอื่น
+
             const paymentModal = document.getElementById('paymentModal');
-            if (!paymentModal.classList.contains('hidden')) {
+            if (paymentModal && !paymentModal.classList.contains('hidden')) {
                 closeModal('paymentModal');
+                // เสริม: เมื่อปิดหน้าต่างรับเงิน ให้เคอร์เซอร์กลับไปรอที่ช่องสแกนบาร์โค้ด
+                setTimeout(() => {
+                    const searchInput = document.getElementById('searchInput');
+                    if (searchInput) {
+                        searchInput.focus();
+                        searchInput.value = '';
+                    }
+                }, 100);
             } else {
                 handleCheckoutClick();
             }
-            return false;
+            return false; // จบการทำงาน
         }
+
+        // 2. ตรวจสอบคีย์ลัด [.] (Numpad Decimal)
         if (key === '.' || code === 'NumpadDecimal' || key === 'Decimal' || key === 'Separator' || code === 'Period' || event.keyCode === 110 || event.keyCode === 190) {
-            event.preventDefault();
+            event.preventDefault(); // 🔴 ป้องกันไม่ให้ตัวอักษร '.' ถูกพิมพ์
             event.stopPropagation();
+            
             const paymentModal = document.getElementById('paymentModal');
-            if (!paymentModal.classList.contains('hidden')) {
+            if (paymentModal && !paymentModal.classList.contains('hidden')) {
                 closeModal('paymentModal');
             } else {
                 const searchInput = document.getElementById('searchInput');
@@ -265,10 +277,16 @@ function initGlobalShortcuts() {
                     searchInput.value = ''; 
                 }
             }
-            return false;
+            return false; // จบการทำงาน
+        }
+
+        // 3. ถ้าไม่ได้กดปุ่มลัดด้านบน และเคอร์เซอร์อยู่ที่ช่อง input อนุญาตให้พิมพ์ตามปกติ
+        if (event.target.id === 'searchInput' || event.target.id === 'inputReceived') {
+            return; 
         }
     }, true);
 }
+
 
 function initQuickAddShortcuts() {
      const mPrice = document.getElementById('mPrice');
