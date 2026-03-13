@@ -19,7 +19,16 @@ let notifiedOrders = new Set();
 let isStoreOpen = true; 
 let myLastOrders = [];  
 
-function speak(text) { if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang = 'th-TH'; utterance.rate = 1.0; window.speechSynthesis.speak(utterance); } }
+function speak(text) { 
+    if ('speechSynthesis' in window) { 
+        // ลบ window.speechSynthesis.cancel(); ออกไปแล้ว เพื่อให้เสียงต่อคิวกัน
+        const utterance = new SpeechSynthesisUtterance(text); 
+        utterance.lang = 'th-TH'; 
+        utterance.rate = 1.0; 
+        window.speechSynthesis.speak(utterance); 
+    } 
+}
+
 function playNotificationSound() { const beep = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg"); beep.play().catch(e=>console.log("Audio blocked", e)); }
 
 function holdBill() {
