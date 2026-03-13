@@ -243,10 +243,11 @@ function generatePayload(mobileNumber, amount) {
     return rawData + crc16(rawData);
 }
 
+let lastDotTime = 0; // ตัวแปรสำหรับจำเวลาที่กดปุ่มจุด (.) ล่าสุด
+
 function initGlobalShortcuts() {
     // 1. ดักตอน "กดปุ่มลงไป" (keydown) เพื่อบล็อกไม่ให้มันทำอย่างอื่น
     document.addEventListener('keydown', function(event) {
-        // ใช้ event.code ควบคู่ไปด้วย จะแม่นยำสุดสำหรับ Numpad แยกอย่าง NUBWO
         const code = event.code;
         const key = event.key;
         
@@ -257,12 +258,14 @@ function initGlobalShortcuts() {
         }
     }, true);
 
-    // 2. ดักตอน "ปล่อยปุ่ม" (keyup) เพื่อสั่งให้ฟังก์ชันทำงาน (ทะลวงกำแพง Android Chrome)
+    // 2. ดักตอน "ปล่อยปุ่ม" (keyup) เพื่อสั่งให้ฟังก์ชันทำงาน
     document.addEventListener('keyup', function(event) {
         const code = event.code;
         const key = event.key;
 
-        // ดักจับปุ่ม [+] (ปุ่ม "รวม" บนแป้น NUBWO)
+        // --------------------------------------------------
+        // 🟢 ปุ่ม [+] (ปุ่ม "รวม") - กดครั้งเดียวทำงานเหมือนเดิม
+        // --------------------------------------------------
         if (code === 'NumpadAdd' || key === '+' || event.keyCode === 107) {
             event.preventDefault();
             event.stopPropagation();
@@ -285,28 +288,42 @@ function initGlobalShortcuts() {
             return false;
         }
 
-        // ดักจับปุ่ม [.] (ปุ่ม "ราคา" บนแป้น NUBWO)
+        // --------------------------------------------------
+        // 🔴 ปุ่ม [.] (ปุ่ม "ราคา") - ต้องกดเบิ้ล 2 ครั้ง (Double-tap)
+        // --------------------------------------------------
         if (code === 'NumpadDecimal' || key === '.' || event.keyCode === 110 || event.keyCode === 190) {
             event.preventDefault();
             event.stopPropagation();
             
-            const paymentModal = document.getElementById('paymentModal');
-            if (paymentModal && !paymentModal.classList.contains('hidden')) {
-                closeModal('paymentModal');
-                setTimeout(() => {
+            const now = Date.now();
+            
+            // เช็คว่ากดครั้งที่ 2 ห่างจากครั้งแรกไม่เกิน 0.5 วินาที (500ms) ไหม
+            if (now - lastDotTime < 500) { 
+                // === ทำงานเมื่อกดดับเบิลคลิกสำเร็จ ===
+                const paymentModal = document.getElementById('paymentModal');
+                if (paymentModal && !paymentModal.classList.contains('hidden')) {
+                    closeModal('paymentModal');
+                    setTimeout(() => {
+                        const searchInput = document.getElementById('searchInput');
+                        if (searchInput) { searchInput.focus(); searchInput.value = ''; }
+                    }, 100);
+                } else {
                     const searchInput = document.getElementById('searchInput');
-                    if (searchInput) { searchInput.focus(); searchInput.value = ''; }
-                }, 100);
-            } else {
-                const searchInput = document.getElementById('searchInput');
-                if(searchInput) {
-                    searchInput.focus(); 
-                    searchInput.value = ''; 
+                    if(searchInput) {
+                        searchInput.focus(); 
+                        searchInput.value = ''; 
+                    }
                 }
+                
+                // คืนค่าเวลาเป็น 0 เพื่อรอรับการกดคู่ใหม่
+                lastDotTime = 0; 
+            } else {
+                // === ถ้าเพิ่งกดครั้งแรก หรือทิ้งช่วงนานเกินไป ให้จดเวลาปัจจุบันไว้ ===
+                lastDotTime = now; 
             }
             return false;
         }
-    }, true); // ใช้ true (Capture Phase) เพื่อแย่งคำสั่งมาก่อนที่ input จะรับรู้
+    }, true); 
 }
 
 
@@ -759,7 +776,27 @@ function renderCart() {
     let total = 0; let count = 0;
     container.innerHTML = cart.map((item, idx) => {
         total += item.price * item.qty; count += item.qty;
-        return `<div class="flex justify-between items-start bg-white p-3 rounded-xl border border-gray-100 shadow-sm mb-2 animate-fade-in"><div class="flex-1"><h4 class="font-bold text-gray-800 leading-tight">${item.name}</h4><div class="text-xs text-gray-500 mt-1 flex gap-2"><span>${item.price}.-</span></div></div><div class="flex flex-col items-end gap-2"><div class="font-bold text-orange-600">${item.price * item.qty}</div><div class="flex items-center bg-gray-100 rounded-lg p-0.5 gap-1"><button onclick="removeFromCart(${idx})" class="w-7 h-7 flex items-center justify-center text-red-500 hover:bg-red-100 rounded-md transition"><i class="fas fa-trash-alt text-xs"></i></button><div class="w-px h-4 bg-gray-300 mx-1"></div><button onclick="updateQty(${idx}, -1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-white hover:shadow rounded-md transition">-</button><span class="w-6 text-center font-bold text-sm text-gray-800">${item.qty}</span><button onclick="updateQty(${idx}, 1)" class="w-7 h-7 flex items-center justify-center text-green-600 hover:bg-white hover:shadow rounded-md transition">+</button></div></div></div>`;
+        
+        // เพิ่ม onclick="removeFromCart(idx)" ที่ div กล่องนอกสุด 
+        // และเพิ่ม hover:bg-red-50 เพื่อให้กล่องเปลี่ยนเป็นสีแดงอ่อนๆ เวลากด/ชี้
+        return `
+        <div onclick="removeFromCart(${idx})" class="flex justify-between items-start bg-white p-3 rounded-xl border border-gray-100 shadow-sm mb-2 animate-fade-in cursor-pointer hover:bg-red-50 transition-colors group">
+            <div class="flex-1">
+                <h4 class="font-bold text-gray-800 leading-tight group-hover:text-red-600 transition-colors">${item.name}</h4>
+                <div class="text-xs text-gray-500 mt-1 flex gap-2"><span>${item.price}.-</span></div>
+            </div>
+            <div class="flex flex-col items-end gap-2">
+                <div class="font-bold text-orange-600">${item.price * item.qty}</div>
+                
+                <div class="flex items-center bg-gray-100 rounded-lg p-0.5 gap-1" onclick="event.stopPropagation()">
+                    <button onclick="removeFromCart(${idx})" class="w-7 h-7 flex items-center justify-center text-red-500 hover:bg-red-100 rounded-md transition"><i class="fas fa-trash-alt text-xs"></i></button>
+                    <div class="w-px h-4 bg-gray-300 mx-1"></div>
+                    <button onclick="updateQty(${idx}, -1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-white hover:shadow rounded-md transition">-</button>
+                    <span class="w-6 text-center font-bold text-sm text-gray-800">${item.qty}</span>
+                    <button onclick="updateQty(${idx}, 1)" class="w-7 h-7 flex items-center justify-center text-green-600 hover:bg-white hover:shadow rounded-md transition">+</button>
+                </div>
+            </div>
+        </div>`;
     }).join('');
     
     const totalTxt = total.toLocaleString() + "";
@@ -1042,7 +1079,10 @@ function confirmPayment() {
     const orderId = currentPayOrder.orderId; const finalChange = received - total; 
     closeModal('paymentModal'); 
     const leftPanel = document.getElementById('leftPanel'); if(leftPanel) leftPanel.classList.remove('blur-sm', 'opacity-50', 'pointer-events-none'); 
+    
+    // ตรงนี้มีคำสั่งพูดขอบคุณอยู่แล้ว
     speak("ขอบคุณค่ะ");
+    
     if(inputRec) inputRec.value = ''; 
     const modalChangeBox = document.getElementById('modalChangeBox'); if(modalChangeBox) { modalChangeBox.classList.add('opacity-0', 'translate-y-2'); const modalChange = document.getElementById('modalChangePay'); if(modalChange) modalChange.innerText = "0"; }
     
@@ -1070,13 +1110,21 @@ function confirmPayment() {
     }, 50);
 
     sendPaymentRequest(payload, isQuickPayMode);
+    
     setTimeout(() => {
         if(cart.length === 0) {
              const totalEl = document.getElementById('totalPrice'); const changeWrapper = document.getElementById('changeWrapper');
              if(changeWrapper) { changeWrapper.classList.add('hidden', 'opacity-0', 'translate-y-4'); changeWrapper.classList.remove('flex', 'opacity-100', 'translate-y-0'); }
              if(totalEl) { totalEl.innerText = "0"; totalEl.classList.remove('text-4xl', 'translate-y-[-5px]'); totalEl.classList.add('text-7xl'); }
         }
-    }, 100); 
+        
+        // 🔴 สิ่งที่เพิ่มเข้ามา: บังคับ Cursor กลับไปที่ช่องสแกนบาร์โค้ดหลังจากปิดหน้าต่างคิดเงิน 🔴
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.focus();
+            searchInput.value = ''; // เคลียร์ช่องให้ว่างพร้อมสแกนชิ้นต่อไป
+        }
+    }, 300); // รอให้หน้าต่าง Payment ปิดสนิทก่อนค่อยดึง Focus
 }
 
 function sendPaymentRequest(payload, isQuickPay) {
@@ -1476,30 +1524,39 @@ document.addEventListener('click', function(event) {
 });
 
 // ==========================================
-        // 🚀 INITIALIZATION (โหลดคำสั่งทั้งหมดตอนเปิดเว็บ)
-        // ==========================================
-        window.onload = () => {
-            // 1. ตรวจสอบโหมดและสถานะ
-            checkMode();                 
-            checkLoginStatus();          
-            initStoreStatus();           
-            
-            // 2. โหลดข้อมูลและหน้าตาเว็บ
-            initDateTime();              // 🔴 สั่งให้นาฬิกาเดิน
-            fetchMenu();                 // 🔴 สั่งให้ดึงรายการสินค้ามาแสดง
-            renderCategoryBar();         // 🔴 โหลดแถบหมวดหมู่
-            populateCategorySelects();   
-            
-            // 3. ระบบเบื้องหลังและปุ่มลัด
-            startOrderPolling();         
-            initGlobalShortcuts();       
-            initQuickAddShortcuts();     
-            setupPasswordRestrictions(); 
-            
-            // 4. เปิดระบบให้ลากหน้าต่างรับเงินได้
-            const modal = document.getElementById("draggableModal");
-            const header = document.getElementById("modalHeader");
-            if (modal && header) {
-                makeDraggable(modal, header);
-            }
-        };
+// 🚀 INITIALIZATION (โหลดคำสั่งทั้งหมดตอนเปิดเว็บ)
+// ==========================================
+window.onload = () => {
+    // 1. ตรวจสอบโหมดและสถานะ
+    checkMode();                 
+    checkLoginStatus();          
+    initStoreStatus();           
+    
+    // 2. โหลดข้อมูลและหน้าตาเว็บ
+    initDateTime();              
+    fetchMenu();                 
+    renderCategoryBar();         
+    populateCategorySelects();   
+    
+    // 3. ระบบเบื้องหลังและปุ่มลัด
+    startOrderPolling();         
+    initGlobalShortcuts();       
+    initQuickAddShortcuts();     
+    setupPasswordRestrictions(); 
+    
+    // 4. เปิดระบบให้ลากหน้าต่างรับเงินได้
+    const modal = document.getElementById("draggableModal");
+    const header = document.getElementById("modalHeader");
+    if (modal && header) {
+        makeDraggable(modal, header);
+    }
+
+    // 🔴 5. บังคับให้ Cursor ไปรอที่ช่องสแกนบาร์โค้ดทันที 🔴
+    setTimeout(() => {
+        const searchInput = document.getElementById('searchInput');
+        // เช็คก่อนว่าไม่ใช่โหมดลูกค้า ถึงจะดึง focus มา
+        if (searchInput && typeof isCustomerMode !== 'undefined' && !isCustomerMode) {
+            searchInput.focus();
+        }
+    }, 500); // หน่วงเวลาครึ่งวินาทีให้หน้าเว็บโหลดเสร็จก่อน
+};
