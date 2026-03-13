@@ -999,14 +999,14 @@ function calcChange() {
     if(received >= total && total > 0) {
         if(modalChangeBox) { modalChangeBox.classList.remove('opacity-0', 'translate-y-2'); modalChangeBox.innerHTML = `เงินทอน: <span class="text-green-600 text-5xl font-extrabold ml-2 drop-shadow-sm animate-heartbeat">${change.toLocaleString()}</span> <span class="ml-1 text-sm">฿</span>`; }
         
-        // 🔴 ปรับปรุงเงื่อนไขการพูดเสียง (แยกกรณีเงินทอน 0 บาท) 🔴
+        // 🔴 ปรับปรุงเงื่อนไขให้พูด "ขอบคุณค่ะ" เวลารับเงินพอดี 🔴
         if (change >= 0) { 
             clearTimeout(ttsTimer); 
             ttsTimer = setTimeout(() => { 
                 if (change > 0) {
                     speak("รับเงิน " + received + " บาท เงินทอน " + change + " บาท"); 
                 } else {
-                    speak("รับเงินพอดี " + received + " บาท"); // ถ้าเงินทอน 0 จะพูดแค่นี้ครับ
+                    speak("ขอบคุณค่ะ"); // <--- เปลี่ยนตรงนี้แล้วครับ
                 }
             }, 800); 
         }
@@ -1019,6 +1019,7 @@ function calcChange() {
     if(received >= total) { inputEl.classList.replace('border-orange-500', 'border-green-500'); inputEl.classList.replace('text-orange-600', 'text-green-600'); } 
     else { inputEl.classList.replace('border-green-500', 'border-orange-500'); inputEl.classList.replace('text-green-600', 'text-orange-600'); }
 }
+
 
 
 function confirmPayment() { 
