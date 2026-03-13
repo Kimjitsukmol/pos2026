@@ -235,20 +235,20 @@ function generatePayload(mobileNumber, amount) {
 }
 
 function initGlobalShortcuts() {
-    // ใช้ capture: true เพื่อดักจับ event ก่อนที่ input จะรับรู้
+    // ใส่ true ด้านหลังสุด เพื่อบังคับให้ระบบสนใจคีย์ลัดก่อนที่ช่อง input จะรับรู้
     document.addEventListener('keydown', function(event) {
         const key = event.key;
         const code = event.code;
 
-        // 1. ตรวจสอบคีย์ลัด [+] ก่อนเลย ไม่ว่าจะ focus ที่ไหนก็ตาม
-        if (key === '+' || code === 'NumpadAdd' || key === 'Add' ||  event.keyCode === 107) {
-            event.preventDefault();  // 🔴 ป้องกันไม่ให้ตัวอักษร '+' ถูกพิมพ์ลงในช่อง input
-            event.stopPropagation(); // 🔴 ดักจับไว้ไม่ให้ส่ง event ทะลุไปฟังก์ชันอื่น
+        // 1. เช็คปุ่มลัด [+] สำหรับเปิด/ปิดหน้าต่างรับเงิน
+        if (key === '+' || code === 'NumpadAdd' || key === 'Add' || event.keyCode === 107) {
+            event.preventDefault();  // ห้ามพิมพ์เครื่องหมาย + ลงช่องเด็ดขาด
+            event.stopPropagation(); // หยุดการทำงานอื่นๆ ไม่ให้แย่งซีน
 
             const paymentModal = document.getElementById('paymentModal');
             if (paymentModal && !paymentModal.classList.contains('hidden')) {
                 closeModal('paymentModal');
-                // เสริม: เมื่อปิดหน้าต่างรับเงิน ให้เคอร์เซอร์กลับไปรอที่ช่องสแกนบาร์โค้ด
+                // พอปิดหน้าต่าง ให้เอาเคอร์เซอร์กลับไปรอที่ช่องสแกน
                 setTimeout(() => {
                     const searchInput = document.getElementById('searchInput');
                     if (searchInput) {
@@ -257,15 +257,17 @@ function initGlobalShortcuts() {
                     }
                 }, 100);
             } else {
-                handleCheckoutClick();
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) searchInput.blur(); // เอาเคอร์เซอร์ออกเพื่อความชัวร์
+                handleCheckoutClick(); // เปิดหน้าต่างคิดเงิน
             }
-            return false; // จบการทำงาน
+            return false;
         }
 
-        // 2. ตรวจสอบคีย์ลัด [.] (Numpad Decimal)
+        // 2. เช็คปุ่มลัด [.] สำหรับเคลียร์ช่องค้นหา
         if (key === '.' || code === 'NumpadDecimal' || key === 'Decimal' || key === 'Separator' || code === 'Period' || event.keyCode === 110 || event.keyCode === 190) {
-            event.preventDefault(); // 🔴 ป้องกันไม่ให้ตัวอักษร '.' ถูกพิมพ์
-            event.stopPropagation();
+            event.preventDefault();  // ห้ามพิมพ์เครื่องหมาย . ลงช่องเด็ดขาด
+            event.stopPropagation(); 
             
             const paymentModal = document.getElementById('paymentModal');
             if (paymentModal && !paymentModal.classList.contains('hidden')) {
@@ -277,15 +279,15 @@ function initGlobalShortcuts() {
                     searchInput.value = ''; 
                 }
             }
-            return false; // จบการทำงาน
+            return false;
         }
 
-        // 3. ถ้าไม่ได้กดปุ่มลัดด้านบน และเคอร์เซอร์อยู่ที่ช่อง input อนุญาตให้พิมพ์ตามปกติ
-        if (event.target.id === 'searchInput' || event.target.id === 'inputReceived') {
-            return; 
-        }
-    }, true);
+        // หมายเหตุ: สังเกตว่าผมลบเงื่อนไขที่เช็ค event.target.id === 'searchInput' ออกไปแล้ว
+        // ดังนั้นตอนนี้ไม่ว่าเคอร์เซอร์จะอยู่ที่ไหน คีย์ลัดจะทำงานได้เสมอครับ
+        
+    }, true); // <- คำสั่ง true ตรงนี้สำคัญมาก (Capture phase)
 }
+
 
 
 function initQuickAddShortcuts() {
