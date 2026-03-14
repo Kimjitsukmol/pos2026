@@ -874,7 +874,11 @@ function quickCheckout() {
     if(leftPanel) leftPanel.classList.add('blur-sm', 'opacity-50', 'pointer-events-none');
 
     const modalTotal = document.getElementById('modalTotalPay');
-    if(modalTotal) modalTotal.innerText = total.toLocaleString();
+    if(modalTotal) {
+        modalTotal.innerText = total.toLocaleString();
+        // 🔴 บังคับคลาสให้ยอดรวมใหญ่สุดๆ สีส้มเข้ม มีเงา 🔴
+        modalTotal.className = "text-7xl sm:text-8xl font-black text-orange-600 drop-shadow-xl tracking-tighter"; 
+    }
     
     const modalChangeBox = document.getElementById('modalChangeBox');
     if(modalChangeBox) {
@@ -1047,7 +1051,12 @@ function openPayment(orderId) {
     isQuickPayMode = false; document.getElementById('quickPayTableNoContainer').classList.add('hidden');
     initBankQR(); document.getElementById('paymentModal').classList.remove('hidden'); 
     const leftPanel = document.getElementById('leftPanel'); if(leftPanel) leftPanel.classList.add('blur-sm', 'opacity-50', 'pointer-events-none');
-    const totalEl = document.getElementById('modalTotalPay'); if(totalEl) { totalEl.innerText = currentPayOrder.totalPrice.toLocaleString(); }
+    const totalEl = document.getElementById('modalTotalPay'); 
+    if(totalEl) { 
+        totalEl.innerText = currentPayOrder.totalPrice.toLocaleString(); 
+        // 🔴 บังคับคลาสให้ยอดรวมใหญ่สุดๆ สีส้มเข้ม มีเงา 🔴
+        totalEl.className = "text-7xl sm:text-8xl font-black text-orange-600 drop-shadow-xl tracking-tighter"; 
+    }
     const inputRec = document.getElementById('inputReceived'); if(inputRec) { inputRec.value = ''; setTimeout(() => { inputRec.focus(); }, 300); }
     const modalChangeBox = document.getElementById('modalChangeBox'); if(modalChangeBox) { modalChangeBox.classList.add('opacity-0', 'translate-y-2'); const changeTxt = document.getElementById('modalChangePay'); if(changeTxt) changeTxt.innerText = "0"; }
     const btnConfirm = document.getElementById('btnConfirmPay'); if(btnConfirm) { btnConfirm.disabled = false; btnConfirm.classList.remove('opacity-50', 'cursor-not-allowed'); }
@@ -1070,6 +1079,16 @@ function calcChange() {
     const mainChangeWrapper = document.getElementById('changeWrapper');
     const mainChangeText = document.getElementById('mainScreenChange');
     const mainTotalEl = document.getElementById('totalPrice'); 
+    
+    // 🔴 1. ดึงกล่องยอดรวมมาเตรียมทำแอนิเมชัน 🔴
+    const modalTotalWrapper = document.getElementById('modalTotalWrapper'); 
+
+    // 🔴 2. ลูกเล่น: ถ้ารับเงินมาแล้ว ให้ยอดรวมหดเล็กลง 50% และจางลง 🔴
+    if (inputEl.value !== '') {
+        if (modalTotalWrapper) modalTotalWrapper.classList.add('scale-50', 'opacity-40', '-translate-y-2');
+    } else {
+        if (modalTotalWrapper) modalTotalWrapper.classList.remove('scale-50', 'opacity-40', '-translate-y-2');
+    }
 
     if(mainChangeWrapper && mainChangeText) {
         if (received > 0) {
@@ -1084,22 +1103,41 @@ function calcChange() {
     }
 
     if(received >= total && total > 0) {
-        if(modalChangeBox) { modalChangeBox.classList.remove('opacity-0', 'translate-y-2'); modalChangeBox.innerHTML = `เงินทอน: <span class="text-green-600 text-5xl font-extrabold ml-2 drop-shadow-sm animate-heartbeat">${change.toLocaleString()}</span> <span class="ml-1 text-sm">฿</span>`; }
+        if(modalChangeBox) { 
+            modalChangeBox.classList.remove('opacity-0', 'translate-y-2'); 
+            // 🔴 3. เงินทอนขยายใหญ่เป็น text-7xl พร้อมอนิเมชันเด้ง (scale-110) 🔴
+            modalChangeBox.innerHTML = `
+            <div class="flex flex-col items-center justify-center w-full animate-fade-in text-center transform scale-110 transition-transform duration-500">
+                <span class="text-green-600 text-sm font-bold tracking-wide mb-1">เงินทอน</span>
+                <div class="flex items-baseline justify-center gap-2">
+                    <span class="text-green-500 text-7xl font-black drop-shadow-md">${change.toLocaleString()}</span>
+                    <span class="text-green-600 text-4xl font-extrabold">฿</span>
+                </div>
+            </div>`; 
+        }
         
-        // 🔴 ปรับปรุงเงื่อนไขให้พูด "ขอบคุณค่ะ" เวลารับเงินพอดี 🔴
         if (change >= 0) { 
             clearTimeout(ttsTimer); 
             ttsTimer = setTimeout(() => { 
-                if (change > 0) {
-                    speak("รับเงิน " + received + " บาท เงินทอน " + change + " บาท"); 
-                } else {
-                 // <--- เปลี่ยนตรงนี้แล้วครับ
-                }
+                if (change > 0) { speak("รับเงิน " + received + " บาท เงินทอน " + change + " บาท"); } 
             }, 800); 
         }
     } else { 
-        if(modalChangeBox && received > 0) { const missing = Math.abs(change); modalChangeBox.classList.remove('opacity-0', 'translate-y-2'); modalChangeBox.innerHTML = `-: <span class="text-red-500 text-4xl font-extrabold ml-2 animate-heartbeat">${missing.toLocaleString()}</span> <span class="ml-1 text-sm">฿</span>`; } 
-        else if (modalChangeBox) { modalChangeBox.classList.add('opacity-0', 'translate-y-2'); }
+        if(modalChangeBox && received > 0) { 
+            const missing = Math.abs(change); 
+            modalChangeBox.classList.remove('opacity-0', 'translate-y-2'); 
+            // 🔴 4. ยอดขาดขยายใหญ่เป็น text-6xl 🔴
+            modalChangeBox.innerHTML = `
+            <div class="flex flex-col items-center justify-center w-full animate-pulse text-center transform scale-105 transition-transform duration-500">
+                <span class="text-red-500 text-sm font-bold mb-1">ยอดเงินยังขาด</span>
+                <div class="flex items-baseline justify-center gap-2">
+                    <span class="text-red-500 text-6xl font-black drop-shadow-md">${missing.toLocaleString()}</span>
+                    <span class="text-red-600 text-3xl font-extrabold">฿</span>
+                </div>
+            </div>`; 
+        } else if (modalChangeBox) { 
+            modalChangeBox.classList.add('opacity-0', 'translate-y-2'); 
+        }
     } 
     
     if(btn) { btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed'); }
@@ -1349,9 +1387,14 @@ function closeModal(id) {
     if (id === 'paymentModal') { 
         const leftPanel = document.getElementById('leftPanel'); 
         if(leftPanel) leftPanel.classList.remove('blur-sm', 'opacity-50', 'pointer-events-none'); 
+        
+        // 🔴 เติมโค้ดบรรทัดนี้: รีเซ็ตให้ยอดรวมกลับมาใหญ่เหมือนเดิม สำหรับลูกค้าคนต่อไป 🔴
+        const modalTotalWrapper = document.getElementById('modalTotalWrapper');
+        if (modalTotalWrapper) {
+            modalTotalWrapper.classList.remove('scale-50', 'opacity-40', '-translate-y-2');
+        }
     }
 
-    // 🔴 เติมโค้ดดึงเคอร์เซอร์กลับไปที่ช่องสแกนทุกครั้งที่ปิดหน้าต่างต่างๆ 🔴
     setTimeout(() => {
         const searchInput = document.getElementById('searchInput');
         if (searchInput && typeof isCustomerMode !== 'undefined' && !isCustomerMode) {
