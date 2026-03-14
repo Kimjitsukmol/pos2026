@@ -685,7 +685,23 @@ function filterMenu(category) {
 
 function handleAddToCart(itemId) {
     let item = masterData.find(m => m.id == itemId) || menuData.find(m => m.id == itemId);
-    if (item) { addItemToCart(item, "-"); } else { console.error("Item not found:", itemId); }
+    if (item) { 
+        addItemToCart(item, "-"); 
+        
+        // 🔴 เติมโค้ดส่วนนี้เพื่อดึงเคอร์เซอร์กลับไปที่ช่องสแกน 🔴
+        setTimeout(() => {
+            const searchInput = document.getElementById('searchInput');
+            // เช็คด้วยว่าไม่ใช่โหมดลูกค้า (ถ้าเป็นโหมดลูกค้าจะได้ไม่ต้องเด้งคีย์บอร์ดขึ้นมากวนใจ)
+            if (searchInput && typeof isCustomerMode !== 'undefined' && !isCustomerMode) {
+                searchInput.focus();
+                // เคลียร์ค่าเผื่อมีอะไรค้างอยู่ จะได้พร้อมยิงบาร์โค้ดใหม่ทันที
+                searchInput.value = ''; 
+            }
+        }, 100);
+
+    } else { 
+        console.error("Item not found:", itemId); 
+    }
 }
 
 function handleEditClick(itemId, e) {
@@ -808,8 +824,33 @@ function renderCart() {
     if (!isDrawerOpen && window.innerWidth < 1024) { mobileBar.classList.remove('translate-y-[150%]'); }
 }
 
-function updateQty(idx, change) { cart[idx].qty += change; if(cart[idx].qty > 0) { speak(cart[idx].qty.toString()); } if (cart[idx].qty <= 0) cart.splice(idx, 1); renderCart(); }
-function removeFromCart(idx) { cart.splice(idx, 1); renderCart(); }
+function updateQty(idx, change) { 
+    cart[idx].qty += change; 
+    if(cart[idx].qty > 0) { speak(cart[idx].qty.toString()); } 
+    if (cart[idx].qty <= 0) cart.splice(idx, 1); 
+    renderCart(); 
+    
+    // 🔴 เติมโค้ดดึงเคอร์เซอร์กลับไปที่ช่องสแกน 🔴
+    setTimeout(() => {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput && typeof isCustomerMode !== 'undefined' && !isCustomerMode) {
+            searchInput.focus();
+        }
+    }, 100);
+}
+
+function removeFromCart(idx) { 
+    cart.splice(idx, 1); 
+    renderCart(); 
+    
+    // 🔴 เติมโค้ดดึงเคอร์เซอร์กลับไปที่ช่องสแกน 🔴
+    setTimeout(() => {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput && typeof isCustomerMode !== 'undefined' && !isCustomerMode) {
+            searchInput.focus();
+        }
+    }, 100);
+}
 
 function handleCheckoutClick() { 
     if (cart.length === 0) { quickCheckout(); return; }
@@ -1253,7 +1294,8 @@ function sendAddMenu(payload) {
          price: parseFloat(payload.price), 
          category: payload.category || 'ทั่วไป', 
          image: '', 
-         spicy: '-' 
+         spicy: '-',
+         isHidden: true
      };
      
      // 1.1 โยนเข้าตะกร้าขายทันที!
@@ -1262,6 +1304,12 @@ function sendAddMenu(payload) {
      // 1.2 เคลียร์ช่องค้นหา และ ปิดหน้าต่างทันที!
      document.getElementById('searchInput').value = '';
      closeModal('addModal'); 
+     setTimeout(() => {
+         const searchInput = document.getElementById('searchInput');
+         if (searchInput) {
+             searchInput.focus();
+         }
+     }, 100);
      
      // 1.3 ยัดเข้าฐานข้อมูลในเครื่องเพื่อให้ยิงบาร์โค้ดชิ้นเดิมซ้ำได้ทันที
      menuData.push(newItem);
@@ -1297,7 +1345,19 @@ function openConfirmActionModal(title, msg, iconHtml, confirmHandler) { document
 
 function closeModal(id) { 
     document.getElementById(id).classList.add('hidden'); 
-    if (id === 'paymentModal') { const leftPanel = document.getElementById('leftPanel'); if(leftPanel) leftPanel.classList.remove('blur-sm', 'opacity-50', 'pointer-events-none'); }
+    
+    if (id === 'paymentModal') { 
+        const leftPanel = document.getElementById('leftPanel'); 
+        if(leftPanel) leftPanel.classList.remove('blur-sm', 'opacity-50', 'pointer-events-none'); 
+    }
+
+    // 🔴 เติมโค้ดดึงเคอร์เซอร์กลับไปที่ช่องสแกนทุกครั้งที่ปิดหน้าต่างต่างๆ 🔴
+    setTimeout(() => {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput && typeof isCustomerMode !== 'undefined' && !isCustomerMode) {
+            searchInput.focus();
+        }
+    }, 100);
 }
 
 function showToast(msg, type='success') { const toast = document.getElementById('toast'); const iconContainer = toast.querySelector('div:first-child'); const icon = iconContainer.querySelector('i'); if (type === 'warning') { toast.classList.remove('border-green-500'); toast.classList.add('border-yellow-500'); iconContainer.classList.replace('bg-green-100', 'bg-yellow-100'); icon.classList.replace('text-green-600', 'text-yellow-600'); icon.className = 'fas fa-bell'; } else { toast.classList.add('border-green-500'); toast.classList.remove('border-yellow-500'); iconContainer.classList.replace('bg-yellow-100', 'bg-green-100'); icon.classList.replace('text-yellow-600', 'text-green-600'); icon.className = 'fas fa-check'; } document.getElementById('toastMsg').innerText = msg; toast.style.transform = 'translateX(0)'; setTimeout(() => { toast.style.transform = 'translateX(150%)'; }, 3000); }
@@ -1560,3 +1620,36 @@ window.onload = () => {
         }
     }, 500); // หน่วงเวลาครึ่งวินาทีให้หน้าเว็บโหลดเสร็จก่อน
 };
+
+// ==========================================
+// 🔴 ดักจับการคลิกหน้าจอ (ดึง Focus กลับช่องสแกนเสมอ)
+// ==========================================
+document.addEventListener('click', function(event) {
+    // 1. ถ้าเป็นโหมดลูกค้า (มือถือลูกค้า) ไม่ต้องทำอะไร ปล่อยผ่าน
+    if (typeof isCustomerMode !== 'undefined' && isCustomerMode) return;
+
+    // 2. เช็คว่าสิ่งที่คลิกอยู่ คือช่องพิมพ์ข้อความหรือไม่ (ถ้าตั้งใจคลิกช่องอื่น ให้ปล่อยผ่าน)
+    const targetTag = event.target.tagName.toLowerCase();
+    const isInput = targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select';
+
+    // 3. ป้องกันการแย่งโฟกัสตอนที่หน้าต่างสำคัญ (ที่ต้องพิมพ์ข้อความ) เปิดอยู่
+    const ignoreModals = [
+        'paymentModal', 'addModal', 'editMenuModal', 
+        'promptPayModal', 'confirmOrderModal', 'changePassModal'
+    ];
+    
+    const isAnyInputModalOpen = ignoreModals.some(modalId => {
+        const modal = document.getElementById(modalId);
+        return modal && !modal.classList.contains('hidden');
+    });
+
+    // 4. ถ้าไม่ได้คลิกที่ช่องพิมพ์ และ ไม่มีหน้าต่างกรอกข้อมูลเปิดอยู่ -> สั่งยึดเคอร์เซอร์คืน!
+    if (!isInput && !isAnyInputModalOpen) {
+        setTimeout(() => {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.focus();
+            }
+        }, 100);
+    }
+});
