@@ -1226,7 +1226,29 @@ function sendPaymentRequest(payload, isQuickPay) {
 
 function openEditMenu(index, e) { e.stopPropagation(); const item = menuData[index]; document.getElementById('editMenuModal').classList.remove('hidden'); document.getElementById('eId').value = item.id; document.getElementById('eName').value = item.name; document.getElementById('ePrice').value = item.price; document.getElementById('eCategory').value = item.category; }
 function openAddMenuModal() { document.getElementById('addModal').classList.remove('hidden'); }
-function openSalesModal() { document.getElementById('salesModal').classList.remove('hidden'); document.getElementById('saleToday').innerText = '...'; fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getSalesStats" }) }).then(r=>r.json()).then(d => { document.getElementById('saleToday').innerText = d.today.toLocaleString(); document.getElementById('saleYest').innerText = d.yesterday.toLocaleString(); document.getElementById('saleMonth').innerText = d.month.toLocaleString(); }); }
+// ประกาศตัวแปรเก็บเวลาไว้ด้านนอก (หรือด้านบนฟังก์ชัน) เพื่อกันการทำงานซ้อนทับ
+let salesModalTimer = null;
+
+function openSalesModal() { 
+    document.getElementById('salesModal').classList.remove('hidden'); 
+    document.getElementById('saleToday').innerText = '...'; 
+    
+    // เคลียร์เวลานับถอยหลังเก่าทิ้งก่อน (ป้องกันการกดปุ่มรัวๆ แล้วหน้าต่างปิดไวกว่าปกติ)
+    if (salesModalTimer) clearTimeout(salesModalTimer);
+
+    fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getSalesStats" }) })
+    .then(r=>r.json())
+    .then(d => { 
+        document.getElementById('saleToday').innerText = d.today.toLocaleString(); 
+        document.getElementById('saleYest').innerText = d.yesterday.toLocaleString(); 
+        document.getElementById('saleMonth').innerText = d.month.toLocaleString(); 
+        
+        // เมื่อข้อมูลยอดขายแสดงผลแล้ว ให้เริ่มนับถอยหลัง 5 วินาที (5000 มิลลิวินาที) เพื่อปิดหน้าต่าง
+        salesModalTimer = setTimeout(() => {
+            closeModal('salesModal');
+        }, 4000);
+    }); 
+}
 
 function openHistoryModal() { 
     document.getElementById('historyModal').classList.remove('hidden'); 
