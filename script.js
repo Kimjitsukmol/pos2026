@@ -472,8 +472,16 @@ function processSearchEnter() {
     const trimVal = val.trim();
 
     if(trimVal) { 
+        // เช็คว่าเป็นตัวเลข 1-4 หลัก
         if (/^[0-9]{1,4}$/.test(trimVal)) { 
-            addManualItem(parseInt(trimVal)); 
+            const price = parseInt(trimVal);
+            // ดักเงื่อนไข: ราคาต้องมากกว่า 0 เท่านั้นถึงจะเพิ่มลงตะกร้า
+            if (price > 0) {
+                addManualItem(price); 
+            } else {
+                // ถ้าพิมพ์ 0 หรือ 000 มา ให้เคลียร์ช่องค้นหาทิ้ง ไม่ต้องทำอะไร
+                searchInput.value = ''; 
+            }
         } else { 
             scanBarcode(trimVal); 
         } 
