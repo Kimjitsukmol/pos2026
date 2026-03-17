@@ -1288,11 +1288,27 @@ function openBillDetail(index) {
 
 function confirmDeleteBill(billId) { document.getElementById('deleteBillIdTarget').value = billId; document.getElementById('deleteBillModal').classList.remove('hidden'); }
 function executeDeleteBill() {
-    const billId = document.getElementById('deleteBillIdTarget').value; setLoading('btnConfirmDeleteBill', true, 'กำลังลบ...');
-    fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "deleteBill", billId: billId }) }).then(res => res.json()).then(data => {
-        if(data.result === 'success') { showToast('ลบบิลเรียบร้อยแล้ว', 'success'); closeModal('deleteBillModal'); closeModal('billDetailModal'); openHistoryModal(); openSalesModal(); } 
-        else { showCustomAlert('ผิดพลาด', 'ไม่สามารถลบบิลได้: ' + data.error, '<i class="fas fa-exclamation-circle text-red-500"></i>'); }
-    }).catch(err => showCustomAlert('Connection Error', 'ตรวจสอบอินเทอร์เน็ต')).finally(() => setLoading('btnConfirmDeleteBill', false, 'ยืนยันลบ'));
+    const billId = document.getElementById('deleteBillIdTarget').value;
+    
+    // 1. สั่งปิดหน้าต่างทั้งหมดทันทีที่กด เพื่อความไหลลื่น
+    closeModal('deleteBillModal'); 
+    closeModal('billDetailModal'); 
+    closeModal('historyModal');
+
+    // 2. ยิงคำสั่งไปลบข้อมูลที่เซิร์ฟเวอร์แบบเบื้องหลัง (Background process)
+    fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "deleteBill", billId: billId }) })
+    .then(res => res.json())
+    .then(data => {
+        if(data.result === 'success') { 
+            // 3. พอลบหลังบ้านเสร็จ ค่อยเด้งแจ้งเตือนสีเขียวมุมขวาบน
+            showToast('ลบบิลเรียบร้อยแล้ว', 'success'); 
+        } 
+        else { 
+            showCustomAlert('ผิดพลาด', 'ไม่สามารถลบบิลได้: ' + data.error, '<i class="fas fa-exclamation-circle text-red-500"></i>'); 
+        }
+    })
+    .catch(err => showCustomAlert('Connection Error', 'ตรวจสอบอินเทอร์เน็ต'));
+    // เอา .finally(setLoading...) ออกไปเลย เพราะปุ่มหายไปพร้อมหน้าต่างแล้ว
 }
 
 function printReceipt(bill) {
@@ -1476,14 +1492,13 @@ function openMyRecentOrder() {
 }
 
 function checkLoginStatus() {
-    const loginScreen = document.getElementById('loginScreen');
     const urlParams = new URLSearchParams(window.location.search);
     const isCustomer = urlParams.get('mode') === 'customer';
     
-    if (isCustomer || (typeof isCustomerMode !== 'undefined' && isCustomerMode)) { loginScreen.classList.add('hidden'); checkCustomerIdentity(); initStoreStatus(); return; }
-
-    const isLoggedIn = localStorage.getItem('isLoggedIn'); 
-    if (isLoggedIn === 'true') { loginScreen.classList.add('hidden'); initStoreStatus(); } else { loginScreen.classList.remove('hidden'); }
+    if (isCustomer || (typeof isCustomerMode !== 'undefined' && isCustomerMode)) { 
+        checkCustomerIdentity(); 
+    }
+    initStoreStatus(); 
 }
 
 function checkCustomerIdentity() {
@@ -1505,35 +1520,8 @@ document.getElementById('customerIdentityForm').addEventListener('submit', funct
     document.getElementById('customerIdentityModal').classList.add('hidden'); document.getElementById('customerTableDisplay').innerText = name; showToast(`ยินดีต้อนรับคุณ ${name}`, 'success'); speak("ยินดีต้อนรับค่ะ");
 });
 
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const errorBox = document.getElementById('loginErrorBox'); errorBox.classList.add('hidden');
-    const phone = document.getElementById('loginPhone').value.trim(); const pass = document.getElementById('loginPass').value.trim();
-    setLoading('btnLogin', true, 'กำลังตรวจสอบ...');
-    
-    fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "login", phone: phone, password: pass }) })
-    .then(res => res.json())
-    .then(data => {
-        if(data.result === 'success') {
-            localStorage.setItem('isLoggedIn', 'true'); localStorage.setItem('userPhone', phone); showToast('เข้าสู่ระบบสำเร็จ', 'success');
-            const screen = document.getElementById('loginScreen'); screen.style.opacity = '0';
-            setTimeout(() => { screen.classList.add('hidden'); initStoreStatus(); }, 500);
-        } else {
-            document.getElementById('loginErrorMsg').innerText = data.error || 'รหัสผ่านไม่ถูกต้อง'; errorBox.classList.remove('hidden');
-            const card = document.querySelector('#loginScreen > div'); card.classList.add('animate-pulse'); setTimeout(() => card.classList.remove('animate-pulse'), 500);
-        }
-    })
-    .catch(err => { document.getElementById('loginErrorMsg').innerText = 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้'; errorBox.classList.remove('hidden'); })
-    .finally(() => { setLoading('btnLogin', false, 'เข้าสู่ระบบ'); });
-});
-
-function logout() { document.getElementById('logoutModal').classList.remove('hidden'); }
 function confirmLogout() { localStorage.removeItem('isLoggedIn'); localStorage.removeItem('userPhone'); location.reload(); }
 
-function openChangePassModal() {
-    const currentPhone = localStorage.getItem('userPhone') || ''; document.getElementById('changePassPhone').value = currentPhone; document.getElementById('newPasswordInput').value = ''; document.getElementById('changePassModal').classList.remove('hidden');
-    setTimeout(() => document.getElementById('changePassPhone').focus(), 300);
-}
 
 function submitChangePassword() {
     const phoneVal = document.getElementById('changePassPhone').value.trim(); const newPass = document.getElementById('newPasswordInput').value.trim();
@@ -1542,14 +1530,6 @@ function submitChangePassword() {
     fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "changePassword", phone: phoneVal, newPassword: newPass }) })
     .then(res => res.json()).then(data => { if(data.result === 'success') { showToast('เปลี่ยนรหัสผ่านเรียบร้อย', 'success'); closeModal('changePassModal'); localStorage.setItem('userPhone', phoneVal); } else { alert('เปลี่ยนรหัสไม่สำเร็จ: ' + data.error); } })
     .catch(err => { alert('Error: ' + err); }).finally(() => { setLoading('btnSubmitChangePass', false, 'บันทึกรหัสผ่านใหม่'); });
-}
-
-function setupPasswordRestrictions() {
-    const passwordFields = ['loginPass', 'newPasswordInput'];
-    passwordFields.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) { el.addEventListener('input', function(e) { const thaiRegex = /[\u0E00-\u0E7F]/g; if (thaiRegex.test(this.value)) { this.value = this.value.replace(thaiRegex, ''); showToast('รหัสผ่านต้องเป็นภาษาอังกฤษ/ตัวเลขเท่านั้น', 'warning'); this.classList.add('border-red-500', 'animate-pulse'); setTimeout(() => { this.classList.remove('border-red-500', 'animate-pulse'); }, 500); } }); }
-    });
 }
 
 function makeDraggable(draggableElement, dragHandle) {
@@ -1561,7 +1541,6 @@ function makeDraggable(draggableElement, dragHandle) {
 }
 
 function togglePaymentMenu() { const menu = document.getElementById('paymentSettingsMenu'); if (menu) { if (menu.classList.contains('hidden')) { menu.classList.remove('hidden'); } else { menu.classList.add('hidden'); } } }
-function toggleFloatingNumpad() { const pad = document.getElementById('floatingNumpad'); if (pad.classList.contains('hidden')) { pad.classList.remove('hidden'); const header = document.getElementById('numpadHeader'); makeDraggable(pad, header); } else { pad.classList.add('hidden'); } }
 
 function numpadPress(num, btnElement) {
     // ลบคำสั่ง playNotificationSound(); ออกไปแล้ว จะไม่มีเสียงติ๊ดๆ กวนใจ
@@ -1675,7 +1654,6 @@ window.onload = () => {
     startOrderPolling();         
     initGlobalShortcuts();       
     initQuickAddShortcuts();     
-    setupPasswordRestrictions(); 
     
     // 4. เปิดระบบให้ลากหน้าต่างรับเงินได้
     const modal = document.getElementById("draggableModal");
