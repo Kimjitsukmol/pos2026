@@ -1743,9 +1743,12 @@ document.addEventListener('click', function(event) {
 
     // 🌟 พระเอกอยู่ตรงนี้: เช็คว่าคลิกโดนแผง Numpad หรือไม่
     const isNumpadClick = event.target.closest('#embeddedNumpadPanel') !== null;
+    
+    // 🟢 เติมบรรทัดนี้: เช็คว่าคลิกโดนแว่นขยายลอยตัวหรือไม่
+    const isFloatingSearchClick = event.target.closest('#floatingSearchContainer') !== null; 
 
-    // ถ้า "ไม่ได้คลิกช่องพิมพ์" + "ไม่มีหน้าต่างบัง" + "และไม่ได้คลิก Numpad" -> ถึงจะล้างค่า
-    if (!isInput && !isAnyInputModalOpen && !isNumpadClick) {
+    // 🟢 เติมเงื่อนไข && !isFloatingSearchClick เข้าไปในวงเล็บนี้ด้วย
+    if (!isInput && !isAnyInputModalOpen && !isNumpadClick && !isFloatingSearchClick) {
         setTimeout(() => {
             const searchInput = document.getElementById('searchInput');
             if (searchInput) {
@@ -1826,9 +1829,12 @@ document.addEventListener('click', function(event) {
 
     // 🌟 พระเอกอยู่ตรงนี้: เช็คว่าคลิกโดนแผง Numpad หรือไม่
     const isNumpadClick = event.target.closest('#embeddedNumpadPanel') !== null;
+    
+    // 🟢 เติมบรรทัดนี้: เช็คว่าคลิกโดนแว่นขยายลอยตัวหรือไม่
+    const isFloatingSearchClick = event.target.closest('#floatingSearchContainer') !== null; 
 
-    // ถ้า "ไม่ได้คลิกช่องพิมพ์" + "ไม่มีหน้าต่างบัง" + "และไม่ได้คลิก Numpad" -> ถึงจะล้างค่า
-    if (!isInput && !isAnyInputModalOpen && !isNumpadClick) {
+    // 🟢 เติมเงื่อนไข && !isFloatingSearchClick เข้าไปในวงเล็บนี้ด้วย
+    if (!isInput && !isAnyInputModalOpen && !isNumpadClick && !isFloatingSearchClick) {
         setTimeout(() => {
             const searchInput = document.getElementById('searchInput');
             if (searchInput) {
