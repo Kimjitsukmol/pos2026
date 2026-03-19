@@ -869,6 +869,7 @@ function updateQty(idx, change) {
         const searchInput = document.getElementById('searchInput');
         if (searchInput && typeof isCustomerMode !== 'undefined' && !isCustomerMode) {
             searchInput.focus();
+            searchInput.value = '';
         }
     }, 100);
 }
@@ -882,6 +883,7 @@ function removeFromCart(idx) {
         const searchInput = document.getElementById('searchInput');
         if (searchInput && typeof isCustomerMode !== 'undefined' && !isCustomerMode) {
             searchInput.focus();
+            searchInput.value = '';
         }
     }, 100);
 }
@@ -1465,6 +1467,7 @@ function sendAddMenu(payload) {
          const searchInput = document.getElementById('searchInput');
          if (searchInput) {
              searchInput.focus();
+             searchInput.value = '';
          }
      }, 100);
      
@@ -1518,6 +1521,7 @@ function closeModal(id) {
         const searchInput = document.getElementById('searchInput');
         if (searchInput && typeof isCustomerMode !== 'undefined' && !isCustomerMode) {
             searchInput.focus();
+            searchInput.value = '';
         }
     }, 100);
 }
@@ -1639,9 +1643,12 @@ function numpadPress(num, btnElement) {
     } else {
         targetInput = document.getElementById('searchInput');
         targetInput.focus(); 
+        // ❌ ตรงนี้แหละครับที่เราห้ามใส่ targetInput.value = ''; เด็ดขาด
+        // เพราะไม่อย่างนั้นเวลาเรากดเลข 1 แล้วจะกดเลข 0 ต่อ เลข 1 มันจะโดนลบทิ้งครับ
     }
 
     if (targetInput) {
+        // คำสั่งนี้คือการเอาเลขเก่า มาต่อท้ายด้วยเลขใหม่ (เช่น 1 + 0 = 10)
         targetInput.value += num;
         targetInput.dispatchEvent(new Event('input', { bubbles: true }));
     }
@@ -1703,11 +1710,51 @@ function syncSearch(val) {
 
 function clearFloatingSearch() { const floatInput = document.getElementById('floatingSearchInput'); floatInput.value = ''; syncSearch(''); floatInput.focus(); }
 
+// ==========================================
+// 🔴 ดักจับการคลิกหน้าจอ (ดึง Focus กลับช่องสแกนเสมอ)
+// ==========================================
+// ==========================================
+// 🔴 ดักจับการคลิกหน้าจอแบบรวม (จัดการเมนู + ดึง Focus อย่างปลอดภัย)
+// ==========================================
 document.addEventListener('click', function(event) {
-    const menu = document.getElementById('paymentSettingsMenu'); const btn = document.querySelector('button[onclick="togglePaymentMenu()"]');
-    if (menu && !menu.classList.contains('hidden')) { if (!menu.contains(event.target) && !btn.contains(event.target)) { menu.classList.add('hidden'); } }
-});
+    
+    // 1. จัดการซ่อนเมนู ... (จุด 3 จุด ในหน้าต่างรับเงิน)
+    const menu = document.getElementById('paymentSettingsMenu'); 
+    const btnMenu = document.querySelector('button[onclick="togglePaymentMenu()"]');
+    if (menu && !menu.classList.contains('hidden')) { 
+        if (!menu.contains(event.target) && btnMenu && !btnMenu.contains(event.target)) { 
+            menu.classList.add('hidden'); 
+        } 
+    }
 
+    // 2. จัดการดึง Focus และเคลียร์ช่องสแกน
+    if (typeof isCustomerMode !== 'undefined' && isCustomerMode) return;
+
+    // เช็คว่าจุดที่คลิกเป็นช่องกรอกข้อความหรือไม่
+    const targetTag = event.target.tagName ? event.target.tagName.toLowerCase() : '';
+    const isInput = targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select';
+
+    // เช็คว่ามีหน้าต่างสำคัญเปิดอยู่หรือไม่
+    const ignoreModals = ['paymentModal', 'addModal', 'editMenuModal', 'promptPayModal', 'confirmOrderModal', 'changePassModal'];
+    const isAnyInputModalOpen = ignoreModals.some(modalId => {
+        const modal = document.getElementById(modalId);
+        return modal && !modal.classList.contains('hidden');
+    });
+
+    // 🌟 พระเอกอยู่ตรงนี้: เช็คว่าคลิกโดนแผง Numpad หรือไม่
+    const isNumpadClick = event.target.closest('#embeddedNumpadPanel') !== null;
+
+    // ถ้า "ไม่ได้คลิกช่องพิมพ์" + "ไม่มีหน้าต่างบัง" + "และไม่ได้คลิก Numpad" -> ถึงจะล้างค่า
+    if (!isInput && !isAnyInputModalOpen && !isNumpadClick) {
+        setTimeout(() => {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.focus();
+                searchInput.value = ''; // เคลียร์ค่าได้อย่างปลอดภัย
+            }
+        }, 100);
+    }
+});
 // ==========================================
 // 🚀 INITIALIZATION (โหลดคำสั่งทั้งหมดตอนเปิดเว็บ)
 // ==========================================
@@ -1741,6 +1788,7 @@ window.onload = () => {
         // เช็คก่อนว่าไม่ใช่โหมดลูกค้า ถึงจะดึง focus มา
         if (searchInput && typeof isCustomerMode !== 'undefined' && !isCustomerMode) {
             searchInput.focus();
+            searchInput.value = '';
         }
     }, 500); // หน่วงเวลาครึ่งวินาทีให้หน้าเว็บโหลดเสร็จก่อน
 };
@@ -1748,31 +1796,44 @@ window.onload = () => {
 // ==========================================
 // 🔴 ดักจับการคลิกหน้าจอ (ดึง Focus กลับช่องสแกนเสมอ)
 // ==========================================
+// ==========================================
+// 🔴 ดักจับการคลิกหน้าจอแบบรวม (จัดการเมนู + ดึง Focus อย่างปลอดภัย)
+// ==========================================
 document.addEventListener('click', function(event) {
-    // 1. ถ้าเป็นโหมดลูกค้า (มือถือลูกค้า) ไม่ต้องทำอะไร ปล่อยผ่าน
+    
+    // 1. จัดการซ่อนเมนู ... (จุด 3 จุด ในหน้าต่างรับเงิน)
+    const menu = document.getElementById('paymentSettingsMenu'); 
+    const btnMenu = document.querySelector('button[onclick="togglePaymentMenu()"]');
+    if (menu && !menu.classList.contains('hidden')) { 
+        if (!menu.contains(event.target) && btnMenu && !btnMenu.contains(event.target)) { 
+            menu.classList.add('hidden'); 
+        } 
+    }
+
+    // 2. จัดการดึง Focus และเคลียร์ช่องสแกน
     if (typeof isCustomerMode !== 'undefined' && isCustomerMode) return;
 
-    // 2. เช็คว่าสิ่งที่คลิกอยู่ คือช่องพิมพ์ข้อความหรือไม่ (ถ้าตั้งใจคลิกช่องอื่น ให้ปล่อยผ่าน)
-    const targetTag = event.target.tagName.toLowerCase();
+    // เช็คว่าจุดที่คลิกเป็นช่องกรอกข้อความหรือไม่
+    const targetTag = event.target.tagName ? event.target.tagName.toLowerCase() : '';
     const isInput = targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select';
 
-    // 3. ป้องกันการแย่งโฟกัสตอนที่หน้าต่างสำคัญ (ที่ต้องพิมพ์ข้อความ) เปิดอยู่
-    const ignoreModals = [
-        'paymentModal', 'addModal', 'editMenuModal', 
-        'promptPayModal', 'confirmOrderModal', 'changePassModal'
-    ];
-    
+    // เช็คว่ามีหน้าต่างสำคัญเปิดอยู่หรือไม่
+    const ignoreModals = ['paymentModal', 'addModal', 'editMenuModal', 'promptPayModal', 'confirmOrderModal', 'changePassModal'];
     const isAnyInputModalOpen = ignoreModals.some(modalId => {
         const modal = document.getElementById(modalId);
         return modal && !modal.classList.contains('hidden');
     });
 
-    // 4. ถ้าไม่ได้คลิกที่ช่องพิมพ์ และ ไม่มีหน้าต่างกรอกข้อมูลเปิดอยู่ -> สั่งยึดเคอร์เซอร์คืน!
-    if (!isInput && !isAnyInputModalOpen) {
+    // 🌟 พระเอกอยู่ตรงนี้: เช็คว่าคลิกโดนแผง Numpad หรือไม่
+    const isNumpadClick = event.target.closest('#embeddedNumpadPanel') !== null;
+
+    // ถ้า "ไม่ได้คลิกช่องพิมพ์" + "ไม่มีหน้าต่างบัง" + "และไม่ได้คลิก Numpad" -> ถึงจะล้างค่า
+    if (!isInput && !isAnyInputModalOpen && !isNumpadClick) {
         setTimeout(() => {
             const searchInput = document.getElementById('searchInput');
             if (searchInput) {
                 searchInput.focus();
+                searchInput.value = ''; // เคลียร์ค่าได้อย่างปลอดภัย
             }
         }, 100);
     }
