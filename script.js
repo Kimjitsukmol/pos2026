@@ -90,7 +90,7 @@ function getDriveUrl(input) {
     let id = input;
     if (input.includes('drive.google.com/thumbnail')) return input;
     if (input.includes('http') || input.includes('google.com')) { const match = input.match(/[-\w]{25,}/); if (match) id = match[0]; }
-    return `https://drive.google.com/thumbnail?id=${id}&sz=w800`;
+    return `https://drive.google.com/thumbnail?id=${id}&sz=w200`;
 }
 
 function initBankQR() {
@@ -440,14 +440,27 @@ function openQRModal() {
 }
 
 function fetchMenu() {
-    document.getElementById('loadingMenu').classList.remove('hidden');
+    // 1. ลองดึงข้อมูลเก่าจาก LocalStorage มาโชว์ก่อนทันที (ไม่ต้องรอโหลด)
+    const cachedMenu = localStorage.getItem('cachedMenuData');
+    if (cachedMenu) {
+        menuData = JSON.parse(cachedMenu);
+        filterMenu('All'); // เรนเดอร์สินค้าทันที
+    } else {
+        // ถ้าไม่มีของเก่าเลย ค่อยโชว์หน้าจอโหลด
+        document.getElementById('loadingMenu').classList.remove('hidden');
+    }
+    
     document.getElementById('noResults').classList.add('hidden');
     
+    // 2. ไปดึงข้อมูลใหม่จาก Server เบื้องหลัง
     fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getMenu" }) })
     .then(res => res.json())
     .then(data => {
         if(data.result === 'success') {
             menuData = data.data; 
+            // เซฟข้อมูลใหม่ทับของเก่าเก็บไว้ใช้รอบหน้า
+            localStorage.setItem('cachedMenuData', JSON.stringify(menuData));
+            
             filterMenu('All'); 
             fetchMasterList(); 
         } 
@@ -1230,43 +1243,90 @@ let salesModalTimer = null;
 
 function openSalesModal() { 
     document.getElementById('salesModal').classList.remove('hidden'); 
-    document.getElementById('saleToday').innerText = '...'; 
     
-    // เคลียร์เวลานับถอยหลังเก่าทิ้งก่อน (ป้องกันการกดปุ่มรัวๆ แล้วหน้าต่างปิดไวกว่าปกติ)
+    // 1. ดึงข้อมูลเก่าจาก LocalStorage มาโชว์ทันที (ลดความหน่วงเป็น 0)
+    const cachedSales = localStorage.getItem('cachedSalesStats');
+    if (cachedSales) {
+        const d = JSON.parse(cachedSales);
+        document.getElementById('saleToday').innerText = d.today.toLocaleString(); 
+        document.getElementById('saleYest').innerText = d.yesterday.toLocaleString(); 
+        document.getElementById('saleMonth').innerText = d.month.toLocaleString(); 
+    } else {
+        document.getElementById('saleToday').innerText = '...'; 
+        document.getElementById('saleYest').innerText = '...'; 
+        document.getElementById('saleMonth').innerText = '...'; 
+    }
+
     if (salesModalTimer) clearTimeout(salesModalTimer);
 
+    // 2. แอบไปดึงข้อมูลใหม่จาก Server เบื้องหลังเพื่ออัปเดตให้เป๊ะ
     fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getSalesStats" }) })
     .then(r=>r.json())
     .then(d => { 
+        // เซฟข้อมูลล่าสุดลงเครื่องไว้ใช้รอบหน้า
+        localStorage.setItem('cachedSalesStats', JSON.stringify(d));
+        
+        // อัปเดตตัวเลขบนหน้าจอ (ถ้ามีการเปลี่ยนแปลง)
         document.getElementById('saleToday').innerText = d.today.toLocaleString(); 
         document.getElementById('saleYest').innerText = d.yesterday.toLocaleString(); 
         document.getElementById('saleMonth').innerText = d.month.toLocaleString(); 
         
-        // เมื่อข้อมูลยอดขายแสดงผลแล้ว ให้เริ่มนับถอยหลัง 5 วินาที (5000 มิลลิวินาที) เพื่อปิดหน้าต่าง
-        salesModalTimer = setTimeout(() => {
-            closeModal('salesModal');
-        }, 4000);
+        // เริ่มนับถอยหลังปิดหน้าต่าง หลังจากดึงข้อมูลล่าสุดเสร็จ
+        salesModalTimer = setTimeout(() => { closeModal('salesModal'); }, 4000);
     }); 
 }
 
 function openHistoryModal() { 
     document.getElementById('historyModal').classList.remove('hidden'); 
     const list = document.getElementById('historyList');
-    list.innerHTML = '<tr><td colspan="3" class="text-center p-10 text-gray-400"><i class="fas fa-circle-notch fa-spin text-2xl mb-2"></i><br>กำลังโหลดรายการ...</td></tr>'; 
+    
+    // 1. ลองเอาของเก่ามาโชว์ก่อนทันที
+    const cachedHistory = localStorage.getItem('cachedHistoryBills');
+    if (cachedHistory) {
+        historyBills = JSON.parse(cachedHistory);
+        renderHistoryList(); // วาดตารางทันทีไม่ต้องรอโหลด
+    } else {
+        list.innerHTML = '<tr><td colspan="3" class="text-center p-10 text-gray-400"><i class="fas fa-circle-notch fa-spin text-2xl mb-2"></i><br>กำลังโหลดรายการ...</td></tr>'; 
+    }
+
+    // 2. แอบไปดึงข้อมูลบิลล่าสุดมาอัปเดตเบื้องหลัง
     fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "getHistory" }) })
     .then(r => r.json())
     .then(d => { 
         if(d.result === 'success') { 
             historyBills = d.data; 
-            if(historyBills.length === 0) { list.innerHTML = '<tr><td colspan="3" class="text-center p-10 text-gray-300">ไม่พบประวัติการขาย</td></tr>'; return; }
-            list.innerHTML = historyBills.map((b, index) => {
-                let dateStr = "-"; let timeStr = "-";
-                try { const d = new Date(b.date); dateStr = d.toLocaleDateString('th-TH', { day: '2-digit', month: '2-digit', year: '2-digit' }); timeStr = d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }); } catch(e) {}
-                return `<tr onclick="openBillDetail(${index})" class="hover:bg-orange-50 transition duration-150 cursor-pointer group border-b border-gray-100 last:border-0"><td class="p-3 font-mono align-top pt-3 group-hover:text-orange-600"><div class="text-[10px] text-gray-400 font-bold leading-none mb-1">${dateStr}</div><div class="text-sm font-bold text-gray-700">${timeStr}</div></td><td class="p-3 text-gray-700 align-top pt-3"><span class="line-clamp-1 leading-relaxed font-medium group-hover:text-orange-800">${b.itemSummary}</span><span class="text-[10px] text-gray-400 block mt-0.5 group-hover:text-orange-400">ID: ${b.billId}</span></td><td class="p-3 text-right font-bold text-gray-800 align-top pt-3 whitespace-nowrap text-base group-hover:text-orange-600">${parseFloat(b.total).toLocaleString()}</td></tr>`; 
-            }).join(''); 
-        } else { list.innerHTML = `<tr><td colspan="3" class="text-center p-4 text-red-400">Error: ${d.error}</td></tr>`; }
+            // เซฟทับลง LocalStorage
+            localStorage.setItem('cachedHistoryBills', JSON.stringify(historyBills));
+            // อัปเดตหน้าจออีกรอบแบบเนียนๆ จะได้มีบิลล่าสุดโชว์ขึ้นมา
+            renderHistoryList(); 
+        } else if (!cachedHistory) { 
+            list.innerHTML = `<tr><td colspan="3" class="text-center p-4 text-red-400">Error: ${d.error}</td></tr>`; 
+        }
     })
-    .catch(err => { list.innerHTML = '<tr><td colspan="3" class="text-center p-4 text-red-400">เชื่อมต่อไม่ได้</td></tr>'; }); 
+    .catch(err => { 
+        if (!cachedHistory) {
+            list.innerHTML = '<tr><td colspan="3" class="text-center p-4 text-red-400">เชื่อมต่อไม่ได้</td></tr>'; 
+        }
+    }); 
+}
+
+// ฟังก์ชันเสริมสำหรับวาดตารางประวัติบิล (แยกออกมาเพื่อให้เรียกใช้ง่าย)
+function renderHistoryList() {
+    const list = document.getElementById('historyList');
+    if(!historyBills || historyBills.length === 0) { 
+        list.innerHTML = '<tr><td colspan="3" class="text-center p-10 text-gray-300">ไม่พบประวัติการขาย</td></tr>'; 
+        return; 
+    }
+    list.innerHTML = historyBills.map((b, index) => {
+        let dateStr = "-"; let timeStr = "-";
+        try { 
+            const d = new Date(b.date); 
+            dateStr = d.toLocaleDateString('th-TH', { day: '2-digit', month: '2-digit', year: '2-digit' }); 
+            timeStr = d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }); 
+        } catch(e) {}
+        
+        return `<tr onclick="openBillDetail(${index})" class="hover:bg-orange-50 transition duration-150 cursor-pointer group border-b border-gray-100 last:border-0"><td class="p-3 font-mono align-top pt-3 group-hover:text-orange-600"><div class="text-[10px] text-gray-400 font-bold leading-none mb-1">${dateStr}</div><div class="text-sm font-bold text-gray-700">${timeStr}</div></td><td class="p-3 text-gray-700 align-top pt-3"><span class="line-clamp-1 leading-relaxed font-medium group-hover:text-orange-800">${b.itemSummary}</span><span class="text-[10px] text-gray-400 block mt-0.5 group-hover:text-orange-400">ID: ${b.billId}</span></td><td class="p-3 text-right font-bold text-gray-800 align-top pt-3 whitespace-nowrap text-base group-hover:text-orange-600">${parseFloat(b.total).toLocaleString()}</td></tr>`; 
+    }).join(''); 
 }
 
 function openBillDetail(index) {
