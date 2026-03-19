@@ -15,12 +15,11 @@
     <div id="customerIdentityModal" class="fixed inset-0 z-[200] bg-gray-900 flex items-center justify-center p-4 hidden animate-fade-in bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"><div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-pop relative"><div class="bg-gradient-to-r from-orange-500 to-yellow-500 h-32 flex items-center justify-center relative overflow-hidden"><div class="absolute inset-0 bg-white/10 opacity-50"></div><div class="w-20 h-20 bg-white text-orange-500 rounded-full flex items-center justify-center shadow-lg text-3xl animate-bounce"><i class="fas fa-user-edit"></i></div></div><div class="p-8"><h2 class="text-2xl font-extrabold text-center text-gray-800 mb-2">ยินดีต้อนรับครับ</h2><p class="text-center text-gray-500 mb-6 text-sm">กรุณาระบุตัวตนเพื่อให้ทางร้าน<br>ติดต่อกลับกรณีสินค้าหมดหรือจัดส่งนะคะ</p><form id="customerIdentityForm" class="space-y-4"><div><label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">ชื่อเล่น / ชื่อของคุณ</label><input type="text" id="custIdName" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-orange-500 outline-none font-bold text-lg bg-gray-50" placeholder="เช่น พี่หนุ่ม, น้องพลอย" required></div><div><label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">เบอร์โทรศัพท์ (สำหรับติดต่อ)</label><input type="tel" id="custIdPhone" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-orange-500 outline-none font-bold text-lg bg-gray-50 tracking-wider" placeholder="08X-XXX-XXXX" required minlength="9" maxlength="10"></div><div class="flex gap-4"><div class="flex-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">บ้านเลขที่ *</label><input type="text" id="custIdHouseNo" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-orange-500 outline-none font-bold text-lg bg-gray-50" placeholder="เช่น 99/9" required></div><div class="flex-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">ซอย/ถนน *</label><input type="text" id="custIdSoi" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-orange-500 outline-none font-bold text-lg bg-gray-50" placeholder="ซ. 15, ถ.หลัก" required></div></div><button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-95 text-lg mt-4">เริ่มสั่งอาหาร <i class="fas fa-arrow-right ml-2"></i></button></form></div></div></div>
 
     <nav class="bg-gradient-to-r from-orange-500 to-yellow-500 text-white p-2 shadow-lg flex justify-between items-center z-30 shrink-0 gap-2">
-        <div class="flex items-center gap-2 overflow-hidden shrink-0">
-            <div class="bg-white text-orange-500 p-1.5 rounded-full w-9 h-9 flex items-center justify-center font-bold shadow shrink-0">🏪</div>
-            <div class="flex flex-col">
-                <h1 class="text-lg font-bold tracking-wide whitespace-nowrap truncate hidden sm:block">ร้านเจ้พิน</h1>
-                <h1 class="text-lg font-bold tracking-wide whitespace-nowrap truncate sm:hidden">ร้านเจ้พิน</h1>
-                <span id="dateTimeDisplay" class="text-xs sm:text-lg text-orange-100 font-mono leading-none">...</span>
+        <div class="flex items-center gap-3 overflow-hidden shrink-0">
+            <div class="bg-white text-orange-500 rounded-full w-10 h-10 flex items-center justify-center font-bold shadow-md shrink-0 text-xl">🏪</div>
+            <div class="flex flex-col justify-center">
+                <span class="text-xs sm:text-sm font-normal text-orange-100 opacity-90 leading-none mb-1 tracking-wide">ร้านเจ้พิน</span>
+                <span id="dateTimeDisplay" class="text-2xl sm:text-3xl font-medium text-white drop-shadow-sm leading-none tracking-tight">...</span>
             </div>
         </div>
         
@@ -120,7 +119,7 @@
                      </div>
                      
                      <div class="text-right flex flex-col items-end transition-all duration-500" id="priceDisplayBox">
-                        <span class="block text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-orange-500 to-red-500 tracking-tighter leading-none drop-shadow-sm filter transition-all duration-500 origin-right" id="totalPrice" style="text-shadow: 2px 2px 0px rgba(255, 237, 213, 0.5);"></span>
+                        <span class="block text-7xl font-extrabold text-orange-600 tracking-tighter leading-none drop-shadow-md filter transition-all duration-500 origin-right" id="totalPrice"></span>
                         <div id="changeWrapper" class="hidden opacity-0 transform translate-y-4 transition-all duration-500 mt-1">
                             <span class="text-gray-500 text-xs font-bold mr-2">เงินทอน</span>
                             <span id="mainScreenChange" class="text-8xl font-extrabold text-green-600 drop-shadow-sm">0 ฿</span>

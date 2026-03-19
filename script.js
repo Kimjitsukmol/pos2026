@@ -81,8 +81,22 @@ function populateCategorySelects() {
 }
 
 function initDateTime() {
-    const updateTime = () => { const now = new Date(); document.getElementById('dateTimeDisplay').innerText = `${now.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' })} ${now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`; };
-    updateTime(); setInterval(updateTime, 1000);
+    const weekdays = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+    
+    const updateTime = () => { 
+        const now = new Date(); 
+        const dateNum = now.getDate(); 
+        const dayName = weekdays[now.getDay()]; 
+        const timeStr = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', hour12: false }); 
+        
+        // จุดที่แก้: 
+        // 1. เปลี่ยนจาก innerText เป็น innerHTML 
+        // 2. ครอบคำว่า "เวลา..." ด้วย <span> และใส่คลาส ml-3 หรือ ml-4 เพื่อดันให้ห่างออกไปอีกประมาณ 20-30%
+        document.getElementById('dateTimeDisplay').innerHTML = `${dateNum} ${dayName} <span class="ml-3 text-white/90">เวลา ${timeStr} น.</span>`; 
+    };
+    
+    updateTime(); 
+    setInterval(updateTime, 1000); 
 }
 
 function getDriveUrl(input) {
