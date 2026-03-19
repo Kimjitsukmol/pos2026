@@ -801,25 +801,24 @@ function renderCart() {
     container.innerHTML = cart.map((item, idx) => {
         total += item.price * item.qty; count += item.qty;
         
-        // เพิ่ม onclick="removeFromCart(idx)" ที่ div กล่องนอกสุด 
-        // และเพิ่ม hover:bg-red-50 เพื่อให้กล่องเปลี่ยนเป็นสีแดงอ่อนๆ เวลากด/ชี้
         return `
-        <div onclick="removeFromCart(${idx})" class="flex justify-between items-start bg-white p-3 rounded-xl border border-gray-100 shadow-sm mb-2 animate-fade-in cursor-pointer hover:bg-red-50 transition-colors group">
-            <div class="flex-1">
-                <h4 class="font-bold text-gray-800 leading-tight group-hover:text-red-600 transition-colors">${item.name}</h4>
-                <div class="text-xs text-gray-500 mt-1 flex gap-2"><span>${item.price}.-</span></div>
+        <div onclick="removeFromCart(${idx})" class="flex justify-between items-center bg-orange-50 p-3 sm:p-4 rounded-3xl border border-orange-100 shadow-lg mb-2 animate-fade-in cursor-pointer hover:bg-red-700 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group">
+            
+            <div class="flex-1 min-w-0 pr-3 border-r border-orange-200 group-hover:border-red-600 transition-colors">
+                <div class="text-base font-bold text-gray-800 leading-tight group-hover:text-white transition-colors truncate">${item.name}</div>
+                <div class="text-sm text-gray-500 mt-1 group-hover:text-red-100 transition-colors">${item.price.toLocaleString()} บาท</div>
             </div>
-            <div class="flex flex-col items-end gap-2">
-                <div class="font-bold text-orange-600">${item.price * item.qty}</div>
-                
-                <div class="flex items-center bg-gray-100 rounded-lg p-0.5 gap-1" onclick="event.stopPropagation()">
-                    <button onclick="removeFromCart(${idx})" class="w-7 h-7 flex items-center justify-center text-red-500 hover:bg-red-100 rounded-md transition"><i class="fas fa-trash-alt text-xs"></i></button>
-                    <div class="w-px h-4 bg-gray-300 mx-1"></div>
-                    <button onclick="updateQty(${idx}, -1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-white hover:shadow rounded-md transition">-</button>
-                    <span class="w-6 text-center font-bold text-sm text-gray-800">${item.qty}</span>
-                    <button onclick="updateQty(${idx}, 1)" class="w-7 h-7 flex items-center justify-center text-green-600 hover:bg-white hover:shadow rounded-md transition">+</button>
-                </div>
+            
+            <div class="flex flex-col items-center justify-center px-4">
+                <span class="text-xs text-gray-400 font-medium tracking-wide mb-1 group-hover:text-red-200 transition-colors">จำนวน</span>
+                <span class="text-lg font-extrabold text-gray-800 leading-none group-hover:text-white transition-colors">${item.qty}</span>
             </div>
+
+            <div class="flex flex-col items-end justify-center pl-4 border-l border-orange-200 group-hover:border-red-600 transition-colors min-w-[90px]">
+                <span class="text-xs text-gray-400 font-medium tracking-wide mb-1 group-hover:text-red-200 transition-colors">ราคารวม</span>
+                <div class="text-lg font-extrabold text-orange-500 leading-none whitespace-nowrap group-hover:text-white transition-colors">${(item.price * item.qty).toLocaleString()} บาท</div>
+            </div>
+
         </div>`;
     }).join('');
     

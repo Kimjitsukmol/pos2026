@@ -220,8 +220,8 @@
         <div class="absolute inset-0" onclick="closeModal('paymentModal')"></div>
         <div id="draggableModal" class="bg-white rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.2)] w-full max-w-xs overflow-hidden animate-pop absolute border border-gray-200 z-[200]" style="left: 20%; top: 15%;">
             
-            <div id="modalHeader" class="bg-gray-800 p-3 text-white flex justify-between items-center shrink-0 cursor-move">
-                <h3 class="font-bold text-base"><i class="fas fa-hand-holding-usd mr-2 text-green-400"></i>รับเงิน</h3>
+            <div id="modalHeader" class="bg-gradient-to-r from-orange-500 to-yellow-500 p-3 text-white flex justify-between items-center shrink-0 cursor-move shadow-sm">
+                <h3 class="font-bold text-base"><i class="fas fa-hand-holding-usd mr-2"></i>รับเงิน</h3>
                 <button onclick="closeModal('paymentModal')" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" class="bg-white/20 hover:bg-white/30 rounded-full w-8 h-8 flex items-center justify-center transition shadow-sm"><i class="fas fa-times text-sm"></i></button>
             </div>
             
@@ -256,7 +256,7 @@
                 <div class="mb-4 relative text-center">
                     <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-wide">ยอดเงินที่รับ</label>
                     <div class="relative">
-                        <input type="text" id="inputReceived" inputmode="none" oninput="this.value = this.value.replace(/[^0-9]/g, ''); calcChange()" onkeydown="checkPaymentEnter(event)" class="w-2/3 mx-auto block text-2xl font-extrabold text-center border-2 border-orange-500 rounded-xl p-1.5 text-orange-600 placeholder-gray-200 focus:ring-4 focus:ring-orange-100 outline-none transition-all shadow-inner bg-orange-50/50" placeholder="0">
+                        <input type="text" id="inputReceived" inputmode="none" oninput="this.value = this.value.replace(/[^0-9]/g, ''); calcChange()" onkeydown="checkPaymentEnter(event)" class="w-1/3 mx-auto block text-base font-bold text-center border border-orange-400 rounded-md py-1 px-2 text-orange-600 placeholder-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-300 outline-none transition-all shadow-inner bg-orange-50" placeholder="0">
                     </div>
                 </div>
                 
